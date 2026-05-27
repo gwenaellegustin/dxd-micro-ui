@@ -3,6 +3,7 @@ Project: Be picky !
 Semestre 2
 
 # install
+npm init
 ## three.js
 npm install --save three
 
