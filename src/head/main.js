@@ -7,7 +7,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-const container = document.getElementById("container");
+const container = document.getElementById("container-head");
 
 let renderer, scene, camera, stats;
 let mesh;
@@ -71,8 +71,8 @@ init();
 
 function init() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  // renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight / 2);
   renderer.setAnimationLoop(animate);
   container.appendChild(renderer.domElement);
 
