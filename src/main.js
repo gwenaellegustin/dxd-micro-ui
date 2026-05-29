@@ -1,7 +1,6 @@
 import * as THREE from "three";
 
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import Stats from "three/addons/libs/stats.module.js";
 
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
@@ -72,12 +71,12 @@ init();
 function init() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   // renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight / 2);
+  renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setAnimationLoop(animate);
   container.appendChild(renderer.domElement);
 
-  stats = new Stats();
-  container.appendChild(stats.dom);
+  // stats = new Stats();
+  // container.appendChild(stats.dom);
 
   scene = new THREE.Scene();
 
@@ -281,5 +280,5 @@ function onWindowResize() {
 function animate() {
   renderer.render(scene, camera);
 
-  stats.update();
+  // stats.update();
 }
