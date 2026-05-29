@@ -17,7 +17,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx vite",
-    "build-github": "npx vite build --base=/dxd-pain-descriptor"
+    "build-github": "vite build --base=/dxd-pain-descriptor"
   },
   "dependencies": {
     "commander": "^0.5.2",
