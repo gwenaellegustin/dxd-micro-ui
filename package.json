@@ -15,7 +15,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=/dist",
-    "build-github": "vite build --base=/dxd-pain-descriptor"
+    "build-github": "vite build --base=/dxd-micro-ui"
   },
   "dependencies": {
     "commander": "^0.5.2",
