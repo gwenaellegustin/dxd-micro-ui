@@ -12,11 +12,9 @@
   },
   "license": "ISC",
   "author": "Gwenaëlle Gustin",
-  "type": "commonjs",
-  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx vite",
+    "dev": "vite",
+    "build": "vite build --base=/dist",
     "build-github": "vite build --base=/dxd-pain-descriptor"
   },
   "dependencies": {
