@@ -14,14 +14,16 @@ let mesh;
 let raycaster;
 let line;
 
-const smithGlb = "models/gltf/LeePerrySmith/LeePerrySmith.glb";
-const smithColJpg = "models/gltf/LeePerrySmith/Map-COL.jpg";
-const smithGreyJpg = "models/gltf/LeePerrySmith/Map-GREY.jpg";
-const smithSpecJpg = "models/gltf/LeePerrySmith/Map-SPEC.jpg";
-const smithDispJpg =
+const glbSmith = "models/gltf/LeePerrySmith/LeePerrySmith.glb";
+const jpgSmithCol = "models/gltf/LeePerrySmith/Map-COL.jpg";
+const jpgSmithGrey = "models/gltf/LeePerrySmith/Map-GREY.jpg";
+const jpgSmithSpec = "models/gltf/LeePerrySmith/Map-SPEC.jpg";
+const jpgSmithDisp =
   "models/gltf/LeePerrySmith/Infinite-Level_02_Disp_NoSmoothUV-4096.jpg";
-const smithTangentJpg =
+const jpgSmithTangent =
   "models/gltf/LeePerrySmith/Infinite-Level_02_Tangent_SmoothUV.jpg";
+
+const glbSculpture = "models/gltf/geometric-head-sculpture/Sculpture.glb";
 
 const intersection = {
   intersects: false,
@@ -107,7 +109,8 @@ function init() {
   line = new THREE.Line(geometry, new THREE.LineBasicMaterial());
   scene.add(line);
 
-  loadLeePerrySmith();
+  loadSculpture();
+  // loadLeePerrySmith();
 
   raycaster = new THREE.Raycaster();
 
@@ -194,15 +197,34 @@ function init() {
   gui.open();
 }
 
-function loadLeePerrySmith() {
-  const map = textureLoader.load(smithGreyJpg);
+function loadSculpture() {
+  const map = textureLoader.load(jpgSmithGrey);
   map.colorSpace = THREE.SRGBColorSpace;
-  const specularMap = textureLoader.load(smithSpecJpg);
-  const normalMap = textureLoader.load(smithTangentJpg);
 
   const loader = new GLTFLoader();
 
-  loader.load(smithGlb, function (gltf) {
+  loader.load(glbSculpture, function (gltf) {
+    mesh = gltf.scene.children[0];
+    mesh.material = new THREE.MeshPhongMaterial({
+      specular: 0x111111,
+      map: map,
+      shininess: 25,
+    });
+
+    scene.add(mesh);
+    mesh.scale.multiplyScalar(10);
+  });
+}
+
+function loadLeePerrySmith() {
+  const map = textureLoader.load(jpgSmithGrey);
+  map.colorSpace = THREE.SRGBColorSpace;
+  const specularMap = textureLoader.load(jpgSmithSpec);
+  const normalMap = textureLoader.load(jpgSmithTangent);
+
+  const loader = new GLTFLoader();
+
+  loader.load(glbSmith, function (gltf) {
     mesh = gltf.scene.children[0];
     mesh.material = new THREE.MeshPhongMaterial({
       specular: 0x111111,
