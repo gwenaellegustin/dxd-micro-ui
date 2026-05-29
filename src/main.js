@@ -1,10 +1,24 @@
+// Inspired by https://github.com/mrdoob/three.js/blob/master/examples/webgl_decals.html
+
+// import * as THREE from "three";
+
+// import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+// import Stats from "three/addons/libs/stats.module.js";
+
+// import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+// import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
+// import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
 import * as THREE from "three";
+
+import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+import Stats from "three/addons/libs/stats.module.js";
 
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-const container = document.getElementById("container-head");
+const container = document.getElementById("container");
 
 let renderer, scene, camera, stats;
 let mesh;
@@ -56,8 +70,7 @@ const orientation = new THREE.Euler();
 const size = new THREE.Vector3(10, 10, 10);
 
 const params = {
-  minScale: 10,
-  maxScale: 20,
+  scale: 5,
   rotate: true,
   clear: function () {
     removeDecals();
@@ -66,11 +79,6 @@ const params = {
 
 // graph
 import { Lut } from "three/addons/math/Lut.js";
-
-const paramsColor = {
-  colorMap: "rainbow",
-};
-// let sceneColor, orthoCamera;
 let sprite, lut;
 
 init();
@@ -82,10 +90,11 @@ function init() {
   renderer.setAnimationLoop(animate);
   container.appendChild(renderer.domElement);
 
-  // stats = new Stats();
-  // container.appendChild(stats.dom);
+  stats = new Stats();
+  container.appendChild(stats.dom);
 
   scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xffffff);
 
   camera = new THREE.PerspectiveCamera(
     45,
@@ -115,9 +124,9 @@ function init() {
   line = new THREE.Line(geometry, new THREE.LineBasicMaterial());
   scene.add(line);
 
-  // loadSculpture();
+  loadSculpture();
   // loadLeePerrySmith();
-  loadBarColor();
+  // loadBarColor();
 
   raycaster = new THREE.Raycaster();
 
@@ -195,12 +204,11 @@ function init() {
     }
   }
 
-  // const gui = new GUI();
-  // gui.add(params, "minScale", 1, 30);
-  // gui.add(params, "maxScale", 1, 30);
-  // gui.add(params, "rotate");
-  // gui.add(params, "clear");
-  // gui.open();
+  const gui = new GUI({ title: "Paint" });
+  gui.add(params, "scale", 1, 30);
+  gui.add(params, "rotate");
+  gui.add(params, "clear");
+  gui.open();
 }
 
 function loadSculpture() {
@@ -251,9 +259,8 @@ function shoot() {
 
   if (params.rotate) orientation.z = Math.random() * 2 * Math.PI;
 
-  const scale =
-    params.minScale + Math.random() * (params.maxScale - params.minScale);
-  size.set(scale, scale, scale);
+  // const scale =  params.minScale + Math.random() * (params.maxScale - params.minScale);
+  size.set(params.scale, params.scale, params.scale);
 
   const material = decalMaterial.clone();
   material.color.setHex(Math.random() * 0xffffff);
@@ -287,17 +294,11 @@ function onWindowResize() {
 function animate() {
   renderer.render(scene, camera);
 
-  // stats.update();
-
-  // renderer.render(sceneColor, orthoCamera);
+  stats.update();
 }
 
 function loadBarColor() {
-  // sceneColor = new THREE.Scene();
-  lut = new Lut();
-
-  // orthoCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 2);
-  // orthoCamera.position.set(0.5, 0, 1);
+  lut = new Lut("blackbody");
 
   sprite = new THREE.Sprite(
     new THREE.SpriteMaterial({
@@ -307,46 +308,6 @@ function loadBarColor() {
   sprite.material.map.colorSpace = THREE.SRGBColorSpace;
   sprite.scale.x = 1;
   sprite.scale.y = 30;
+
   scene.add(sprite);
-
-  // const guiColor = new GUI();
-
-  // guiColor
-  //   .add(paramsColor, "colorMap", [
-  //     "rainbow",
-  //     "cooltowarm",
-  //     "blackbody",
-  //     "grayscale",
-  //   ])
-  //   .onChange(function () {
-  //     updateColors();
-  //     render();
-  //   });
 }
-
-// function updateColors() {
-//   console.log("updateColors");
-//   lut.setColorMap(params.colorMap);
-
-//   lut.setMax(2000);
-//   lut.setMin(0);
-
-//   const geometry = mesh.geometry;
-//   const pressures = geometry.attributes.pressure;
-//   const colors = geometry.attributes.color;
-//   const color = new THREE.Color();
-
-//   for (let i = 0; i < pressures.array.length; i++) {
-//     const colorValue = pressures.array[i];
-
-//     color.copy(lut.getColor(colorValue)).convertSRGBToLinear();
-
-//     colors.setXYZ(i, color.r, color.g, color.b);
-//   }
-
-//   colors.needsUpdate = true;
-
-//   const map = sprite.material.map;
-//   lut.updateCanvas(map.image);
-//   map.needsUpdate = true;
-// }
