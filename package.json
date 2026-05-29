@@ -24,7 +24,6 @@
     "fdir": "^6.5.0",
     "jsm": "^0.0.1",
     "lightningcss": "^1.32.0",
-    "lightningcss-win32-x64-msvc": "^1.32.0",
     "lil-gui": "^0.21.0",
     "nanoid": "^3.3.12",
     "picocolors": "^1.1.1",
