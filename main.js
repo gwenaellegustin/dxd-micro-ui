@@ -14,6 +14,15 @@ let mesh;
 let raycaster;
 let line;
 
+const smithGlb = "models/gltf/LeePerrySmith/LeePerrySmith.glb";
+const smithColJpg = "models/gltf/LeePerrySmith/Map-COL.jpg";
+const smithGreyJpg = "models/gltf/LeePerrySmith/Map-GREY.jpg";
+const smithSpecJpg = "models/gltf/LeePerrySmith/Map-SPEC.jpg";
+const smithDispJpg =
+  "models/gltf/LeePerrySmith/Infinite-Level_02_Disp_NoSmoothUV-4096.jpg";
+const smithTangentJpg =
+  "models/gltf/LeePerrySmith/Infinite-Level_02_Tangent_SmoothUV.jpg";
+
 const intersection = {
   intersects: false,
   point: new THREE.Vector3(),
@@ -186,18 +195,14 @@ function init() {
 }
 
 function loadLeePerrySmith() {
-  const map = textureLoader.load("models/gltf/LeePerrySmith/Map-COL.jpg");
+  const map = textureLoader.load(smithGreyJpg);
   map.colorSpace = THREE.SRGBColorSpace;
-  const specularMap = textureLoader.load(
-    "models/gltf/LeePerrySmith/Map-SPEC.jpg"
-  );
-  const normalMap = textureLoader.load(
-    "models/gltf/LeePerrySmith/Infinite-Level_02_Tangent_SmoothUV.jpg"
-  );
+  const specularMap = textureLoader.load(smithSpecJpg);
+  const normalMap = textureLoader.load(smithTangentJpg);
 
   const loader = new GLTFLoader();
 
-  loader.load("models/gltf/LeePerrySmith/LeePerrySmith.glb", function (gltf) {
+  loader.load(smithGlb, function (gltf) {
     mesh = gltf.scene.children[0];
     mesh.material = new THREE.MeshPhongMaterial({
       specular: 0x111111,
