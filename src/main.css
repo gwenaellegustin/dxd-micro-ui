@@ -1,7 +1,6 @@
 body {
   margin: 0;
-  background-color: #000;
-  color: #fff;
+  color: #000;
   font-family: Monospace;
   font-size: 13px;
   line-height: 24px;
@@ -21,6 +20,25 @@ body {
   user-select: none;
   pointer-events: none;
   z-index: 1; /* TODO Solve this in HTML */
+}
+
+#color {
+  position: fixed;
+  left: 10px;
+  top: 10vh;
+  width: 20px;
+  height: 50vh;
+  box-sizing: border-box;
+  background: linear-gradient(
+    to top,
+    MediumSeaGreen 0%,
+    yellow 10%,
+    orange 80%,
+    red 100%
+  );
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 2px;
 }
 
 a {

@@ -1,12 +1,24 @@
+// Inspired by https://github.com/mrdoob/three.js/blob/master/examples/webgl_decals.html
+
+// import * as THREE from "three";
+
+// import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+// import Stats from "three/addons/libs/stats.module.js";
+
+// import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+// import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
+// import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
 import * as THREE from "three";
 
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+import Stats from "three/addons/libs/stats.module.js";
 
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-const container = document.getElementById("container-head");
+const container = document.getElementById("container");
 
 let renderer, scene, camera, stats;
 let mesh;
@@ -58,27 +70,31 @@ const orientation = new THREE.Euler();
 const size = new THREE.Vector3(10, 10, 10);
 
 const params = {
-  minScale: 10,
-  maxScale: 20,
+  scale: 5,
   rotate: true,
   clear: function () {
     removeDecals();
   },
 };
 
+// graph
+import { Lut } from "three/addons/math/Lut.js";
+let sprite, lut;
+
 init();
 
 function init() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
-  // renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setAnimationLoop(animate);
   container.appendChild(renderer.domElement);
 
-  // stats = new Stats();
-  // container.appendChild(stats.dom);
+  stats = new Stats();
+  container.appendChild(stats.dom);
 
   scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xffffff);
 
   camera = new THREE.PerspectiveCamera(
     45,
@@ -110,6 +126,7 @@ function init() {
 
   loadSculpture();
   // loadLeePerrySmith();
+  // loadBarColor();
 
   raycaster = new THREE.Raycaster();
 
@@ -187,10 +204,8 @@ function init() {
     }
   }
 
-  const gui = new GUI();
-
-  gui.add(params, "minScale", 1, 30);
-  gui.add(params, "maxScale", 1, 30);
+  const gui = new GUI({ title: "Paint" });
+  gui.add(params, "scale", 1, 30);
   gui.add(params, "rotate");
   gui.add(params, "clear");
   gui.open();
@@ -244,9 +259,8 @@ function shoot() {
 
   if (params.rotate) orientation.z = Math.random() * 2 * Math.PI;
 
-  const scale =
-    params.minScale + Math.random() * (params.maxScale - params.minScale);
-  size.set(scale, scale, scale);
+  // const scale =  params.minScale + Math.random() * (params.maxScale - params.minScale);
+  size.set(params.scale, params.scale, params.scale);
 
   const material = decalMaterial.clone();
   material.color.setHex(Math.random() * 0xffffff);
@@ -280,5 +294,20 @@ function onWindowResize() {
 function animate() {
   renderer.render(scene, camera);
 
-  // stats.update();
+  stats.update();
+}
+
+function loadBarColor() {
+  lut = new Lut("blackbody");
+
+  sprite = new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map: new THREE.CanvasTexture(lut.createCanvas()),
+    })
+  );
+  sprite.material.map.colorSpace = THREE.SRGBColorSpace;
+  sprite.scale.x = 1;
+  sprite.scale.y = 30;
+
+  scene.add(sprite);
 }
