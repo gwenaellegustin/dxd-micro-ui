@@ -1,14 +1,12 @@
-Class: Micro UI
-Project: Be picky !
-Semestre 2
+# Context
+School project part of ECAL Master DXD, semestre 2
+- Class: Micro UI
+- Project: Be picky !
+- Project name: Pain Descriptor
 
-# install
-npm init
-## three.js
-npm install --save three
-
-## vite
-npm install --save-dev vite
+# Code
+## install
+npm i
 
 # run
 npx vite 
