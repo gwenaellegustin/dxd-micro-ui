@@ -1,0 +1,53 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 23.12.2020 10:33:26
+
+newmtl headmodel
+	Ns 100.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.4588 0.4588 0.4588
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka textures/Plastic_Shiny_Diffuse.png
+	map_Kd textures/Plastic_Shiny_Diffuse.png
+	map_Ks textures/Plastic_Shiny_Specular.png
+	map_bump textures/Plastic_Shiny_Normal.png
+	bump textures/Plastic_Shiny_Normal.png
+
+newmtl CPAPMaskBody2
+	Ns 100.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5000 0.5000 0.5000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka textures/CPAPmask2_Diffuse.png
+	map_Kd textures/CPAPmask2_Diffuse.png
+	map_Ks textures/CPAPmask2_Specular.png
+	map_bump textures/CPAPmask2_Normal.png
+	bump textures/CPAPmask2_Normal.png
+
+newmtl CPAPMaskAcrylic
+	Ns 100.0000
+	Ni 1.6000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5000 0.5000 0.5000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka textures/MaskAcryl_Diffuse.png
+	map_Kd textures/MaskAcryl_Diffuse.png
+	map_Ks textures/MaskAcryl_Specular.png
+	map_bump textures/MaskAcryl_Normal.png
+	bump textures/MaskAcryl_Normal.png
