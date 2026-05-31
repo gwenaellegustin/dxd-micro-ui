@@ -1,0 +1,11 @@
+Model Information:
+* title:	Full CT Head Point Cloud--Visible Human Female
+* source:	https://sketchfab.com/3d-models/full-ct-head-point-cloud-visible-human-female-76115e69f3304172835cfce7cc6714a8
+* author:	Terrie (https://sketchfab.com/terrielsimmons)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Full CT Head Point Cloud--Visible Human Female" (https://sketchfab.com/3d-models/full-ct-head-point-cloud-visible-human-female-76115e69f3304172835cfce7cc6714a8) by Terrie (https://sketchfab.com/terrielsimmons) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

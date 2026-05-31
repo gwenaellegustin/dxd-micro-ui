@@ -124,8 +124,11 @@ function init() {
   line = new THREE.Line(geometry, new THREE.LineBasicMaterial());
   scene.add(line);
 
-  loadSculpture();
   // loadLeePerrySmith();
+  // loadGlb(glbSmith);
+  // loadGlb(glbSculpture);
+  loadGlb("models/gltf/head-polygon/tete_2.glb", 500);
+
   // loadBarColor();
 
   raycaster = new THREE.Raycaster();
@@ -211,22 +214,18 @@ function init() {
   gui.open();
 }
 
-function loadSculpture() {
-  const map = textureLoader.load(jpgSmithGrey);
-  map.colorSpace = THREE.SRGBColorSpace;
-
+function loadGlb(glbPath, scale = 10) {
   const loader = new GLTFLoader();
 
-  loader.load(glbSculpture, function (gltf) {
+  loader.load(glbPath, function (gltf) {
     mesh = gltf.scene.children[0];
     mesh.material = new THREE.MeshPhongMaterial({
       specular: 0x111111,
-      map: map,
       shininess: 25,
     });
 
     scene.add(mesh);
-    mesh.scale.multiplyScalar(10);
+    mesh.scale.multiplyScalar(scale);
   });
 }
 
@@ -240,13 +239,13 @@ function loadLeePerrySmith() {
 
   loader.load(glbSmith, function (gltf) {
     mesh = gltf.scene.children[0];
-    mesh.material = new THREE.MeshPhongMaterial({
-      specular: 0x111111,
-      map: map,
-      specularMap: specularMap,
-      normalMap: normalMap,
-      shininess: 25,
-    });
+    // mesh.material = new THREE.MeshPhongMaterial({
+    //   specular: 0x111111,
+    //   map: map,
+    //   // specularMap: specularMap, 
+    //   // normalMap: normalMap, // skin texture
+    //   shininess: 25,
+    // });
 
     scene.add(mesh);
     mesh.scale.multiplyScalar(10);

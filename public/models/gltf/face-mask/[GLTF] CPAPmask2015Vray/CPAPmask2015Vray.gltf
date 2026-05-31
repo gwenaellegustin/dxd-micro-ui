@@ -1,0 +1,703 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "TurboSquid Stem Converter v1.0.0"
+  },
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 5108,
+      "type": "VEC3",
+      "max": [
+        -5.8255615234375,
+        7.897102355957031,
+        22.789230346679688
+      ],
+      "min": [
+        -22.377323150634766,
+        -13.490943908691406,
+        -3.0517578125e-05
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 5108,
+      "type": "VEC3",
+      "max": [
+        0.9999269843101501,
+        0.9990909099578857,
+        0.9995768070220947
+      ],
+      "min": [
+        -0.9999333620071411,
+        -1.0,
+        -1.0
+      ]
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 5108,
+      "type": "VEC2",
+      "max": [
+        0.9855355024337769,
+        0.9804807901382446
+      ],
+      "min": [
+        0.01719006709754467,
+        0.04986625909805298
+      ]
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 0,
+      "componentType": 5123,
+      "count": 28944,
+      "type": "SCALAR",
+      "max": [
+        5107.0
+      ],
+      "min": [
+        0.0
+      ]
+    },
+    {
+      "bufferView": 4,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 10067,
+      "type": "VEC3",
+      "max": [
+        -8.399444580078125,
+        7.717445373535156,
+        19.189529418945312
+      ],
+      "min": [
+        -22.81365203857422,
+        -17.029823303222656,
+        0.1868133544921875
+      ]
+    },
+    {
+      "bufferView": 5,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 10067,
+      "type": "VEC3",
+      "max": [
+        1.0,
+        0.9998574256896973,
+        0.9984753727912903
+      ],
+      "min": [
+        -1.0,
+        -0.9985318779945374,
+        -0.9984831809997559
+      ]
+    },
+    {
+      "bufferView": 6,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 10067,
+      "type": "VEC2",
+      "max": [
+        0.9868826270103455,
+        0.9957149028778076
+      ],
+      "min": [
+        0.0029009501449763775,
+        0.0068114399909973145
+      ]
+    },
+    {
+      "bufferView": 7,
+      "byteOffset": 0,
+      "componentType": 5123,
+      "count": 52356,
+      "type": "SCALAR",
+      "max": [
+        10066.0
+      ],
+      "min": [
+        0.0
+      ]
+    },
+    {
+      "bufferView": 8,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 15978,
+      "type": "VEC3",
+      "max": [
+        -10.924659729003906,
+        -5.699714660644531,
+        17.329376220703125
+      ],
+      "min": [
+        -19.992916107177734,
+        -13.878814697265625,
+        1.72100830078125
+      ]
+    },
+    {
+      "bufferView": 9,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 15978,
+      "type": "VEC3",
+      "max": [
+        0.9999994039535522,
+        1.0,
+        0.9999926686286926
+      ],
+      "min": [
+        -0.9999994039535522,
+        -0.999984622001648,
+        -0.9998794794082642
+      ]
+    },
+    {
+      "bufferView": 10,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 15978,
+      "type": "VEC2",
+      "max": [
+        0.9908701181411743,
+        0.9913226962089539
+      ],
+      "min": [
+        0.011165976524353027,
+        0.01517564058303833
+      ]
+    },
+    {
+      "bufferView": 11,
+      "byteOffset": 0,
+      "componentType": 5123,
+      "count": 86196,
+      "type": "SCALAR",
+      "max": [
+        15977.0
+      ],
+      "min": [
+        0.0
+      ]
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 1331888,
+      "uri": "CPAPmask2015Vray.bin"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 61296,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 61296,
+      "byteLength": 61296,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 122592,
+      "byteLength": 40864,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 163456,
+      "byteLength": 57888,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 221344,
+      "byteLength": 120804,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 342148,
+      "byteLength": 120804,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 462952,
+      "byteLength": 80536,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 543488,
+      "byteLength": 104712,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 648200,
+      "byteLength": 191736,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 839936,
+      "byteLength": 191736,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1031672,
+      "byteLength": 127824,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1159496,
+      "byteLength": 172392,
+      "target": 34963
+    }
+  ],
+  "materials": [
+    {
+      "name": "headmodel",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      },
+      "alphaMode": "OPAQUE",
+      "occlusionTexture": {
+        "index": 1
+      },
+      "normalTexture": {
+        "index": 2
+      }
+    },
+    {
+      "name": "CPAPMaskBody2",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 3
+        },
+        "metallicRoughnessTexture": {
+          "index": 4
+        }
+      },
+      "alphaMode": "OPAQUE",
+      "occlusionTexture": {
+        "index": 4
+      },
+      "normalTexture": {
+        "index": 5
+      }
+    },
+    {
+      "name": "CPAPMaskAcrylic",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 6
+        },
+        "metallicRoughnessTexture": {
+          "index": 7
+        }
+      },
+      "alphaMode": "BLEND",
+      "occlusionTexture": {
+        "index": 7
+      },
+      "normalTexture": {
+        "index": 8
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "headmanequin",
+      "primitives": [
+        {
+          "mode": 4,
+          "material": 0,
+          "indices": 3,
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "maskbody1",
+      "primitives": [
+        {
+          "mode": 4,
+          "material": 1,
+          "indices": 7,
+          "attributes": {
+            "POSITION": 4,
+            "NORMAL": 5,
+            "TEXCOORD_0": 6
+          }
+        }
+      ]
+    },
+    {
+      "name": "MaskAcryl2",
+      "primitives": [
+        {
+          "mode": 4,
+          "material": 2,
+          "indices": 11,
+          "attributes": {
+            "POSITION": 8,
+            "NORMAL": 9,
+            "TEXCOORD_0": 10
+          }
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ]
+    },
+    {
+      "name": "MaskOnManequin_$_PreRotation",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -4.371138828673793e-08,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        -4.371138828673793e-08,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "children": [
+        2
+      ]
+    },
+    {
+      "name": "MaskOnManequin_$_GeometricTranslation",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        4.76837158203125e-07,
+        -9.72884208749747e-07,
+        11.34823226928711,
+        1.0
+      ],
+      "children": [
+        3
+      ]
+    },
+    {
+      "name": "MaskOnManequin",
+      "children": [
+        4
+      ]
+    },
+    {
+      "name": "MaskOnManequin_$_GeometricTranslationInverse",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -4.76837158203125e-07,
+        9.72884208749747e-07,
+        -11.34823226928711,
+        1.0
+      ],
+      "children": [
+        5,
+        8,
+        11
+      ]
+    },
+    {
+      "name": "headmanequin_$_Translation",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        5.4836273193359375e-05,
+        2.2249202728271484,
+        11.394622802734375,
+        1.0
+      ],
+      "children": [
+        6
+      ]
+    },
+    {
+      "name": "headmanequin_$_GeometricTranslation",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        14.101442337036133,
+        2.7969207763671875,
+        -11.394599914550781,
+        1.0
+      ],
+      "children": [
+        7
+      ]
+    },
+    {
+      "name": "headmanequin",
+      "mesh": 0
+    },
+    {
+      "name": "maskbody1_$_Translation",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.06111288070678711,
+        -0.29925158619880676,
+        9.688194274902344,
+        1.0
+      ],
+      "children": [
+        9
+      ]
+    },
+    {
+      "name": "maskbody1_$_GeometricTranslation",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        15.606548309326172,
+        4.65618896484375,
+        -9.68817138671875,
+        1.0
+      ],
+      "children": [
+        10
+      ]
+    },
+    {
+      "name": "maskbody1",
+      "mesh": 1
+    },
+    {
+      "name": "MaskAcryl2_$_Translation",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.06110715866088867,
+        -8.668160438537598,
+        9.525215148925781,
+        1.0
+      ],
+      "children": [
+        12
+      ]
+    },
+    {
+      "name": "MaskAcryl2_$_GeometricTranslation",
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        15.45878791809082,
+        9.789264678955078,
+        -9.525192260742188,
+        1.0
+      ],
+      "children": [
+        13
+      ]
+    },
+    {
+      "name": "MaskAcryl2",
+      "mesh": 2
+    }
+  ],
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "scene": 0,
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/baseColor.jpg"
+    },
+    {
+      "uri": "textures/occlusionRoughnessMetallic.jpg"
+    },
+    {
+      "uri": "textures/normal.png"
+    },
+    {
+      "uri": "textures/baseColor-CPAPMaskBody2.jpg"
+    },
+    {
+      "uri": "textures/occlusionRoughnessMetallic-CPAPMaskBody2.jpg"
+    },
+    {
+      "uri": "textures/normal-CPAPMaskBody2.png"
+    },
+    {
+      "uri": "textures/baseColor-CPAPMaskAcrylic.png"
+    },
+    {
+      "uri": "textures/occlusionRoughnessMetallic-CPAPMaskAcrylic.jpg"
+    },
+    {
+      "uri": "textures/normal-CPAPMaskAcrylic.png"
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    },
+    {
+      "sampler": 0,
+      "source": 3
+    },
+    {
+      "sampler": 0,
+      "source": 4
+    },
+    {
+      "sampler": 0,
+      "source": 5
+    },
+    {
+      "sampler": 0,
+      "source": 6
+    },
+    {
+      "sampler": 0,
+      "source": 7
+    },
+    {
+      "sampler": 0,
+      "source": 8
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Head study
+* source:	https://sketchfab.com/3d-models/head-study-0f8179e8765149c1853e0b0b7e7fffe1
+* author:	atypotopyta (https://sketchfab.com/atypotopyta)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Head study" (https://sketchfab.com/3d-models/head-study-0f8179e8765149c1853e0b0b7e7fffe1) by atypotopyta (https://sketchfab.com/atypotopyta) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

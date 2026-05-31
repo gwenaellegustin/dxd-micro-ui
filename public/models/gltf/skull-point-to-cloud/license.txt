@@ -1,0 +1,11 @@
+Model Information:
+* title:	Skull Point to Cloud
+* source:	https://sketchfab.com/3d-models/skull-point-to-cloud-3b6368dc957d4e068c53a89ecc7ee56b
+* author:	Yaapi (https://sketchfab.com/Yaapi)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Skull Point to Cloud" (https://sketchfab.com/3d-models/skull-point-to-cloud-3b6368dc957d4e068c53a89ecc7ee56b) by Yaapi (https://sketchfab.com/Yaapi) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
