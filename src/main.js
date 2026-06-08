@@ -100,7 +100,7 @@ function init() {
     45,
     window.innerWidth / window.innerHeight,
     1,
-    1000
+    1000,
   );
   camera.position.z = 120;
 
@@ -124,10 +124,10 @@ function init() {
   line = new THREE.Line(geometry, new THREE.LineBasicMaterial());
   scene.add(line);
 
-  // loadLeePerrySmith();
+  loadLeePerrySmith();
   // loadGlb(glbSmith);
   // loadGlb(glbSculpture);
-  loadGlb("models/gltf/head-polygon/tete_2.glb", 500);
+  // loadGlb("models/gltf/head-polygon/tete_1.glb", 500);
 
   // loadBarColor();
 
@@ -135,7 +135,7 @@ function init() {
 
   mouseHelper = new THREE.Mesh(
     new THREE.BoxGeometry(1, 1, 10),
-    new THREE.MeshNormalMaterial()
+    new THREE.MeshNormalMaterial(),
   );
   mouseHelper.visible = false;
   scene.add(mouseHelper);
@@ -183,7 +183,7 @@ function init() {
       intersection.point.copy(p);
 
       const normalMatrix = new THREE.Matrix3().getNormalMatrix(
-        mesh.matrixWorld
+        mesh.matrixWorld,
       );
 
       const n = intersects[0].face.normal.clone();
@@ -230,7 +230,7 @@ function loadGlb(glbPath, scale = 10) {
 }
 
 function loadLeePerrySmith() {
-  const map = textureLoader.load(jpgSmithGrey);
+  const map = textureLoader.load(jpgSmithCol);
   map.colorSpace = THREE.SRGBColorSpace;
   const specularMap = textureLoader.load(jpgSmithSpec);
   const normalMap = textureLoader.load(jpgSmithTangent);
@@ -239,13 +239,13 @@ function loadLeePerrySmith() {
 
   loader.load(glbSmith, function (gltf) {
     mesh = gltf.scene.children[0];
-    // mesh.material = new THREE.MeshPhongMaterial({
-    //   specular: 0x111111,
-    //   map: map,
-    //   // specularMap: specularMap, 
-    //   // normalMap: normalMap, // skin texture
-    //   shininess: 25,
-    // });
+    mesh.material = new THREE.MeshPhongMaterial({
+      specular: 0x111111,
+      map: map,
+      specularMap: specularMap,
+      normalMap: normalMap, // skin texture
+      shininess: 25,
+    });
 
     scene.add(mesh);
     mesh.scale.multiplyScalar(10);
@@ -266,7 +266,7 @@ function shoot() {
 
   const m = new THREE.Mesh(
     new DecalGeometry(mesh, position, orientation, size),
-    material
+    material,
   );
   m.renderOrder = decals.length; // give decals a fixed render order
 
@@ -302,7 +302,7 @@ function loadBarColor() {
   sprite = new THREE.Sprite(
     new THREE.SpriteMaterial({
       map: new THREE.CanvasTexture(lut.createCanvas()),
-    })
+    }),
   );
   sprite.material.map.colorSpace = THREE.SRGBColorSpace;
   sprite.scale.x = 1;
