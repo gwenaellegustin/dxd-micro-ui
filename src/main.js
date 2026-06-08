@@ -45,14 +45,15 @@ const mouse = new THREE.Vector2();
 const intersects = [];
 
 const textureLoader = new THREE.TextureLoader();
-const decalDiffuse = textureLoader.load("textures/decal/decal-diffuse.png");
+// const decalDiffuse = textureLoader.load("textures/decal/decal-diffuse.png");
+const decalDiffuse = textureLoader.load("textures/aiguille/decal-diffuse.png");
 decalDiffuse.colorSpace = THREE.SRGBColorSpace;
 const decalNormal = textureLoader.load("textures/decal/decal-normal.jpg");
 
 const decalMaterial = new THREE.MeshPhongMaterial({
   specular: 0x444444,
   map: decalDiffuse,
-  normalMap: decalNormal,
+  // normalMap: decalNormal,
   normalScale: new THREE.Vector2(1, 1),
   shininess: 30,
   transparent: true,
@@ -69,8 +70,9 @@ const position = new THREE.Vector3();
 const orientation = new THREE.Euler();
 const size = new THREE.Vector3(10, 10, 10);
 
+const maxScale = 1;
 const params = {
-  scale: 5,
+  scale: maxScale / 2,
   rotate: true,
   clear: function () {
     removeDecals();
@@ -78,8 +80,10 @@ const params = {
 };
 
 // graph
-import { Lut } from "three/addons/math/Lut.js";
 let sprite, lut;
+
+let controls;
+let headMaxDim = 20; // updated after model load, used to scale decals
 
 init();
 
@@ -94,7 +98,8 @@ function init() {
   container.appendChild(stats.dom);
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xffffff);
+  // scene.background = new THREE.Color(0xffffff);
+  // scene.color = new THREE.Color(0xffffff);
 
   camera = new THREE.PerspectiveCamera(
     45,
@@ -104,7 +109,7 @@ function init() {
   );
   camera.position.z = 120;
 
-  const controls = new OrbitControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, renderer.domElement);
   controls.minDistance = 50;
   controls.maxDistance = 200;
 
@@ -124,10 +129,12 @@ function init() {
   line = new THREE.Line(geometry, new THREE.LineBasicMaterial());
   scene.add(line);
 
-  loadLeePerrySmith();
-  // loadGlb(glbSmith);
-  // loadGlb(glbSculpture);
+  // loadLeePerrySmith();
+  // loadGlb(glbSmith, 5);
+  // loadGlb(glbSculpture, 15);
   // loadGlb("models/gltf/head-polygon/tete_1.glb", 500);
+
+  loadGlbCloudPoint("models/gltf/head-polygon/tete_1.glb");
 
   // loadBarColor();
 
@@ -208,25 +215,10 @@ function init() {
   }
 
   const gui = new GUI({ title: "Paint" });
-  gui.add(params, "scale", 1, 30);
+  gui.add(params, "scale", 0.1, maxScale);
   gui.add(params, "rotate");
   gui.add(params, "clear");
   gui.open();
-}
-
-function loadGlb(glbPath, scale = 10) {
-  const loader = new GLTFLoader();
-
-  loader.load(glbPath, function (gltf) {
-    mesh = gltf.scene.children[0];
-    mesh.material = new THREE.MeshPhongMaterial({
-      specular: 0x111111,
-      shininess: 25,
-    });
-
-    scene.add(mesh);
-    mesh.scale.multiplyScalar(scale);
-  });
 }
 
 function loadLeePerrySmith() {
@@ -296,17 +288,169 @@ function animate() {
   stats.update();
 }
 
-function loadBarColor() {
-  lut = new Lut("blackbody");
+// function loadBarColor() {
+//   lut = new Lut("blackbody");
 
-  sprite = new THREE.Sprite(
-    new THREE.SpriteMaterial({
-      map: new THREE.CanvasTexture(lut.createCanvas()),
-    }),
-  );
-  sprite.material.map.colorSpace = THREE.SRGBColorSpace;
-  sprite.scale.x = 1;
-  sprite.scale.y = 30;
+//   sprite = new THREE.Sprite(
+//     new THREE.SpriteMaterial({
+//       map: new THREE.CanvasTexture(lut.createCanvas()),
+//     }),
+//   );
+//   sprite.material.map.colorSpace = THREE.SRGBColorSpace;
+//   sprite.scale.x = 1;
+//   sprite.scale.y = 30;
 
-  scene.add(sprite);
+//   scene.add(sprite);
+// }
+
+function loadGlb(glbPath, scale = 1) {
+  const loader = new GLTFLoader();
+
+  loader.load(glbPath, function (gltf) {
+    mesh = gltf.scene.children[0];
+    mesh.material = new THREE.MeshPhongMaterial({
+      specular: 0x111111,
+      shininess: 25,
+    });
+
+    scene.add(mesh);
+    mesh.scale.multiplyScalar(scale);
+  });
+}
+
+function loadGlbCloudPoint(glbPath) {
+  const loader = new GLTFLoader();
+  loader.load(glbPath, function (gltf) {
+    gltf.scene.scale.multiplyScalar(50);
+    gltf.scene.updateMatrixWorld(true);
+
+    // Pick the first mesh as the raycasting target (kept invisible)
+    gltf.scene.traverse((child) => {
+      if (child.isMesh && mesh === undefined) {
+        mesh = child;
+        mesh.material = new THREE.MeshPhongMaterial({
+          transparent: true,
+          opacity: 0,
+          depthWrite: false,
+        });
+      }
+    });
+
+    scene.add(gltf.scene);
+
+    // Build point cloud from all meshes
+    const allPositions = [];
+    gltf.scene.traverse((child) => {
+      if (child.isMesh) {
+        const pts = samplePointsOnMesh(child.geometry, 500);
+        for (let i = 0; i < pts.length; i += 3) {
+          const v = new THREE.Vector3(pts[i], pts[i + 1], pts[i + 2]);
+          v.applyMatrix4(child.matrixWorld);
+          allPositions.push(v.x, v.y, v.z);
+        }
+      }
+    });
+
+    const pointsGeo = new THREE.BufferGeometry();
+    pointsGeo.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(allPositions, 3),
+    );
+
+    pointsGeo.computeBoundingBox();
+    const bboxSize = new THREE.Vector3();
+    pointsGeo.boundingBox.getSize(bboxSize);
+    const center = new THREE.Vector3();
+    pointsGeo.boundingBox.getCenter(center);
+
+    headMaxDim = Math.max(bboxSize.x, bboxSize.y, bboxSize.z);
+
+    // Fit camera & controls to model
+    controls.target.copy(center);
+    camera.position.set(center.x, center.y, center.z + headMaxDim * 1.8);
+    controls.minDistance = headMaxDim * 0.3;
+    controls.maxDistance = headMaxDim * 5;
+    controls.update();
+
+    // Scale mouseHelper to model size
+    mouseHelper.scale.setScalar(headMaxDim * 0.01);
+
+    const pointsMaterial = new THREE.PointsMaterial({
+      size: headMaxDim * 0.012,
+      map: createDotTexture(),
+      color: new THREE.Color(0x2288ff),
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      sizeAttenuation: true,
+    });
+
+    scene.add(new THREE.Points(pointsGeo, pointsMaterial));
+  });
+}
+
+function samplePointsOnMesh(geo, totalCount) {
+  const positions = [];
+  const posAttr = geo.attributes.position;
+
+  if (!geo.index) {
+    for (let i = 0; i < posAttr.count; i++) {
+      positions.push(posAttr.getX(i), posAttr.getY(i), posAttr.getZ(i));
+    }
+    return positions;
+  }
+
+  const indices = geo.index.array;
+  const triCount = indices.length / 3;
+  const samplesPerTri = Math.max(1, Math.ceil(totalCount / triCount));
+
+  for (let t = 0; t < triCount; t++) {
+    const ia = indices[t * 3],
+      ib = indices[t * 3 + 1],
+      ic = indices[t * 3 + 2];
+    const ax = posAttr.getX(ia),
+      ay = posAttr.getY(ia),
+      az = posAttr.getZ(ia);
+    const bx = posAttr.getX(ib),
+      by = posAttr.getY(ib),
+      bz = posAttr.getZ(ib);
+    const cx = posAttr.getX(ic),
+      cy = posAttr.getY(ic),
+      cz = posAttr.getZ(ic);
+
+    for (let s = 0; s < samplesPerTri; s++) {
+      let u = Math.random();
+      let v = Math.random();
+      if (u + v > 1) {
+        u = 1 - u;
+        v = 1 - v;
+      }
+      const w = 1 - u - v;
+      positions.push(
+        ax * w + bx * u + cx * v,
+        ay * w + by * u + cy * v,
+        az * w + bz * u + cz * v,
+      );
+    }
+  }
+
+  return positions;
+}
+
+function createDotTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 64;
+  canvas.height = 64;
+  const ctx = canvas.getContext("2d");
+
+  const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
+  gradient.addColorStop(0.25, "rgba(140, 200, 255, 0.9)");
+  gradient.addColorStop(0.6, "rgba(30, 100, 220, 0.4)");
+  gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 64, 64);
+
+  return new THREE.CanvasTexture(canvas);
 }
