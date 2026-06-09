@@ -25,18 +25,17 @@ body {
 #color {
   position: fixed;
   left: 10px;
-  top: 10vh;
-  width: 20px;
-  height: 50vh;
+  top: 10px;
+  width: calc(100vw - 20px);
+  height: 50px;
   box-sizing: border-box;
   background: linear-gradient(
-    to top,
+    to right,
     MediumSeaGreen 0%,
     yellow 10%,
-    orange 80%,
+    orange 85%,
     red 100%
   );
-  pointer-events: none;
   z-index: 9999;
   border-radius: 2px;
 }
