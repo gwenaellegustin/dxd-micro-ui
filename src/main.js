@@ -134,7 +134,7 @@ function init() {
   // loadGlb(glbSculpture, 15);
   // loadGlb("models/gltf/head-polygon/tete_1.glb", 500);
 
-  loadGlbCloudPoint("models/gltf/head-polygon/tete_1.glb");
+  loadGlbCloudPoint("models/gltf/head-polygon/tete_3.glb");
 
   // loadBarColor();
 
@@ -329,7 +329,7 @@ function loadGlbCloudPoint(glbPath) {
     const allPositions = [];
     gltf.scene.traverse((child) => {
       if (child.isMesh) {
-        const pts = samplePointsOnMesh(child.geometry, 500);
+        const pts = samplePointsOnMesh(child.geometry, 5000);
         for (let i = 0; i < pts.length; i += 3) {
           const v = new THREE.Vector3(pts[i], pts[i + 1], pts[i + 2]);
           v.applyMatrix4(child.matrixWorld);
@@ -365,7 +365,7 @@ function loadGlbCloudPoint(glbPath) {
     const pointsMaterial = new THREE.PointsMaterial({
       size: headMaxDim * 0.012,
       map: createDotTexture(),
-      color: new THREE.Color(0x2288ff),
+      color: new THREE.Color(0xffffff),
       transparent: true,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
@@ -462,6 +462,8 @@ const color = document.getElementById("color");
 color.addEventListener("click", changeColor);
 console.log(color);
 function changeColor() {
+  var top = color.top;
+  var left = color.left;
   console.log("changeColor click");
   // const randomColor = () => Math.floor(Math.random() * 256);
   // const r = randomColor();

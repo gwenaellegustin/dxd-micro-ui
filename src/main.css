@@ -31,13 +31,16 @@ body {
   box-sizing: border-box;
   background: linear-gradient(
     to right,
-    MediumSeaGreen 0%,
-    yellow 10%,
-    orange 85%,
-    red 100%
+    #359800 0%,
+    #7c9800 2%,
+    #beb80d 10%,
+    #ffbb0c 35%,
+    #cc620e 70%,
+    #e13e0d 95%,
+    #ff0000 100%
   );
   z-index: 9999;
-  border-radius: 2px;
+  border-radius: 1000px;
 }
 
 a {
