@@ -14,7 +14,7 @@
   "author": "Gwenaëlle Gustin",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --base=/dist",
     "build-github": "vite build --base=/dxd-micro-ui"
   },
   "dependencies": {

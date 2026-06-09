@@ -10,12 +10,12 @@
 // import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 import * as THREE from "three";
-
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import * as colorjs from "./color.js";
 
 const container = document.getElementById("container");
 
@@ -443,9 +443,9 @@ function createDotTexture() {
 }
 
 const color = document.getElementById("color");
-window.defineGradient?.();
+colorjs.defineGradient();
 color.addEventListener("click", pickColor);
 
 function pickColor(e) {
-  colorSelected = changeColor(e);
+  colorSelected = colorjs.changeColor(e);
 }

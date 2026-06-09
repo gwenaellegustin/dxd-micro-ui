@@ -24,7 +24,7 @@ body {
   width: calc(100vw - 20px);
   height: 50px; /**/
   box-sizing: border-box;
-
+  background-color: red;
   border-radius: 1000px;
 }
 
