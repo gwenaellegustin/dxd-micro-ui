@@ -12,7 +12,6 @@
 import * as THREE from "three";
 
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import Stats from "three/addons/libs/stats.module.js";
 
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
@@ -85,6 +84,8 @@ let sprite, lut;
 let controls;
 let headMaxDim = 20; // updated after model load, used to scale decals
 
+let colorSelected = 0xffd000;
+
 init();
 
 function init() {
@@ -94,12 +95,11 @@ function init() {
   renderer.setAnimationLoop(animate);
   container.appendChild(renderer.domElement);
 
-  stats = new Stats();
-  container.appendChild(stats.dom);
+  // stats = new Stats();
+  // container.appendChild(stats.dom);
 
   scene = new THREE.Scene();
   // scene.background = new THREE.Color(0xffffff);
-  // scene.color = new THREE.Color(0xffffff);
 
   camera = new THREE.PerspectiveCamera(
     45,
@@ -254,7 +254,8 @@ function shoot() {
   size.set(params.scale, params.scale, params.scale);
 
   const material = decalMaterial.clone();
-  material.color.setHex(Math.random() * 0xffffff);
+  // material.color.setHex(Math.random() * 0xffffff);
+  material.color.setHex(colorSelected);
 
   const m = new THREE.Mesh(
     new DecalGeometry(mesh, position, orientation, size),
@@ -285,24 +286,10 @@ function onWindowResize() {
 function animate() {
   renderer.render(scene, camera);
 
-  stats.update();
+  // stats.update();
 }
 
-// function loadBarColor() {
-//   lut = new Lut("blackbody");
-
-//   sprite = new THREE.Sprite(
-//     new THREE.SpriteMaterial({
-//       map: new THREE.CanvasTexture(lut.createCanvas()),
-//     }),
-//   );
-//   sprite.material.map.colorSpace = THREE.SRGBColorSpace;
-//   sprite.scale.x = 1;
-//   sprite.scale.y = 30;
-
-//   scene.add(sprite);
-// }
-
+//* Other models
 function loadGlb(glbPath, scale = 1) {
   const loader = new GLTFLoader();
 
@@ -453,4 +440,32 @@ function createDotTexture() {
   ctx.fillRect(0, 0, 64, 64);
 
   return new THREE.CanvasTexture(canvas);
+}
+
+//* COLOR
+// function loadBarColor() {
+//   lut = new Lut("blackbody");
+
+//   sprite = new THREE.Sprite(
+//     new THREE.SpriteMaterial({
+//       map: new THREE.CanvasTexture(lut.createCanvas()),
+//     }),
+//   );
+//   sprite.material.map.colorSpace = THREE.SRGBColorSpace;
+//   sprite.scale.x = 1;
+//   sprite.scale.y = 30;
+
+//   scene.add(sprite);
+// }
+
+const color = document.getElementById("color");
+color.addEventListener("click", changeColor);
+console.log(color);
+function changeColor() {
+  console.log("changeColor click");
+  // const randomColor = () => Math.floor(Math.random() * 256);
+  // const r = randomColor();
+  // const g = randomColor();
+  // const b = randomColor();
+  // color.style.background = `linear-gradient(to right, rgb(${r}, ${g}, ${b}), rgb(${255 - r}, ${255 - g}, ${255 - b}))`;
 }
