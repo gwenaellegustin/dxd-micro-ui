@@ -24,16 +24,16 @@ let mesh;
 let raycaster;
 let line;
 
-const glbSmith = "models/gltf/LeePerrySmith/LeePerrySmith.glb";
-const jpgSmithCol = "models/gltf/LeePerrySmith/Map-COL.jpg";
-const jpgSmithGrey = "models/gltf/LeePerrySmith/Map-GREY.jpg";
-const jpgSmithSpec = "models/gltf/LeePerrySmith/Map-SPEC.jpg";
+const glbSmith = "models/LeePerrySmith/LeePerrySmith.glb";
+const jpgSmithCol = "models/LeePerrySmith/Map-COL.jpg";
+const jpgSmithGrey = "models/LeePerrySmith/Map-GREY.jpg";
+const jpgSmithSpec = "models/LeePerrySmith/Map-SPEC.jpg";
 const jpgSmithDisp =
-  "models/gltf/LeePerrySmith/Infinite-Level_02_Disp_NoSmoothUV-4096.jpg";
+  "models/LeePerrySmith/Infinite-Level_02_Disp_NoSmoothUV-4096.jpg";
 const jpgSmithTangent =
-  "models/gltf/LeePerrySmith/Infinite-Level_02_Tangent_SmoothUV.jpg";
+  "models/LeePerrySmith/Infinite-Level_02_Tangent_SmoothUV.jpg";
 
-const glbSculpture = "models/gltf/geometric-head-sculpture/Sculpture.glb";
+const glbSculpture = "models/geometric-head-sculpture/Sculpture.glb";
 
 const intersection = {
   intersects: false,
@@ -132,9 +132,9 @@ function init() {
   // loadLeePerrySmith();
   // loadGlb(glbSmith, 5);
   // loadGlb(glbSculpture, 15);
-  // loadGlb("models/gltf/head-polygon/tete_1.glb", 500);
+  // loadGlb("models/head-polygon/tete_1.glb", 500);
 
-  loadGlbCloudPoint("models/gltf/head-polygon/tete_1.glb");
+  loadGlbCloudPoint("models/head-polygon/tete_3.glb");
 
   // loadBarColor();
 
@@ -329,7 +329,7 @@ function loadGlbCloudPoint(glbPath) {
     const allPositions = [];
     gltf.scene.traverse((child) => {
       if (child.isMesh) {
-        const pts = samplePointsOnMesh(child.geometry, 500);
+        const pts = samplePointsOnMesh(child.geometry, 5000);
         for (let i = 0; i < pts.length; i += 3) {
           const v = new THREE.Vector3(pts[i], pts[i + 1], pts[i + 2]);
           v.applyMatrix4(child.matrixWorld);
@@ -365,7 +365,7 @@ function loadGlbCloudPoint(glbPath) {
     const pointsMaterial = new THREE.PointsMaterial({
       size: headMaxDim * 0.012,
       map: createDotTexture(),
-      color: new THREE.Color(0x2288ff),
+      color: new THREE.Color(0xffffff),
       transparent: true,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
@@ -462,6 +462,8 @@ const color = document.getElementById("color");
 color.addEventListener("click", changeColor);
 console.log(color);
 function changeColor() {
+  var top = color.top;
+  var left = color.left;
   console.log("changeColor click");
   // const randomColor = () => Math.floor(Math.random() * 256);
   // const r = randomColor();
