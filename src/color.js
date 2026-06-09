@@ -8,7 +8,7 @@ const gradient = [
   { stop: 1.0, color: "#ff0000" },
 ];
 
-function defineGradient() {
+export function defineGradient() {
   const color = document.getElementById("color");
   if (!color) return;
 
@@ -19,7 +19,7 @@ function defineGradient() {
   color.style.background = `linear-gradient(to right, ${cssStops})`;
 }
 
-function changeColor(event) {
+export function changeColor(event) {
   const rect = color.getBoundingClientRect();
   const minX = 10;
   const maxX = rect.width - 10;
