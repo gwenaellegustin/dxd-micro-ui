@@ -24,16 +24,16 @@ let mesh;
 let raycaster;
 let line;
 
-const glbSmith = "models/gltf/LeePerrySmith/LeePerrySmith.glb";
-const jpgSmithCol = "models/gltf/LeePerrySmith/Map-COL.jpg";
-const jpgSmithGrey = "models/gltf/LeePerrySmith/Map-GREY.jpg";
-const jpgSmithSpec = "models/gltf/LeePerrySmith/Map-SPEC.jpg";
+const glbSmith = "models/LeePerrySmith/LeePerrySmith.glb";
+const jpgSmithCol = "models/LeePerrySmith/Map-COL.jpg";
+const jpgSmithGrey = "models/LeePerrySmith/Map-GREY.jpg";
+const jpgSmithSpec = "models/LeePerrySmith/Map-SPEC.jpg";
 const jpgSmithDisp =
-  "models/gltf/LeePerrySmith/Infinite-Level_02_Disp_NoSmoothUV-4096.jpg";
+  "models/LeePerrySmith/Infinite-Level_02_Disp_NoSmoothUV-4096.jpg";
 const jpgSmithTangent =
-  "models/gltf/LeePerrySmith/Infinite-Level_02_Tangent_SmoothUV.jpg";
+  "models/LeePerrySmith/Infinite-Level_02_Tangent_SmoothUV.jpg";
 
-const glbSculpture = "models/gltf/geometric-head-sculpture/Sculpture.glb";
+const glbSculpture = "models/geometric-head-sculpture/Sculpture.glb";
 
 const intersection = {
   intersects: false,
@@ -132,9 +132,9 @@ function init() {
   // loadLeePerrySmith();
   // loadGlb(glbSmith, 5);
   // loadGlb(glbSculpture, 15);
-  // loadGlb("models/gltf/head-polygon/tete_1.glb", 500);
+  // loadGlb("models/head-polygon/tete_1.glb", 500);
 
-  loadGlbCloudPoint("models/gltf/head-polygon/tete_3.glb");
+  loadGlbCloudPoint("models/head-polygon/tete_3.glb");
 
   // loadBarColor();
 
