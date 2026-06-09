@@ -134,7 +134,7 @@ function init() {
   // loadGlb(glbSculpture, 15);
   // loadGlb("models/head-polygon/tete_1.glb", 500);
 
-  loadGlbCloudPoint("models/head-polygon/tete_3.glb");
+  loadGlbCloudPoint("models/head-polygon/tete_1.glb");
 
   // loadBarColor();
 
@@ -442,32 +442,10 @@ function createDotTexture() {
   return new THREE.CanvasTexture(canvas);
 }
 
-//* COLOR
-// function loadBarColor() {
-//   lut = new Lut("blackbody");
-
-//   sprite = new THREE.Sprite(
-//     new THREE.SpriteMaterial({
-//       map: new THREE.CanvasTexture(lut.createCanvas()),
-//     }),
-//   );
-//   sprite.material.map.colorSpace = THREE.SRGBColorSpace;
-//   sprite.scale.x = 1;
-//   sprite.scale.y = 30;
-
-//   scene.add(sprite);
-// }
-
 const color = document.getElementById("color");
-color.addEventListener("click", changeColor);
-console.log(color);
-function changeColor() {
-  var top = color.top;
-  var left = color.left;
-  console.log("changeColor click");
-  // const randomColor = () => Math.floor(Math.random() * 256);
-  // const r = randomColor();
-  // const g = randomColor();
-  // const b = randomColor();
-  // color.style.background = `linear-gradient(to right, rgb(${r}, ${g}, ${b}), rgb(${255 - r}, ${255 - g}, ${255 - b}))`;
+window.defineGradient?.();
+color.addEventListener("click", pickColor);
+
+function pickColor(e) {
+  colorSelected = changeColor(e);
 }
