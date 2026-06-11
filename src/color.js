@@ -9,7 +9,7 @@ const gradient = [
 ];
 
 export function defineGradient() {
-  const color = document.getElementById("color");
+  const color = document.getElementById("color-bar");
   if (!color) return;
 
   const cssStops = gradient

@@ -74,7 +74,7 @@ function init() {
   //*Scene
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setAnimationLoop(animate);
   container.appendChild(renderer.domElement);
   scene = new THREE.Scene();
@@ -82,7 +82,7 @@ function init() {
   //*Camera
   camera = new THREE.PerspectiveCamera(
     45,
-    window.innerWidth / window.innerHeight,
+    container.clientWidth / container.clientHeight,
     1,
     1000,
   );
@@ -137,9 +137,9 @@ function init() {
   scene.add(mouseHelper);
 
   //* Color picker
-  const color = document.getElementById("color");
-  colorjs.defineGradient();
-  color.addEventListener("click", pickColor);
+  // const colorBar = document.getElementById("color-bar");
+  // colorjs.defineGradient();
+  // colorBar.addEventListener("click", pickColor);
 
   //* Default settings for drawing
   const gui = new GUI({ title: "Paint" });
@@ -151,10 +151,13 @@ function init() {
 
 //////////////////////////* Move
 function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+
+  camera.aspect = width / height;
   camera.updateProjectionMatrix();
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(width, height);
 }
 
 function animate() {

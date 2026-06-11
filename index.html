@@ -10,9 +10,27 @@
     <link type="text/css" rel="stylesheet" href="src/main.css" />
   </head>
   <body>
-    <h1 id="title">Pain(t)</h1>
-    <div id="color"></div>
+    <div class="container-info">
+      <div class="line">
+        <h1 id="title">Pain(t)</h1>
+      </div>
+      <input
+        class="line"
+        type="range"
+        id="color-bar"
+        name="color"
+        min="0"
+        max="11"
+      />
+    </div>
+    <!-- <div id="color-bar">
+      <div id="color-picker"></div>
+    </div> -->
     <div id="container"></div>
+    <div class="container-info">
+      <h2>Evolution over time</h2>
+    </div>
+
     <script type="module" src="src/main.js"></script>
   </body>
 </html>
