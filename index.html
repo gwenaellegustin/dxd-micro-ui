@@ -15,12 +15,36 @@
         <h1 id="title">Pain(t)</h1>
       </div>
       <div class="line">
-        <button id="cancel-all-btn">
-          <img src="/cancel_all.png" alt="Cancel all">
-        </button>
-        <button id="cancel-btn" >
-          <img src="/cancel.png" alt="Cancel">
-        </button>
+        <div>
+          <button id="cancel-all-btn">
+            <img src="/cancel_all.png" alt="Cancel all">
+          </button>
+          <button id="cancel-btn" >
+            <img src="/cancel.png" alt="Cancel">
+          </button>
+        </div>
+        <div>
+          <fieldset class="mode-picker">
+            <label class="radio-button">
+              <input type="radio" id="point" name="mode" value="point" checked />
+              <img src="/radiant.png" alt="Point">
+            </label>
+            <label class="radio-button">
+              <input type="radio" id="pulse" name="mode" value="pulse" />
+              <img src="/pulse.png" alt="Pulse">
+            </label>
+            <label class="radio-button">
+              <input type="radio" id="acute" name="mode" value="acute" />
+              <img src="/acute.png" alt="Acute">
+            </label>
+          </fieldset>
+        </div>
+        <div>
+          <button id="info">
+            <img src="/question_mark.png" alt="Cancel all">
+          </button>
+        </div>
+
       </div>
       <input
         class="line"

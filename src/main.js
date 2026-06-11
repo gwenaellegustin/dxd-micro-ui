@@ -10,7 +10,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
-import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import * as colorjs from "./color.js";
 
@@ -54,9 +53,6 @@ let mouseHelper;
 const position = new THREE.Vector3();
 const orientation = new THREE.Euler();
 const size = new THREE.Vector3(10, 10, 10);
-const params = {
-  rotate: true,
-};
 
 let colorSelected = 0xffd000;
 let sizeSelected = 0.24;
@@ -171,11 +167,6 @@ function init() {
   };
   sizeBar.addEventListener("input", updateSizeThumb);
   // updateSizeThumb(sizeBar)
-
-  //* Default settings for drawing
-  const gui = new GUI({ title: "Paint" });
-  gui.add(params, "rotate");
-  // gui.open();
 }
 
 //////////////////////////* Move
@@ -421,7 +412,7 @@ function shoot() {
   position.copy(intersection.point);
   orientation.copy(mouseHelper.rotation);
 
-  if (params.rotate) orientation.z = Math.random() * 2 * Math.PI;
+  orientation.z = Math.random() * 2 * Math.PI;
 
   size.set(sizeSelected, sizeSelected, sizeSelected);
 
