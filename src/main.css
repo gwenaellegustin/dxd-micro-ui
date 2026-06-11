@@ -1,52 +1,242 @@
+:root {
+  --background: black;
+  --on-background: white;
+  --helper: #404040;
+  --border-width: 2px;
+  --space: 20px; /*16px;*/
+  --space-smallest: calc(var(--space)/4);
+  --space-small: calc(var(--space)/2);
+  --space-big: calc(var(--space)/2 * 3);
+  --space-bigger: calc(var(--space) * 2);
+  --space-biggest: calc(var(--space) * 4);
+  --space-giant: calc(var(--space) * 6);
+  --space-gargantua: calc(var(--space) * 8);
+}
+
 body {
+  height: 100svh;
+  width: 100svw;
   margin: 0;
-  color: grey;
+  background-color: var(--background);
+  color: var(--on-background);
+  display: flex;
+  flex-direction: column;
   font-family: Monospace;
-  font-size: 13px;
-  line-height: 24px;
+  /* font-size: 13px; */
+  /* line-height: 24px; */
   overscroll-behavior: none;
+  box-sizing: border-box; /*include padding and border in widht/height */
+}
+h1,
+h2,
+h3,
+p {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+button {
+  width: var(--space-bigger);
+  height: var(--space-bigger);
+  background-color: var(--background);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  border-radius: var(--space-gargantua);
+  transition: 0.3s ease-in-out;
+}
+button:active {
+  transform: scale(0.96);
+  background-color: var(--on-background);
+}
+
+button:active img {
+  filter: invert(1);
+}
+
+.container-info {
+  display: flex;
+  flex-direction: column;
+  margin: var(--space);
+  gap: var(--space);
+}
+.line {
+  height: var(--space-bigger);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* Threejs container, cannot be renamed */
+#container {
+  flex: 1;
 }
 
 #title {
-  z-index: 9999;
-  position: absolute;
-  top: 0px;
-  width: 100%;
-  color: #ffffff;
   text-align: center;
+  width: 100%;
 }
 
-#color {
-  z-index: 9999;
-  position: fixed;
-  left: 10px;
-  top: 50px;
-  width: calc(100vw - 20px);
-  height: 50px; /**/
-  box-sizing: border-box;
-  background-color: red;
-  border-radius: 1000px;
+#color-bar {
+  -webkit-appearance: none;
+  /* appearance: none; */
+  /* background: transparent; */
+  width: 100%;
+  margin: 0;
+  border-radius: var(--space-gargantua);
+  background-color: var(--background);
 }
 
-.lil-gui {
-  z-index: 2 !important; /* TODO Solve this in HTML */
+#color-bar::-webkit-slider-runnable-track {
+  height: var(--space-bigger);
+  background: linear-gradient(
+    to right,
+    #359800 0%,
+    #7c9800 2%,
+    #beb80d 10%,
+    #ffbb0c 35%,
+    #cc620e 70%,
+    #e13e0d 95%,
+    #ff0000 100%
+  );
+  border-radius: var(--space-gargantua);
 }
 
-@media all and (max-width: 640px) {
-  .lil-gui.root {
-    right: auto;
-    top: auto;
-    max-height: 50%;
-    max-width: 80%;
-    bottom: 0;
-    left: 0;
-  }
+#color-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  /* background: transparent; */
+  width: var(--space-big);
+  height: var(--space-big);
+  margin-top: calc((var(--space-bigger) - var(--space-big)) / 2);
+  border: 1px solid var(--background);
+  cursor: pointer;
+  border-radius: var(--space-gargantua);
 }
 
-#notSupported {
-  width: 50%;
-  margin: auto;
-  background-color: #f00;
-  margin-top: 20px;
-  padding: 10px;
+#size-bar {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: transparent;
+  margin: 0;
+  --size-round-left: var(--space-small);
+  --size-round-right: var(--space-bigger);
+  --size-thumb-size: calc((var(--size-round-right) - var(--size-round-left)));
 }
+
+#size-bar::-webkit-slider-runnable-track {
+  height: var(--space-bigger);
+  background-image:
+    linear-gradient(var(--helper), var(--helper)),
+    radial-gradient(
+      circle at center center,
+      var(--helper) var(--size-round-left),
+      transparent 0
+    ),
+    radial-gradient(
+      circle at center center,
+      var(--helper) calc(var(--size-round-right) / 2),
+      transparent 0
+    );
+  background-repeat: no-repeat;
+  background-size:
+    100% 1px,
+    calc(var(--size-round-left) * 2) calc(var(--size-round-left) * 2),
+    var(--size-round-right) var(--size-round-right);
+
+  background-position:
+    center center,
+    left center,
+    right center;
+}
+
+#size-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: var(--size-thumb-size);
+  height: var(--size-thumb-size);
+  margin-top: calc((var(--size-round-right) - var(--size-thumb-size)) / 2);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+/* Radiobutton */
+
+.radio-button-picker {
+  display: flex;
+  gap: var(--space-small);
+  border: none;
+  padding: 0;
+}
+
+.radio-button {
+  /* width: var(--space-bigger);
+  height: var(--space-bigger); */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: var(--border-width) solid var(--on-background);
+  border-radius: var(--space-small);
+  background: transparent;
+  cursor: pointer;
+  transition: 0.15s ease-in-out;
+  overflow: hidden;
+}
+
+.radio-button input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radio-button img {
+  height: calc(var(--space-bigger) - var(--border-width) * 2);
+  width: calc(var(--space-bigger) - var(--border-width) * 2);
+}
+
+.radio-button:has(input[type="radio"]:checked) {
+  background: var(--on-background);
+  border-radius: var(--space-gargantua);
+}
+
+.radio-button:has(input[type="radio"]:checked) img {
+  filter: invert();
+}
+
+/* @TODO check with firefox */
+/* #color-bar::-moz-range-track {
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    #359800 0%,
+    #7c9800 2%,
+    #beb80d 10%,
+    #ffbb0c 35%,
+    #cc620e 70%,
+    #e13e0d 95%,
+    #ff0000 100%
+  );
+  border-radius: var(--space-gargantua);
+}
+#color-bar::-moz-range-thumb {
+  width: var(--space-big);
+  height: var(--space-big);
+  border: 1px solid var(--slider-color);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 100%;
+  cursor: pointer;
+}
+#size-bar::-moz-range-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+#size-bar::-moz-range-thumb {
+  width: var(--size-thumb-size);
+  height: var(--size-thumb-size);
+  border: 2px solid white;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 100%;
+  cursor: pointer;
+}*/

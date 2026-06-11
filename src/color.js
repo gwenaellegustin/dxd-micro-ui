@@ -8,28 +8,19 @@ const gradient = [
   { stop: 1.0, color: "#ff0000" },
 ];
 
-export function defineGradient() {
-  const color = document.getElementById("color");
-  if (!color) return;
-
-  const cssStops = gradient
-    .map((stop) => `${stop.color} ${Math.round(stop.stop * 100)}%`)
-    .join(", ");
-
-  color.style.background = `linear-gradient(to right, ${cssStops})`;
+export function getColorFromRangeValue(value, max = 100) {
+  const t = max > 0 ? Number(value) / Number(max) : 0;
+  const rgb = getGradientColor(t);
+  return rgbToHex(rgb);
 }
 
-export function changeColor(event) {
-  const rect = color.getBoundingClientRect();
-  const minX = 10;
-  const maxX = rect.width - 10;
-  const clientX = event.clientX - rect.left;
-  const clampedX = Math.min(Math.max(clientX, minX), maxX);
-  const t = maxX > minX ? (clampedX - minX) / (maxX - minX) : 0;
+function rgbToHex({ r, g, b }) {
+  return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
+}
 
-  const rgb = getGradientColor(t);
-  let colorSelected = (rgb.r << 16) | (rgb.g << 8) | rgb.b;
-  return colorSelected;
+function componentToHex(value) {
+  const hex = value.toString(16);
+  return hex.length === 1 ? `0${hex}` : hex;
 }
 
 function getGradientColor(tValue) {
