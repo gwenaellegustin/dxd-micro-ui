@@ -1,6 +1,7 @@
 :root {
   --background: black;
   --on-background: white;
+  --helper: #404040;
   --border-width: 2px;
   --space-smallest: 4px;
   --space-small: 8px;
@@ -84,6 +85,54 @@ p {
   height: var(--space-big);
   margin-top: calc((var(--space-bigger) - var(--space-big)) / 2);
   border: 1px solid var(--background);
+  cursor: pointer;
+  border-radius: var(--space-gargantua);
+}
+
+#size-bar {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: transparent;
+  margin: 0;
+  --size-round-left: var(--space-small);
+  --size-round-right: var(--space-bigger);
+  --size-thumb-size: calc((var(--size-round-right) - var(--size-round-left)));
+}
+
+#size-bar::-webkit-slider-runnable-track {
+  height: var(--space-bigger);
+  background-image:
+    linear-gradient(var(--helper), var(--helper)),
+    radial-gradient(
+      circle at center center,
+      var(--helper) var(--size-round-left),
+      transparent 0
+    ),
+    radial-gradient(
+      circle at center center,
+      var(--helper) calc(var(--size-round-right) / 2),
+      transparent 0
+    );
+  background-repeat: no-repeat;
+  background-size:
+    100% 1px,
+    calc(var(--size-round-left) * 2) calc(var(--size-round-left) * 2),
+    var(--size-round-right) var(--size-round-right);
+
+  background-position:
+    center center,
+    left center,
+    right center;
+}
+
+#size-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: var(--size-thumb-size);
+  height: var(--size-thumb-size);
+  margin-top: calc((var(--size-round-right) - var(--size-thumb-size)) / 2);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 100%;
   cursor: pointer;
 }
@@ -103,25 +152,29 @@ p {
   );
   border-radius: var(--space-gargantua);
 }
-
 #color-bar::-moz-range-thumb {
   width: var(--space-big);
   height: var(--space-big);
-  border: 2px solid var(--slider-color);
-  background: transparent;
+  border: 1px solid var(--slider-color);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 100%;
   cursor: pointer;
-} */
+}
+#size-bar::-moz-range-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+#size-bar::-moz-range-thumb {
+  width: var(--size-thumb-size);
+  height: var(--size-thumb-size);
+  border: 2px solid white;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 100%;
+  cursor: pointer;
+}*/
 
 /* @TODO remove after */
-
-/* #color-picker {
-  --border: 2px;
-  border: var(--border) solid white;
-  height: calc(var(--height-color-picker) - var(--border) * 2);
-  width: calc(var(--height-color-picker) - var(--border) * 2);
-  border-radius: 1000px;
-} */
 
 .lil-gui {
   z-index: 2 !important; /* TODO Solve this in HTML */

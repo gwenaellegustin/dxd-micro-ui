@@ -147,6 +147,18 @@ function init() {
   colorBar.addEventListener("input", updateSliderColor);
   // updateSliderColor(colorBar);
 
+  //* Size picker
+  const sizeBar = document.getElementById("size-bar");
+  const updateSizeThumb = (event) => {
+    const target = event.target || event;
+    const percent =
+      target.max > 0 ? Number(target.value) / Number(target.max) : 0;
+    const sizeValue = 16 + percent * (32 - 16);
+    target.style.setProperty("--size-thumb-size", `${sizeValue}px`);
+  };
+  sizeBar.addEventListener("input", updateSizeThumb);
+  // updateSizeThumb(sizeBar)
+
   //* Default settings for drawing
   const gui = new GUI({ title: "Paint" });
   gui.add(params, "scale", 0.1, maxScale);
