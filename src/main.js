@@ -56,9 +56,6 @@ const orientation = new THREE.Euler();
 const size = new THREE.Vector3(10, 10, 10);
 const params = {
   rotate: true,
-  clear: function () {
-    removeDecals();
-  },
 };
 
 let colorSelected = 0xffd000;
@@ -146,6 +143,22 @@ function init() {
   colorBar.addEventListener("input", updateSliderColor);
   // updateSliderColor(colorBar);
 
+  const cancelButton = document.getElementById("cancel-btn");
+  cancelButton.addEventListener("click", (event) => {
+    const toRemove = decals.pop();
+    mesh.remove(toRemove);
+  });
+
+  const cancelAllButton = document.getElementById("cancel-all-btn");
+  cancelAllButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    decals.forEach(function (d) {
+      mesh.remove(d);
+    });
+
+    decals.length = 0;
+  });
+
   //* Size picker
   const sizeBar = document.getElementById("size-bar");
   const updateSizeThumb = (event) => {
@@ -162,7 +175,6 @@ function init() {
   //* Default settings for drawing
   const gui = new GUI({ title: "Paint" });
   gui.add(params, "rotate");
-  gui.add(params, "clear");
   // gui.open();
 }
 
@@ -344,9 +356,9 @@ function createDotTexture() {
 
   const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
   gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
-  gradient.addColorStop(0.25, "rgba(140, 200, 255, 0.9)");
-  gradient.addColorStop(0.6, "rgba(30, 100, 220, 0.4)");
-  gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+  gradient.addColorStop(0.25, "rgba(173, 173, 173, 0.9)");
+  gradient.addColorStop(0.6, "rgba(87, 87, 87, 0.4)");
+  gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, 64, 64);
@@ -426,11 +438,4 @@ function shoot() {
   decals.push(m);
 
   mesh.attach(m);
-}
-function removeDecals() {
-  decals.forEach(function (d) {
-    mesh.remove(d);
-  });
-
-  decals.length = 0;
 }
