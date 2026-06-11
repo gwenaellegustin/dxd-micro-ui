@@ -54,10 +54,11 @@ p {
 
 #color-bar {
   -webkit-appearance: none;
-  appearance: none;
+  /* appearance: none; */
+  /* background: transparent; */
   width: 100%;
-  background: transparent;
   margin: 0;
+  border-radius: var(--space-gargantua);
 }
 
 #color-bar::-webkit-slider-runnable-track {
@@ -84,12 +85,12 @@ p {
   margin-top: calc((var(--space-bigger) - var(--space-big)) / 2);
   border: 1px solid var(--background);
   border-radius: 100%;
-  /* cursor: pointer; */
+  cursor: pointer;
 }
 
 /* @TODO check with firefox */
 /* #color-bar::-moz-range-track {
-  height: 8px;
+  height: 100%;
   background: linear-gradient(
     to right,
     #359800 0%,
@@ -100,15 +101,15 @@ p {
     #e13e0d 95%,
     #ff0000 100%
   );
-  border-radius: 1000px;
+  border-radius: var(--space-gargantua);
 }
 
 #color-bar::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
-  border: 2px solid #4da6ff;
-  border-radius: 50%;
+  width: var(--space-big);
+  height: var(--space-big);
+  border: 2px solid var(--slider-color);
   background: transparent;
+  border-radius: 100%;
   cursor: pointer;
 } */
 

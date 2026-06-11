@@ -137,9 +137,15 @@ function init() {
   scene.add(mouseHelper);
 
   //* Color picker
-  // const colorBar = document.getElementById("color-bar");
-  // colorjs.defineGradient();
-  // colorBar.addEventListener("click", pickColor);
+  const colorBar = document.getElementById("color-bar");
+  const updateSliderColor = (event) => {
+    const target = event.target || event;
+    const hex = colorjs.getColorFromRangeValue(target.value, target.max);
+    target.style.setProperty("--slider-color", hex);
+    colorSelected = parseInt(hex.replace("#", ""), 16);
+  };
+  colorBar.addEventListener("input", updateSliderColor);
+  // updateSliderColor(colorBar);
 
   //* Default settings for drawing
   const gui = new GUI({ title: "Paint" });
@@ -408,7 +414,4 @@ function removeDecals() {
   });
 
   decals.length = 0;
-}
-function pickColor(e) {
-  colorSelected = colorjs.changeColor(e);
 }
