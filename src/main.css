@@ -162,7 +162,7 @@ button:active img {
 
 /* Radiobutton */
 
-.mode-picker {
+.radio-button-picker {
   display: flex;
   gap: var(--space-small);
   border: none;
@@ -170,14 +170,17 @@ button:active img {
 }
 
 .radio-button {
-  display: inline-flex;
+  /* width: var(--space-bigger);
+  height: var(--space-bigger); */
+  display: flex;
+  justify-content: center;
   align-items: center;
-  /* justify-content: center; */
   border: var(--border-width) solid var(--on-background);
   border-radius: var(--space-small);
   background: transparent;
   cursor: pointer;
   transition: 0.15s ease-in-out;
+  overflow: hidden;
 }
 
 .radio-button input[type="radio"] {
@@ -189,7 +192,7 @@ button:active img {
 
 .radio-button img {
   height: calc(var(--space-bigger) - var(--border-width) * 2);
-  width: auto;
+  width: calc(var(--space-bigger) - var(--border-width) * 2);
 }
 
 .radio-button:has(input[type="radio"]:checked) {
@@ -237,28 +240,3 @@ button:active img {
   border-radius: 100%;
   cursor: pointer;
 }*/
-
-/* @TODO remove after */
-
-.lil-gui {
-  z-index: 2 !important; /* TODO Solve this in HTML */
-}
-
-@media all and (max-width: 640px) {
-  .lil-gui.root {
-    right: auto;
-    top: auto;
-    max-height: 50%;
-    max-width: 80%;
-    bottom: 0;
-    left: 0;
-  }
-}
-
-#notSupported {
-  width: 50%;
-  margin: auto;
-  background-color: #f00;
-  margin-top: 20px;
-  padding: 10px;
-}
