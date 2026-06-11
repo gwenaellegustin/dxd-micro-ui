@@ -33,7 +33,7 @@ let headMaxDim = 20; // updated after model load, used to scale decals
 //* Drawing
 const textureLoader = new THREE.TextureLoader();
 // const decalDiffuse = textureLoader.load("textures/decal/decal-diffuse.png");
-const decalDiffuse = textureLoader.load("textures/aiguille/decal-diffuse.png");
+const decalDiffuse = textureLoader.load("textures/point/decal-diffuse.png");
 decalDiffuse.colorSpace = THREE.SRGBColorSpace;
 const decalNormal = textureLoader.load("textures/decal/decal-normal.jpg");
 const decalMaterial = new THREE.MeshPhongMaterial({
@@ -54,15 +54,15 @@ let mouseHelper;
 const position = new THREE.Vector3();
 const orientation = new THREE.Euler();
 const size = new THREE.Vector3(10, 10, 10);
-let colorSelected = 0xffd000;
-const maxScale = 1;
 const params = {
-  scale: maxScale / 2,
   rotate: true,
   clear: function () {
     removeDecals();
   },
 };
+
+let colorSelected = 0xffd000;
+let sizeSelected = 0.24;
 
 init();
 
@@ -114,7 +114,6 @@ function init() {
   window.addEventListener("pointerup", function (event) {
     if (moved === false) {
       checkIntersection(event.clientX, event.clientY);
-
       if (intersection.intersects) shoot();
     }
   });
@@ -155,13 +154,13 @@ function init() {
       target.max > 0 ? Number(target.value) / Number(target.max) : 0;
     const sizeValue = 16 + percent * (32 - 16);
     target.style.setProperty("--size-thumb-size", `${sizeValue}px`);
+    sizeSelected = 0.1 + percent;
   };
   sizeBar.addEventListener("input", updateSizeThumb);
   // updateSizeThumb(sizeBar)
 
   //* Default settings for drawing
   const gui = new GUI({ title: "Paint" });
-  gui.add(params, "scale", 0.1, maxScale);
   gui.add(params, "rotate");
   gui.add(params, "clear");
   // gui.open();
@@ -364,8 +363,17 @@ function onPointerMove(event) {
 function checkIntersection(x, y) {
   if (mesh === undefined) return;
 
-  mouse.x = (x / window.innerWidth) * 2 - 1;
-  mouse.y = -(y / window.innerHeight) * 2 + 1;
+  const rect = container.getBoundingClientRect();
+  const localX = x - rect.left;
+  const localY = y - rect.top;
+
+  if (localX < 0 || localX > rect.width || localY < 0 || localY > rect.height) {
+    intersection.intersects = false;
+    return;
+  }
+
+  mouse.x = (localX / rect.width) * 2 - 1;
+  mouse.y = -(localY / rect.height) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
   raycaster.intersectObject(mesh, false, intersects);
@@ -403,8 +411,7 @@ function shoot() {
 
   if (params.rotate) orientation.z = Math.random() * 2 * Math.PI;
 
-  // const scale =  params.minScale + Math.random() * (params.maxScale - params.minScale);
-  size.set(params.scale, params.scale, params.scale);
+  size.set(sizeSelected, sizeSelected, sizeSelected);
 
   const material = decalMaterial.clone();
   // material.color.setHex(Math.random() * 0xffffff);
