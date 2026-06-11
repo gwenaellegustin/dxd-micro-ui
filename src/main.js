@@ -121,7 +121,7 @@ function init() {
   window.addEventListener("pointermove", onPointerMove);
 
   //*Model
-  loadGlbCloudPoint("models/head-polygon/tete_1.glb");
+  loadGlbCloudPoint("models/head-polygon/tete_clean.glb");
   const geometry = new THREE.BufferGeometry();
   geometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
 
