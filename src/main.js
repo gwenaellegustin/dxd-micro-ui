@@ -162,7 +162,7 @@ function init() {
     const target = event.target || event;
     const percent =
       target.max > 0 ? Number(target.value) / Number(target.max) : 0;
-    const sizeValue = 16 + percent * (32 - 16);
+    const sizeValue = 10 + percent * (40 - 10);
     target.style.setProperty("--size-thumb-size", `${sizeValue}px`);
     sizeSelected = 0.1 + percent;
   };

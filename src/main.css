@@ -3,6 +3,16 @@
   --on-background: white;
   --helper: #404040;
   --border-width: 2px;
+
+  /* --space-smallest: 4px;
+  --space-small: 8px;
+  --space: 16px;
+  --space-big: 24px;
+  --space-bigger: 32px;
+  --space-biggest: 64px;
+  --space-giant: 72px;
+  --space-gargantua: 128px; */
+
   --space: 20px; /*16px;*/
   --space-smallest: calc(var(--space)/4);
   --space-small: calc(var(--space)/2);
@@ -118,7 +128,7 @@ button:active img {
   width: 100%;
   background: transparent;
   margin: 0;
-  --size-round-left: var(--space-small);
+  --size-round-left: var(--space-smallest);
   --size-round-right: var(--space-bigger);
   --size-thumb-size: calc((var(--size-round-right) - var(--size-round-left)));
 }
