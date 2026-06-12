@@ -44,6 +44,7 @@ const decalMaterial = new THREE.MeshPhongMaterial({
   transparent: true,
   depthTest: true,
   depthWrite: false,
+  opacity: 0.5,
   polygonOffset: true,
   polygonOffsetFactor: -4,
   wireframe: false,
