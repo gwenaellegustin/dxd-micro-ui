@@ -120,7 +120,7 @@ function init() {
 
   //*Draw on head
   line = new THREE.Line(geometry, new THREE.LineBasicMaterial());
-  // scene.add(line);
+  scene.add(line);
   raycaster = new THREE.Raycaster();
   mouseHelper = new THREE.Mesh(
     new THREE.BoxGeometry(1, 1, 10),

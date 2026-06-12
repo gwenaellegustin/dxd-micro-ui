@@ -128,7 +128,7 @@ button:active img {
   width: 100%;
   background: transparent;
   margin: 0;
-  --size-round-left: var(--space-smallest);
+  --size-round-left: var(--space-small);
   --size-round-right: var(--space-bigger);
   --size-thumb-size: calc((var(--size-round-right) - var(--size-round-left)));
 }
@@ -139,7 +139,7 @@ button:active img {
     linear-gradient(var(--helper), var(--helper)),
     radial-gradient(
       circle at center center,
-      var(--helper) var(--size-round-left),
+      var(--helper) calc(var(--size-round-left) / 2),
       transparent 0
     ),
     radial-gradient(
@@ -150,7 +150,7 @@ button:active img {
   background-repeat: no-repeat;
   background-size:
     100% 1px,
-    calc(var(--size-round-left) * 2) calc(var(--size-round-left) * 2),
+    var(--size-round-left) var(--size-round-left),
     var(--size-round-right) var(--size-round-right);
 
   background-position:
