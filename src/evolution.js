@@ -1,3 +1,5 @@
+import { getTFromColor } from "./color.js";
+
 const canvas = document.getElementById("evolution-canvas");
 const ctx = canvas.getContext("2d");
 
@@ -10,15 +12,64 @@ let startCustomTime = null;
 let endCustomTime = null;
 
 // Y position (0=top=max pain, 1=bottom=no pain) for each preset as a function of t (0..1)
+const _session = JSON.parse(
+  sessionStorage.getItem("pending-session") || "null",
+);
+const maxPainT = _session?.decals?.length
+  ? Math.max(..._session.decals.map((d) => getTFromColor(d.color)))
+  : 1;
+
 const presetFunctions = {
-  linear: (t) => 1 - 0.9 * t,
-  exp: (t) => 1 - 0.7 * Math.pow(t, 2.2),
-  power: (t) => 1 - 0.75 * (1 - Math.exp(-3.5 * t)),
-  peak: (t) => 0.5 - 0.35 * Math.sin(Math.PI * t),
-  "peak-incr": (t) =>
-    0.55 - 0.4 * Math.sin(Math.PI * Math.min(t * 1.5, 1)) + 0.1 * t,
-  var: (t) => 0.5 + 0.28 * Math.sin(4.5 * Math.PI * t),
-  "var-incr": (t) => 0.25 + 0.35 * t + 0.18 * Math.sin(4 * Math.PI * t),
+  linear: (t) => 1 - maxPainT * t,
+  exp: (t) => 1 - maxPainT * Math.pow(t, 3),
+  power: (t) => 1 - maxPainT * (1 - Math.exp(-3 * t)),
+  peak: (t) => {
+    const s = [
+      [0, 1],
+      [0.13, 0.96 - maxPainT],
+      [0.26, 0.99],
+      [0.42, 0.99],
+      [0.58, 0.96 - maxPainT],
+      [0.74, 0.99],
+      [0.87, 0.99],
+      [1, 1 - maxPainT],
+    ];
+    for (let i = 0; i < s.length - 1; i++)
+      if (t <= s[i + 1][0])
+        return (
+          s[i][1] +
+          ((t - s[i][0]) / (s[i + 1][0] - s[i][0])) * (s[i + 1][1] - s[i][1])
+        );
+    return 1 - maxPainT;
+  },
+  "peak-incr": (t) => {
+    const d = 0.6 * maxPainT,
+      r = 0.4 * maxPainT;
+    const s = [
+      [0, 1],
+      [0.13, 1 - d],
+      [0.26, 1 - d + r],
+      [0.42, 1 - d + r],
+      [0.58, 1 - 2 * d + r],
+      [0.74, 1 - 2 * d + 2 * r],
+      [0.87, 1 - 2 * d + 2 * r],
+      [1, 1 - maxPainT],
+    ];
+    for (let i = 0; i < s.length - 1; i++)
+      if (t <= s[i + 1][0])
+        return (
+          s[i][1] +
+          ((t - s[i][0]) / (s[i + 1][0] - s[i][0])) * (s[i + 1][1] - s[i][1])
+        );
+    return 1 - maxPainT;
+  },
+  var: (t) =>
+    1 -
+    maxPainT -
+    (maxPainT / 2) * Math.sin(5 * Math.PI * t + 11) +
+    maxPainT / 2,
+  "var-incr": (t) =>
+    1 - maxPainT * t - 0.2 * maxPainT * Math.sin(4 * Math.PI * t),
 };
 
 function resizeCanvas() {
@@ -97,10 +148,23 @@ function getPresetPoints() {
   return points;
 }
 
+function drawMaxPainMarker() {
+  const y = (1 - maxPainT) * canvas.height;
+  ctx.beginPath();
+  ctx.moveTo(0, y);
+  ctx.lineTo(canvas.width, y);
+  ctx.strokeStyle = "rgba(0,0,0,0.5)";
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
 function render() {
   drawBackground();
   // drawAxes();
   drawCurve(drawnPoints ?? getPresetPoints());
+  drawMaxPainMarker();
 }
 
 // Drawing interaction
@@ -145,7 +209,8 @@ document.querySelectorAll("input[name='time-start']").forEach((radio) => {
     if (radio.value !== "custom") {
       const picker = document.querySelector(".time-picker[data-side='start']");
       picker.value = "";
-      picker.parentElement.querySelector(".time-picker-display").textContent = "";
+      picker.parentElement.querySelector(".time-picker-display").textContent =
+        "";
       startCustomTime = null;
     }
   });
@@ -157,7 +222,8 @@ document.querySelectorAll("input[name='time-end']").forEach((radio) => {
     if (radio.value !== "custom") {
       const picker = document.querySelector(".time-picker[data-side='end']");
       picker.value = "";
-      picker.parentElement.querySelector(".time-picker-display").textContent = "";
+      picker.parentElement.querySelector(".time-picker-display").textContent =
+        "";
       endCustomTime = null;
     }
   });
@@ -166,7 +232,9 @@ document.querySelectorAll("input[name='time-end']").forEach((radio) => {
 // Open native time picker on label click
 document.querySelectorAll(".radio-btn-custom").forEach((label) => {
   label.addEventListener("click", () => {
-    try { label.querySelector(".time-picker").showPicker(); } catch (_) {}
+    try {
+      label.querySelector(".time-picker").showPicker();
+    } catch (_) {}
   });
 });
 
