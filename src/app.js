@@ -41,6 +41,8 @@ const decalMaterial = new THREE.MeshBasicMaterial({
   polygonOffsetFactor: -4,
 });
 const decals = [];
+const decalData = [];
+const sessionStart = Date.now();
 let mouseHelper;
 const position = new THREE.Vector3();
 const orientation = new THREE.Euler();
@@ -135,6 +137,7 @@ function init() {
   cancelButton.addEventListener("click", (event) => {
     const toRemove = decals.pop();
     mesh.remove(toRemove);
+    decalData.pop();
   });
 
   const cancelAllButton = document.getElementById("cancel-all-btn");
@@ -143,8 +146,16 @@ function init() {
     decals.forEach(function (d) {
       mesh.remove(d);
     });
-
     decals.length = 0;
+    decalData.length = 0;
+  });
+
+  const validateButton = document.getElementById("validate-btn");
+  validateButton.addEventListener("click", () => {
+    const sessions = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
+    sessions.push({ timestamp: sessionStart, decals: [...decalData] });
+    localStorage.setItem("paint-sessions", JSON.stringify(sessions));
+    location.href = "index.html";
   });
 
   //* Size picker
@@ -495,6 +506,13 @@ function shoot() {
       m.renderOrder = decals.length;
       decals.push(m);
       mesh.attach(m);
+      decalData.push({
+        tool: "acute",
+        position: markPos.toArray(),
+        orientation: [markOrientation.x, markOrientation.y, markOrientation.z],
+        size: markSize.toArray(),
+        color: colorSelected,
+      });
     }
   } else {
     size.set(sizeSelected, sizeSelected, sizeSelected);
@@ -508,6 +526,13 @@ function shoot() {
     m.renderOrder = decals.length;
     decals.push(m);
     mesh.attach(m);
+    decalData.push({
+      tool: selectedTool,
+      position: position.toArray(),
+      orientation: [orientation.x, orientation.y, orientation.z],
+      size: size.toArray(),
+      color: colorSelected,
+    });
   }
 }
 function createDecalTexture() {
@@ -536,7 +561,10 @@ function createAcuteLineTexture() {
   ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
 
   // Needle shape: pointed at both ends, wider in the middle
-  const cx = 32, cy = 8, halfLen = 29, halfW = 2.5;
+  const cx = 32,
+    cy = 8,
+    halfLen = 29,
+    halfW = 2.5;
   ctx.beginPath();
   ctx.moveTo(cx - halfLen, cy);
   ctx.quadraticCurveTo(cx - halfLen * 0.3, cy - halfW, cx, cy - halfW);

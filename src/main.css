@@ -219,18 +219,44 @@ button:active img {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: var(--space-biggest);
-  font-size: var(--space-big);
-  color: var(--on-background);
-  background: transparent;
   border: var(--border-width) solid var(--on-background);
   border-radius: var(--space-gargantua);
-  text-decoration: none;
+  padding: var(--space);
   transition: 0.3s ease-in-out;
 }
 #new-entry-btn:active {
   background-color: var(--on-background);
   color: var(--background);
+}
+
+#new-entry-btn img {
+  height: var(--space-bigger);
+  width: var(--space-bigger);
+}
+
+#new-entry-btn:active img {
+  filter: invert(1);
+}
+
+#sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+}
+
+.session-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-small);
+  border: var(--border-width) solid var(--on-background);
+  border-radius: var(--space-bigger);
+  padding: var(--space) var(--space-big);
+}
+
+.session-tools {
+  display: flex;
+  gap: var(--space-small);
+  align-items: center;
 }
 
 /* @TODO check with firefox */
