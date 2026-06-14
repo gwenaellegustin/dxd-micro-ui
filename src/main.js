@@ -46,7 +46,7 @@ const orientation = new THREE.Euler();
 const size = new THREE.Vector3(10, 10, 10);
 
 let colorSelected = 0xffd000;
-let sizeSelected = 0.24;
+let sizeSelected = 0.5; // Define in CSS ?
 
 init();
 
@@ -128,7 +128,7 @@ function init() {
     colorSelected = parseInt(hex.replace("#", ""), 16);
   };
   colorBar.addEventListener("input", updateSliderColor);
-  // updateSliderColor(colorBar);
+  updateSliderColor(colorBar);
 
   const cancelButton = document.getElementById("cancel-btn");
   cancelButton.addEventListener("click", (event) => {
@@ -150,14 +150,14 @@ function init() {
   const sizeBar = document.getElementById("size-bar");
   const updateSizeThumb = (event) => {
     const target = event.target || event;
-    const percent =
-      target.max > 0 ? Number(target.value) / Number(target.max) : 0;
+    const percent = Number(target.value) / Number(target.max);
+    console.log(percent);
     const sizeValue = 10 + percent * (40 - 10);
     target.style.setProperty("--size-thumb-size", `${sizeValue}px`);
-    sizeSelected = 0.1 + percent;
+    sizeSelected = 0.4 + percent * 1;
   };
   sizeBar.addEventListener("input", updateSizeThumb);
-  // updateSizeThumb(sizeBar)
+  updateSizeThumb(sizeBar);
 
   //* Tool picker
   const toolTextures = {
@@ -353,7 +353,8 @@ function createPulseTexture() {
   canvas.height = 128;
   const ctx = canvas.getContext("2d");
 
-  const cx = 64, cy = 64;
+  const cx = 64,
+    cy = 64;
   const radii = [20, 40, 60];
   const lineWidth = 4;
 
