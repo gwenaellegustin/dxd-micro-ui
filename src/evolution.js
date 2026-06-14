@@ -142,16 +142,35 @@ document.querySelectorAll("input[name='evolution']").forEach((radio) => {
 document.querySelectorAll("input[name='time-start']").forEach((radio) => {
   radio.addEventListener("change", () => {
     startValue = radio.value;
+    if (radio.value !== "custom") {
+      const picker = document.querySelector(".time-picker[data-side='start']");
+      picker.value = "";
+      picker.parentElement.querySelector(".time-picker-display").textContent = "";
+      startCustomTime = null;
+    }
   });
 });
 
 document.querySelectorAll("input[name='time-end']").forEach((radio) => {
   radio.addEventListener("change", () => {
     endValue = radio.value;
+    if (radio.value !== "custom") {
+      const picker = document.querySelector(".time-picker[data-side='end']");
+      picker.value = "";
+      picker.parentElement.querySelector(".time-picker-display").textContent = "";
+      endCustomTime = null;
+    }
   });
 });
 
-// Custom time pickers — overlay click opens native picker, change sets value and checks radio
+// Open native time picker on label click
+document.querySelectorAll(".radio-btn-custom").forEach((label) => {
+  label.addEventListener("click", () => {
+    try { label.querySelector(".time-picker").showPicker(); } catch (_) {}
+  });
+});
+
+// Custom time pickers — change sets value and checks radio
 document.querySelectorAll(".time-picker").forEach((picker) => {
   picker.addEventListener("change", () => {
     const side = picker.dataset.side;
