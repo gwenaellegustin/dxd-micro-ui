@@ -31,7 +31,6 @@ let headMaxDim = 20; // updated after model load, used to scale decals
 
 //* Drawing
 const textureLoader = new THREE.TextureLoader();
-const acuteLineTexture = createAcuteLineTexture();
 const decalMaterial = new THREE.MeshBasicMaterial({
   map: createDecalTexture(),
   transparent: true,
@@ -86,8 +85,8 @@ function init() {
 
   //*Control
   controls = new OrbitControls(camera, renderer.domElement);
-  controls.minDistance = 50;
-  controls.maxDistance = 200;
+  // controls.minDistance = 50; // Redefine after base on head size
+  // controls.maxDistance = 200; // Redefine after base on head size
 
   //*Interaction
   window.addEventListener("resize", onWindowResize);
@@ -174,6 +173,7 @@ function init() {
   const toolTextures = {
     point: createDecalTexture(),
     pulse: createPulseTexture(),
+    acute: createAcuteLineTexture(),
   };
   document.querySelectorAll("input[name='tool']").forEach((radio) => {
     radio.addEventListener("change", () => {
@@ -290,8 +290,8 @@ function loadGlbCloudPoint(glbPath) {
     // Fit camera & controls to model
     controls.target.copy(center);
     camera.position.set(center.x, center.y, center.z + headMaxDim * 1.8);
-    controls.minDistance = headRadius + 0.5;
-    controls.maxDistance = headMaxDim * 5;
+    controls.minDistance = headRadius + 1;
+    controls.maxDistance = headMaxDim * 1.4;
     controls.update();
 
     // Scale mouseHelper to model size
@@ -356,30 +356,6 @@ function samplePointsOnMesh(geo, totalCount) {
   }
 
   return positions;
-}
-
-function createPulseTexture() {
-  const canvas = document.createElement("canvas");
-  canvas.width = 128;
-  canvas.height = 128;
-  const ctx = canvas.getContext("2d");
-
-  const cx = 64,
-    cy = 64;
-  const radii = [20, 40, 60];
-  const lineWidth = 4;
-
-  ctx.clearRect(0, 0, 128, 128);
-  radii.forEach((r, i) => {
-    const alpha = 1 - i * 0.25;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-    ctx.lineWidth = lineWidth;
-    ctx.stroke();
-  });
-
-  return new THREE.CanvasTexture(canvas);
 }
 function createDotTexture() {
   const canvas = document.createElement("canvas");
@@ -459,81 +435,24 @@ function shoot() {
     "input[name='tool']:checked",
   )?.value;
 
-  if (selectedTool === "acute") {
-    const t = (sizeSelected - 0.4) / 1.0;
-    const lineCount = Math.round(10 + t * 40);
+  size.set(sizeSelected, sizeSelected, sizeSelected);
+  const material = decalMaterial.clone();
+  material.color.setHex(colorSelected);
 
-    // Fixed physical size per line mark — never scales with sizeSelected
-    const markSize = new THREE.Vector3(0.15, 0.03, 0.15);
-
-    // Tangent frame to scatter marks within the clicked area
-    const worldNormal = intersection.normal
-      .clone()
-      .applyNormalMatrix(new THREE.Matrix3().getNormalMatrix(mesh.matrixWorld))
-      .normalize();
-    const up =
-      Math.abs(worldNormal.y) < 0.9
-        ? new THREE.Vector3(0, 1, 0)
-        : new THREE.Vector3(1, 0, 0);
-    const tangent = new THREE.Vector3()
-      .crossVectors(worldNormal, up)
-      .normalize();
-    const bitangent = new THREE.Vector3()
-      .crossVectors(tangent, worldNormal)
-      .normalize();
-
-    const markOrientation = new THREE.Euler();
-
-    for (let i = 0; i < lineCount; i++) {
-      const r = sizeSelected * 0.25 * Math.sqrt(Math.random());
-      const theta = Math.random() * Math.PI * 2;
-      const markPos = position
-        .clone()
-        .addScaledVector(tangent, Math.cos(theta) * r)
-        .addScaledVector(bitangent, Math.sin(theta) * r);
-
-      markOrientation.copy(mouseHelper.rotation);
-      markOrientation.z = Math.random() * Math.PI * 2;
-
-      const material = decalMaterial.clone();
-      material.color.setHex(colorSelected);
-      material.map = acuteLineTexture;
-
-      const m = new THREE.Mesh(
-        new DecalGeometry(mesh, markPos, markOrientation, markSize),
-        material,
-      );
-      m.renderOrder = decals.length;
-      decals.push(m);
-      mesh.attach(m);
-      decalData.push({
-        tool: "acute",
-        position: markPos.toArray(),
-        orientation: [markOrientation.x, markOrientation.y, markOrientation.z],
-        size: markSize.toArray(),
-        color: colorSelected,
-      });
-    }
-  } else {
-    size.set(sizeSelected, sizeSelected, sizeSelected);
-    const material = decalMaterial.clone();
-    material.color.setHex(colorSelected);
-
-    const m = new THREE.Mesh(
-      new DecalGeometry(mesh, position, orientation, size),
-      material,
-    );
-    m.renderOrder = decals.length;
-    decals.push(m);
-    mesh.attach(m);
-    decalData.push({
-      tool: selectedTool,
-      position: position.toArray(),
-      orientation: [orientation.x, orientation.y, orientation.z],
-      size: size.toArray(),
-      color: colorSelected,
-    });
-  }
+  const m = new THREE.Mesh(
+    new DecalGeometry(mesh, position, orientation, size),
+    material,
+  );
+  m.renderOrder = decals.length;
+  decals.push(m);
+  mesh.attach(m);
+  decalData.push({
+    tool: selectedTool,
+    position: position.toArray(),
+    orientation: [orientation.x, orientation.y, orientation.z],
+    size: size.toArray(),
+    color: colorSelected,
+  });
 }
 function createDecalTexture() {
   const canvas = document.createElement("canvas");
@@ -551,28 +470,47 @@ function createDecalTexture() {
 
   return new THREE.CanvasTexture(canvas);
 }
-function createAcuteLineTexture() {
+
+function svgToTexture(svgString) {
   const canvas = document.createElement("canvas");
-  canvas.width = 64;
-  canvas.height = 16;
+  canvas.width = 512;
+  canvas.height = 512;
   const ctx = canvas.getContext("2d");
+  const tex = new THREE.CanvasTexture(canvas);
 
-  ctx.clearRect(0, 0, 64, 16);
-  ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+  const blob = new Blob([svgString], { type: "image/svg+xml" });
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0, 512, 512);
+    URL.revokeObjectURL(url);
+    tex.needsUpdate = true;
+  };
+  img.src = url;
 
-  // Needle shape: pointed at both ends, wider in the middle
-  const cx = 32,
-    cy = 8,
-    halfLen = 29,
-    halfW = 2.5;
-  ctx.beginPath();
-  ctx.moveTo(cx - halfLen, cy);
-  ctx.quadraticCurveTo(cx - halfLen * 0.3, cy - halfW, cx, cy - halfW);
-  ctx.quadraticCurveTo(cx + halfLen * 0.3, cy - halfW, cx + halfLen, cy);
-  ctx.quadraticCurveTo(cx + halfLen * 0.3, cy + halfW, cx, cy + halfW);
-  ctx.quadraticCurveTo(cx - halfLen * 0.3, cy + halfW, cx - halfLen, cy);
-  ctx.closePath();
-  ctx.fill();
+  return tex;
+}
 
-  return new THREE.CanvasTexture(canvas);
+function createPulseTexture() {
+  return svgToTexture(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <circle cx="256" cy="256" r="80"  fill="none" stroke="white" stroke-width="16" stroke-opacity="1"/>
+    <circle cx="256" cy="256" r="160" fill="none" stroke="white" stroke-width="16" stroke-opacity="0.75"/>
+    <circle cx="256" cy="256" r="240" fill="none" stroke="white" stroke-width="16" stroke-opacity="0.5"/>
+  </svg>`);
+}
+
+function createAcuteLineTexture() {
+  return svgToTexture(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <defs><path id="petal" d="M48,0 Q89.6,28 224,0 Q89.6,-28 48,0 Z"/></defs>
+    <g transform="translate(256,256)" fill="rgba(255,255,255,0.9)">
+      <use href="#petal"/>
+      <use href="#petal" transform="rotate(45)"/>
+      <use href="#petal" transform="rotate(90)"/>
+      <use href="#petal" transform="rotate(135)"/>
+      <use href="#petal" transform="rotate(180)"/>
+      <use href="#petal" transform="rotate(225)"/>
+      <use href="#petal" transform="rotate(270)"/>
+      <use href="#petal" transform="rotate(315)"/>
+    </g>
+  </svg>`);
 }

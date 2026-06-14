@@ -31,15 +31,18 @@ function drawPulse(ctx, color) {
 
 function drawAcute(ctx, color) {
   const [r, g, b] = [(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff];
-  const count = 7;
   ctx.fillStyle = `rgba(${r},${g},${b},0.9)`;
+
+  const count = 8, len = 17, halfW = 2.5;
   for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2;
     ctx.save();
     ctx.translate(20, 20);
-    ctx.rotate(angle);
+    ctx.rotate((i / count) * Math.PI * 2);
     ctx.beginPath();
-    ctx.ellipse(9, 0, 7, 1.5, 0, 0, Math.PI * 2);
+    ctx.moveTo(4, 0);
+    ctx.quadraticCurveTo(len * 0.4, halfW, len, 0);
+    ctx.quadraticCurveTo(len * 0.4, -halfW, 4, 0);
+    ctx.closePath();
     ctx.fill();
     ctx.restore();
   }
