@@ -31,23 +31,13 @@ let headMaxDim = 20; // updated after model load, used to scale decals
 
 //* Drawing
 const textureLoader = new THREE.TextureLoader();
-// const decalDiffuse = textureLoader.load("textures/decal/decal-diffuse.png");
-const decalDiffuse = textureLoader.load("textures/point/decal-diffuse.png");
-decalDiffuse.colorSpace = THREE.SRGBColorSpace;
-const decalNormal = textureLoader.load("textures/decal/decal-normal.jpg");
-const decalMaterial = new THREE.MeshPhongMaterial({
-  specular: 0x444444,
-  map: decalDiffuse,
-  // normalMap: decalNormal,
-  normalScale: new THREE.Vector2(1, 1),
-  shininess: 30,
+const decalMaterial = new THREE.MeshBasicMaterial({
+  map: createDecalTexture(),
   transparent: true,
   depthTest: true,
   depthWrite: false,
-  opacity: 0.5,
   polygonOffset: true,
   polygonOffsetFactor: -4,
-  wireframe: false,
 });
 const decals = [];
 let mouseHelper;
@@ -341,6 +331,7 @@ function samplePointsOnMesh(geo, totalCount) {
 
   return positions;
 }
+
 function createDotTexture() {
   const canvas = document.createElement("canvas");
   canvas.width = 64;
@@ -431,4 +422,20 @@ function shoot() {
   decals.push(m);
 
   mesh.attach(m);
+}
+function createDecalTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 128;
+  canvas.height = 128;
+  const ctx = canvas.getContext("2d");
+
+  const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
+  gradient.addColorStop(0.4, "rgba(255, 255, 255, 0.8)");
+  gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 128, 128);
+
+  return new THREE.CanvasTexture(canvas);
 }
