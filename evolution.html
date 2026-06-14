@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Pain(t)</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <link type="text/css" rel="stylesheet" href="src/main.css" />
+  </head>
+  <body>
+    <div class="container-info">
+      <div class="line">
+        <button id="previous-btn" onclick="history.back()">
+          <img src="/previous.svg" alt="Previous" />
+        </button>
+        <h1 id="title">Pain(t)</h1>
+        <button id="validate-btn">
+          <img src="/save.png" alt="Save" />
+        </button>
+      </div>
+
+      <h2>Evolution over time</h2>
+      <fieldset class="radio-button-picker">
+        <label class="radio-button">
+          <input type="radio" name="evolution" value="linear" checked />
+          <img src="/linear.png" alt="Linear" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" name="evolution" value="exp" />
+          <img src="/exp.png" alt="Exponential" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" name="evolution" value="power" />
+          <img src="/power.png" alt="Power" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" name="evolution" value="peak" />
+          <img src="/pic.png" alt="Peak" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" name="evolution" value="peak-incr" />
+          <img src="/pic-incr.png" alt="Peak increase" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" name="evolution" value="var" />
+          <img src="/var.png" alt="Variable" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" name="evolution" value="var-incr" />
+          <img src="/var-incr.png" alt="Variable increase" />
+        </label>
+      </fieldset>
+
+      <p>Or draw your curve</p>
+    </div>
+
+    <canvas id="evolution-canvas"></canvas>
+
+    <div class="time-section">
+      <div class="time-labels">
+        <span>Start</span>
+        <span>End</span>
+      </div>
+      <div class="time-cols">
+        <div class="time-col">
+          <button class="time-btn selected" data-side="start" data-value="now">
+            Now
+          </button>
+          <button class="time-btn" data-side="start" data-value="1h">
+            1 hour ago
+          </button>
+          <button
+            class="time-btn time-btn-icon"
+            data-side="start"
+            data-value="custom"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </button>
+        </div>
+        <div class="time-col time-col-end">
+          <button class="time-btn selected" data-side="end" data-value="still">
+            Still
+          </button>
+          <button class="time-btn" data-side="end" data-value="now">Now</button>
+          <button class="time-btn" data-side="end" data-value="1h">
+            1 hour ago
+          </button>
+          <button
+            class="time-btn time-btn-icon"
+            data-side="end"
+            data-value="custom"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <input type="datetime-local" id="time-picker" style="display: none" />
+    <script type="module" src="src/evolution.js"></script>
+  </body>
+</html>
