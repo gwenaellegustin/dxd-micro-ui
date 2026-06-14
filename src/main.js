@@ -120,7 +120,7 @@ function init() {
 
   //*Draw on head
   line = new THREE.Line(geometry, new THREE.LineBasicMaterial());
-  scene.add(line);
+  // scene.add(line);
   raycaster = new THREE.Raycaster();
   mouseHelper = new THREE.Mesh(
     new THREE.BoxGeometry(1, 1, 10),
@@ -263,17 +263,19 @@ function loadGlbCloudPoint(glbPath) {
     );
 
     pointsGeo.computeBoundingBox();
+    pointsGeo.computeBoundingSphere();
     const bboxSize = new THREE.Vector3();
     pointsGeo.boundingBox.getSize(bboxSize);
     const center = new THREE.Vector3();
     pointsGeo.boundingBox.getCenter(center);
 
     headMaxDim = Math.max(bboxSize.x, bboxSize.y, bboxSize.z);
+    const headRadius = pointsGeo.boundingSphere.radius;
 
     // Fit camera & controls to model
     controls.target.copy(center);
     camera.position.set(center.x, center.y, center.z + headMaxDim * 1.8);
-    controls.minDistance = headMaxDim * 0.3;
+    controls.minDistance = headRadius + 0.5;
     controls.maxDistance = headMaxDim * 5;
     controls.update();
 
