@@ -52,10 +52,10 @@ const size = new THREE.Vector3(10, 10, 10);
 
 let colorSelected = 0xffd000;
 let sizeSelected = 0.1;
-const SIZE_MIN = 0.3;
+const SIZE_MIN = 0.5;
 const SIZE_MAX = 1.8;
-const SIZE_GROW_DURATION = 5000;
-const PREVIEW_DELAY = 70;
+const SIZE_GROW_DURATION = 4000;
+const PREVIEW_DELAY = 100;
 let isPressing = false;
 let pressStart = 0;
 let previewMesh;
