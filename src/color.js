@@ -55,3 +55,17 @@ function hexToRgb(hex) {
 function lerp(a, b, alpha) {
   return a + (b - a) * alpha;
 }
+
+export function getTFromColor(hexInt) {
+  const r0 = (hexInt >> 16) & 255;
+  const g0 = (hexInt >> 8) & 255;
+  const b0 = hexInt & 255;
+  let bestT = 0, bestDist = Infinity;
+  for (let i = 0; i <= 200; i++) {
+    const t = i / 200;
+    const { r, g, b } = getGradientColor(t);
+    const dist = (r - r0) ** 2 + (g - g0) ** 2 + (b - b0) ** 2;
+    if (dist < bestDist) { bestDist = dist; bestT = t; }
+  }
+  return bestT;
+}

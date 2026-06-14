@@ -41,7 +41,10 @@ const decalMaterial = new THREE.MeshBasicMaterial({
 });
 const decals = [];
 const decalData = [];
-const sessionStart = Date.now();
+const pendingSession = JSON.parse(
+  sessionStorage.getItem("pending-session") || "null",
+);
+const sessionStart = pendingSession?.timestamp ?? Date.now();
 let mouseHelper;
 const position = new THREE.Vector3();
 const orientation = new THREE.Euler();
@@ -139,6 +142,15 @@ function init() {
   mouseHelper.visible = false;
   scene.add(mouseHelper);
 
+  const closeButton = document.getElementById("close-btn");
+  closeButton.addEventListener("click", (event) => {
+    sessionStorage.setItem(
+      "pending-session",
+      JSON.stringify({ timestamp: sessionStart, decals: [...decalData] }),
+    );
+    sessionStorage.removeItem("pending-session");
+  });
+
   //* Color picker
   const colorBar = document.getElementById("color-bar");
   const painLabel = document.getElementById("pain-label");
@@ -187,10 +199,11 @@ function init() {
 
   const validateButton = document.getElementById("validate-btn");
   validateButton.addEventListener("click", () => {
-    const sessions = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
-    sessions.push({ timestamp: sessionStart, decals: [...decalData] });
-    localStorage.setItem("paint-sessions", JSON.stringify(sessions));
-    location.href = "index.html";
+    sessionStorage.setItem(
+      "pending-session",
+      JSON.stringify({ ...(pendingSession ?? {}), timestamp: sessionStart, decals: [...decalData] }),
+    );
+    location.href = "evolution.html";
   });
 
   //* Press-size preview ring
@@ -366,6 +379,31 @@ function loadGlbCloudPoint(glbPath) {
     });
 
     scene.add(new THREE.Points(pointsGeo, pointsMaterial));
+
+    // Restore decals when returning from evolution page
+    if (pendingSession?.decals?.length) {
+      const texMap = {
+        point: createDecalTexture(),
+        pulse: createPulseTexture(),
+        acute: createAcuteLineTexture(),
+      };
+      for (const d of pendingSession.decals) {
+        const pos = new THREE.Vector3(...d.position);
+        const ori = new THREE.Euler(...d.orientation);
+        const sz = new THREE.Vector3(...d.size);
+        const mat = decalMaterial.clone();
+        mat.color.setHex(d.color);
+        if (texMap[d.tool]) {
+          mat.map = texMap[d.tool];
+          mat.needsUpdate = true;
+        }
+        const m = new THREE.Mesh(new DecalGeometry(mesh, pos, ori, sz), mat);
+        m.renderOrder = decals.length;
+        decals.push(m);
+        mesh.attach(m);
+        decalData.push(d);
+      }
+    }
   });
 }
 function samplePointsOnMesh(geo, totalCount) {

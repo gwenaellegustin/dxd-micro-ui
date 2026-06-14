@@ -1,0 +1,56 @@
+/* Evolution page */
+#evolution-canvas {
+  flex: 1;
+  width: 100%;
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.time-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-small);
+  margin: var(--space);
+}
+
+.time-labels {
+  display: flex;
+  justify-content: space-between;
+}
+
+.time-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.time-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-small);
+  align-items: flex-start;
+}
+
+.time-col-end {
+  align-items: flex-end;
+}
+
+.radio-btn-custom {
+  position: relative;
+}
+
+.radio-btn-custom .time-picker {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+.radio-btn-custom:has(.time-picker-display:not(:empty)) {
+  padding-right: var(--space-small);
+}
+
+.radio-btn-custom:has(input[type="radio"]:checked) .time-picker-display {
+  color: var(--background);
+}
