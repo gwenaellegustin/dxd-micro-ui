@@ -78,11 +78,19 @@ button:active img {
 /* Threejs container, cannot be renamed */
 #container {
   flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 #title {
   text-align: center;
   width: 100%;
+}
+
+#pain-label {
+  width: 100%;
+  text-align: center;
+  margin: 0;
 }
 
 #color-bar {
@@ -210,4 +218,3 @@ button:active img {
   gap: var(--space-small);
   align-items: center;
 }
-
