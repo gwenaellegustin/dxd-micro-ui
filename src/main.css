@@ -122,54 +122,6 @@ button:active img {
   border-radius: var(--space-gargantua);
 }
 
-#size-bar {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  background: transparent;
-  margin: 0;
-  --size-round-left: var(--space-small);
-  --size-round-right: var(--space-bigger);
-  --size-thumb-size: calc((var(--size-round-right) - var(--size-round-left)));
-}
-
-#size-bar::-webkit-slider-runnable-track {
-  height: var(--space-bigger);
-  background-image:
-    linear-gradient(var(--helper), var(--helper)),
-    radial-gradient(
-      circle at center center,
-      var(--helper) calc(var(--size-round-left) / 2),
-      transparent 0
-    ),
-    radial-gradient(
-      circle at center center,
-      var(--helper) calc(var(--size-round-right) / 2),
-      transparent 0
-    );
-  background-repeat: no-repeat;
-  background-size:
-    100% 1px,
-    var(--size-round-left) var(--size-round-left),
-    var(--size-round-right) var(--size-round-right);
-
-  background-position:
-    center center,
-    left center,
-    right center;
-}
-
-#size-bar::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: var(--size-thumb-size);
-  height: var(--size-thumb-size);
-  margin-top: calc((var(--size-round-right) - var(--size-thumb-size)) / 2);
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 100%;
-  cursor: pointer;
-}
-
 /* Radiobutton */
 
 .radio-button-picker {
@@ -259,39 +211,3 @@ button:active img {
   align-items: center;
 }
 
-/* @TODO check with firefox */
-/* #color-bar::-moz-range-track {
-  height: 100%;
-  background: linear-gradient(
-    to right,
-    #359800 0%,
-    #7c9800 2%,
-    #beb80d 10%,
-    #ffbb0c 35%,
-    #cc620e 70%,
-    #e13e0d 95%,
-    #ff0000 100%
-  );
-  border-radius: var(--space-gargantua);
-}
-#color-bar::-moz-range-thumb {
-  width: var(--space-big);
-  height: var(--space-big);
-  border: 1px solid var(--slider-color);
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 100%;
-  cursor: pointer;
-}
-#size-bar::-moz-range-track {
-  height: 6px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 999px;
-}
-#size-bar::-moz-range-thumb {
-  width: var(--size-thumb-size);
-  height: var(--size-thumb-size);
-  border: 2px solid white;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 100%;
-  cursor: pointer;
-}*/

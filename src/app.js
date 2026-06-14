@@ -48,7 +48,14 @@ const orientation = new THREE.Euler();
 const size = new THREE.Vector3(10, 10, 10);
 
 let colorSelected = 0xffd000;
-let sizeSelected = 0.5; // Define in CSS ?
+let sizeSelected = 0.1;
+const SIZE_MIN = 0.1;
+const SIZE_MAX = 1.8;
+const SIZE_GROW_DURATION = 4000;
+const PREVIEW_DELAY = 100;
+let isPressing = false;
+let pressStart = 0;
+let previewMesh;
 
 init();
 
@@ -93,15 +100,24 @@ function init() {
   let moved = false;
   controls.addEventListener("change", function () {
     moved = true;
+    isPressing = false;
+    if (previewMesh) previewMesh.visible = false;
+    line.visible = false;
   });
-  window.addEventListener("pointerdown", function () {
+  window.addEventListener("pointerdown", function (event) {
     moved = false;
+    isPressing = true;
+    pressStart = Date.now();
+    sizeSelected = SIZE_MIN;
+    checkIntersection(event.clientX, event.clientY);
   });
   window.addEventListener("pointerup", function (event) {
-    if (moved === false) {
-      checkIntersection(event.clientX, event.clientY);
-      if (intersection.intersects) shoot();
+    if (moved === false && isPressing && intersection.intersects) {
+      shoot();
     }
+    isPressing = false;
+    if (previewMesh) previewMesh.visible = false;
+    line.visible = false;
   });
   window.addEventListener("pointermove", onPointerMove);
 
@@ -112,7 +128,8 @@ function init() {
 
   //*Draw on head
   line = new THREE.Line(geometry, new THREE.LineBasicMaterial());
-  // scene.add(line);
+  line.visible = false;
+  scene.add(line);
   raycaster = new THREE.Raycaster();
   mouseHelper = new THREE.Mesh(
     new THREE.BoxGeometry(1, 1, 10),
@@ -157,17 +174,20 @@ function init() {
     location.href = "index.html";
   });
 
-  //* Size picker
-  const sizeBar = document.getElementById("size-bar");
-  const updateSizeThumb = (event) => {
-    const target = event.target || event;
-    const percent = Number(target.value) / Number(target.max);
-    const sizeValue = 10 + percent * (40 - 10);
-    target.style.setProperty("--size-thumb-size", `${sizeValue}px`);
-    sizeSelected = 0.4 + percent * 1;
-  };
-  sizeBar.addEventListener("input", updateSizeThumb);
-  updateSizeThumb(sizeBar);
+  //* Press-size preview ring
+  previewMesh = new THREE.Mesh(
+    new THREE.RingGeometry(0.94, 1.0, 48),
+    new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.8,
+      depthTest: false,
+    }),
+  );
+  previewMesh.renderOrder = 999;
+  previewMesh.visible = false;
+  scene.add(previewMesh);
 
   //* Tool picker
   const toolTextures = {
@@ -198,6 +218,24 @@ function onWindowResize() {
 }
 
 function animate() {
+  if (isPressing && previewMesh) {
+    const elapsed = Date.now() - pressStart;
+    const sizeMax = Math.min(SIZE_MAX, headMaxDim / 2);
+    sizeSelected =
+      SIZE_MIN +
+      Math.min(Math.max(elapsed - PREVIEW_DELAY, 0) / SIZE_GROW_DURATION, 1) *
+        (sizeMax - SIZE_MIN);
+
+    if (intersection.intersects && elapsed > PREVIEW_DELAY) {
+      previewMesh.visible = true;
+      line.visible = true;
+      previewMesh.position.copy(intersection.point);
+      previewMesh.rotation.copy(mouseHelper.rotation);
+      previewMesh.scale.setScalar(sizeSelected / 2);
+    }
+  } else {
+    line.visible = false;
+  }
   renderer.render(scene, camera);
   // stats.update();
 }
