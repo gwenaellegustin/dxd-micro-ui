@@ -31,6 +31,7 @@ let headMaxDim = 20; // updated after model load, used to scale decals
 
 //* Drawing
 const textureLoader = new THREE.TextureLoader();
+const acuteLineTexture = createAcuteLineTexture();
 const decalMaterial = new THREE.MeshBasicMaterial({
   map: createDecalTexture(),
   transparent: true,
@@ -151,7 +152,6 @@ function init() {
   const updateSizeThumb = (event) => {
     const target = event.target || event;
     const percent = Number(target.value) / Number(target.max);
-    console.log(percent);
     const sizeValue = 10 + percent * (40 - 10);
     target.style.setProperty("--size-thumb-size", `${sizeValue}px`);
     sizeSelected = 0.4 + percent * 1;
@@ -442,24 +442,73 @@ function checkIntersection(x, y) {
 function shoot() {
   position.copy(intersection.point);
   orientation.copy(mouseHelper.rotation);
-
   orientation.z = Math.random() * 2 * Math.PI;
 
-  size.set(sizeSelected, sizeSelected, sizeSelected);
+  const selectedTool = document.querySelector(
+    "input[name='tool']:checked",
+  )?.value;
 
-  const material = decalMaterial.clone();
-  // material.color.setHex(Math.random() * 0xffffff);
-  material.color.setHex(colorSelected);
+  if (selectedTool === "acute") {
+    const t = (sizeSelected - 0.4) / 1.0;
+    const lineCount = Math.round(10 + t * 40);
 
-  const m = new THREE.Mesh(
-    new DecalGeometry(mesh, position, orientation, size),
-    material,
-  );
-  m.renderOrder = decals.length; // give decals a fixed render order
+    // Fixed physical size per line mark — never scales with sizeSelected
+    const markSize = new THREE.Vector3(0.15, 0.03, 0.15);
 
-  decals.push(m);
+    // Tangent frame to scatter marks within the clicked area
+    const worldNormal = intersection.normal
+      .clone()
+      .applyNormalMatrix(new THREE.Matrix3().getNormalMatrix(mesh.matrixWorld))
+      .normalize();
+    const up =
+      Math.abs(worldNormal.y) < 0.9
+        ? new THREE.Vector3(0, 1, 0)
+        : new THREE.Vector3(1, 0, 0);
+    const tangent = new THREE.Vector3()
+      .crossVectors(worldNormal, up)
+      .normalize();
+    const bitangent = new THREE.Vector3()
+      .crossVectors(tangent, worldNormal)
+      .normalize();
 
-  mesh.attach(m);
+    const markOrientation = new THREE.Euler();
+
+    for (let i = 0; i < lineCount; i++) {
+      const r = sizeSelected * 0.25 * Math.sqrt(Math.random());
+      const theta = Math.random() * Math.PI * 2;
+      const markPos = position
+        .clone()
+        .addScaledVector(tangent, Math.cos(theta) * r)
+        .addScaledVector(bitangent, Math.sin(theta) * r);
+
+      markOrientation.copy(mouseHelper.rotation);
+      markOrientation.z = Math.random() * Math.PI * 2;
+
+      const material = decalMaterial.clone();
+      material.color.setHex(colorSelected);
+      material.map = acuteLineTexture;
+
+      const m = new THREE.Mesh(
+        new DecalGeometry(mesh, markPos, markOrientation, markSize),
+        material,
+      );
+      m.renderOrder = decals.length;
+      decals.push(m);
+      mesh.attach(m);
+    }
+  } else {
+    size.set(sizeSelected, sizeSelected, sizeSelected);
+    const material = decalMaterial.clone();
+    material.color.setHex(colorSelected);
+
+    const m = new THREE.Mesh(
+      new DecalGeometry(mesh, position, orientation, size),
+      material,
+    );
+    m.renderOrder = decals.length;
+    decals.push(m);
+    mesh.attach(m);
+  }
 }
 function createDecalTexture() {
   const canvas = document.createElement("canvas");
@@ -474,6 +523,28 @@ function createDecalTexture() {
 
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, 128, 128);
+
+  return new THREE.CanvasTexture(canvas);
+}
+function createAcuteLineTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 64;
+  canvas.height = 16;
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, 64, 16);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+
+  // Needle shape: pointed at both ends, wider in the middle
+  const cx = 32, cy = 8, halfLen = 29, halfW = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(cx - halfLen, cy);
+  ctx.quadraticCurveTo(cx - halfLen * 0.3, cy - halfW, cx, cy - halfW);
+  ctx.quadraticCurveTo(cx + halfLen * 0.3, cy - halfW, cx + halfLen, cy);
+  ctx.quadraticCurveTo(cx + halfLen * 0.3, cy + halfW, cx, cy + halfW);
+  ctx.quadraticCurveTo(cx - halfLen * 0.3, cy + halfW, cx - halfLen, cy);
+  ctx.closePath();
+  ctx.fill();
 
   return new THREE.CanvasTexture(canvas);
 }
