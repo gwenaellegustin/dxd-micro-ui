@@ -41,7 +41,9 @@ const decalMaterial = new THREE.MeshBasicMaterial({
 });
 const decals = [];
 const decalData = [];
-const pendingSession = JSON.parse(sessionStorage.getItem("pending-session") || "null");
+const pendingSession = JSON.parse(
+  sessionStorage.getItem("pending-session") || "null",
+);
 const sessionStart = pendingSession?.timestamp ?? Date.now();
 let mouseHelper;
 const position = new THREE.Vector3();
@@ -138,6 +140,15 @@ function init() {
   );
   mouseHelper.visible = false;
   scene.add(mouseHelper);
+
+  const closeButton = document.getElementById("close-btn");
+  closeButton.addEventListener("click", (event) => {
+    sessionStorage.setItem(
+      "pending-session",
+      JSON.stringify({ timestamp: sessionStart, decals: [...decalData] }),
+    );
+    sessionStorage.removeItem("pending-session");
+  });
 
   //* Color picker
   const colorBar = document.getElementById("color-bar");
