@@ -152,11 +152,27 @@ function init() {
 
   //* Color picker
   const colorBar = document.getElementById("color-bar");
+  const painLabel = document.getElementById("pain-label");
+  const painLevels = [
+    [10, "Able to ignore it"],
+    [20, "Mildly distracted"],
+    [30, "Distracted"],
+    [40, "Making mistakes"],
+    [50, "Can't work"],
+    [60, "Laying down resting"],
+    [70, "Crying and/or moaning"],
+    [80, "Can't move"],
+    [90, "Needs ambulance"],
+    [100, "Unconscious or needs sedation"],
+  ];
   const updateSliderColor = (event) => {
     const target = event.target || event;
     const hex = colorjs.getColorFromRangeValue(target.value, target.max);
     target.style.setProperty("--slider-color", hex);
     colorSelected = parseInt(hex.replace("#", ""), 16);
+    const pct = (Number(target.value) / Number(target.max)) * 100;
+    painLabel.textContent = painLevels.find(([threshold]) => pct <= threshold)?.[1] ?? painLevels.at(-1)[1];
+    painLabel.style.color = hex;
   };
   colorBar.addEventListener("input", updateSliderColor);
   updateSliderColor(colorBar);
