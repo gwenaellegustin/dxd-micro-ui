@@ -87,9 +87,23 @@ button:active img {
   width: 100%;
 }
 
+.pain-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-small);
+  align-items: baseline;
+}
+
+#pain-reference {
+  flex: 1;
+  text-align: right;
+  color: var(--on-background);
+  white-space: nowrap;
+  margin: 0;
+}
+
 #pain-label {
-  width: 100%;
-  text-align: center;
+  flex: 1;
   margin: 0;
 }
 
