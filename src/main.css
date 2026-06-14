@@ -214,6 +214,25 @@ button:active img {
   filter: invert();
 }
 
+/* Welcome screen */
+#new-entry-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: var(--space-biggest);
+  font-size: var(--space-big);
+  color: var(--on-background);
+  background: transparent;
+  border: var(--border-width) solid var(--on-background);
+  border-radius: var(--space-gargantua);
+  text-decoration: none;
+  transition: 0.3s ease-in-out;
+}
+#new-entry-btn:active {
+  background-color: var(--on-background);
+  color: var(--background);
+}
+
 /* @TODO check with firefox */
 /* #color-bar::-moz-range-track {
   height: 100%;

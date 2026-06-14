@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Pain(t)</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <link type="text/css" rel="stylesheet" href="src/main.css" />
+  </head>
+  <body>
+    <div class="container-info">
+      <div class="line">
+        <button id="close-btn" onclick="location.href = 'index.html'">
+          <img src="/close.png" alt="Close" />
+        </button>
+        <h1 id="title">Pain(t)</h1>
+        <button id="validate-btn"><img src="/save.png" alt="Save" /></button>
+      </div>
+      <div class="line">
+        <div>
+          <button id="cancel-all-btn">
+            <img src="/cancel_all.png" alt="Cancel all" />
+          </button>
+          <button id="cancel-btn">
+            <img src="/cancel.png" alt="Cancel" />
+          </button>
+        </div>
+        <div>
+          <fieldset class="radio-button-picker">
+            <label class="radio-button">
+              <input
+                type="radio"
+                id="point"
+                name="tool"
+                value="point"
+                checked
+              />
+              <img src="/radiant.png" alt="Point" />
+            </label>
+            <label class="radio-button">
+              <input type="radio" id="pulse" name="tool" value="pulse" />
+              <img src="/pulse.png" alt="Pulse" />
+            </label>
+            <label class="radio-button">
+              <input type="radio" id="acute" name="tool" value="acute" />
+              <img src="/acute.png" alt="Acute" />
+            </label>
+          </fieldset>
+        </div>
+        <div>
+          <button id="info">
+            <img src="/question_mark.png" alt="Cancel all" />
+          </button>
+        </div>
+      </div>
+      <input
+        class="line"
+        type="range"
+        id="color-bar"
+        name="color"
+        min="0"
+        max="1000"
+      />
+      <input
+        class="line"
+        type="range"
+        id="size-bar"
+        name="color"
+        min="0"
+        max="1000"
+      />
+    </div>
+
+    <div id="container"></div>
+    <div class="container-info">
+      <h2>Evolution over time</h2>
+      <fieldset class="radio-button-picker">
+        <label class="radio-button">
+          <input
+            type="radio"
+            id="linear"
+            name="evolution"
+            value="linear"
+            checked
+          />
+          <img src="/linear.png" alt="Point" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" id="exp" name="evolution" value="exp" />
+          <img src="/exp.png" alt="Pulse" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" id="power" name="evolution" value="power" />
+          <img src="/power.png" alt="Acute" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" id="pic" name="evolution" value="pic" />
+          <img src="/pic.png" alt="Acute" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" id="pic-incr" name="evolution" value="pic-incr" />
+          <img src="/pic-incr.png" alt="Acute" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" id="var" name="evolution" value="var" />
+          <img src="/var.png" alt="Acute" />
+        </label>
+        <label class="radio-button">
+          <input type="radio" id="var-incr" name="evolution" value="var-incr" />
+          <img src="/var-incr.png" alt="Acute" />
+        </label>
+      </fieldset>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
