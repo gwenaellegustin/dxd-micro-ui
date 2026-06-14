@@ -3,6 +3,16 @@
   --on-background: white;
   --helper: #404040;
   --border-width: 2px;
+
+  /* --space-smallest: 4px;
+  --space-small: 8px;
+  --space: 16px;
+  --space-big: 24px;
+  --space-bigger: 32px;
+  --space-biggest: 64px;
+  --space-giant: 72px;
+  --space-gargantua: 128px; */
+
   --space: 20px; /*16px;*/
   --space-smallest: calc(var(--space)/4);
   --space-small: calc(var(--space)/2);
@@ -129,7 +139,7 @@ button:active img {
     linear-gradient(var(--helper), var(--helper)),
     radial-gradient(
       circle at center center,
-      var(--helper) var(--size-round-left),
+      var(--helper) calc(var(--size-round-left) / 2),
       transparent 0
     ),
     radial-gradient(
@@ -140,7 +150,7 @@ button:active img {
   background-repeat: no-repeat;
   background-size:
     100% 1px,
-    calc(var(--size-round-left) * 2) calc(var(--size-round-left) * 2),
+    var(--size-round-left) var(--size-round-left),
     var(--size-round-right) var(--size-round-right);
 
   background-position:
