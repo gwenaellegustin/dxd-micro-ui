@@ -29,16 +29,64 @@
 }
 
 .session-card {
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: var(--space-small);
   border: var(--border-width) solid var(--on-background);
   border-radius: var(--space-bigger);
-  padding: var(--space) var(--space-big);
+  padding: var(--space-small) var(--space) var(--space) var(--space-big);
 }
 
 .session-tools {
   display: flex;
   gap: var(--space-small);
   align-items: center;
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.session-delete-btn {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  opacity: 0.5;
+}
+
+.session-delete-btn img {
+  width: 30px;
+  height: 30px;
+}
+
+.session-delete-btn:active {
+  opacity: 1;
+  background-color: transparent;
+  color: var(--on-background);
+}
+
+.session-times {
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+
+.session-curve-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--space-bigger);
+  height: var(--space-bigger);
+  background: var(--on-background);
+  border-radius: var(--space-gargantua);
+  border: var(--border-width) solid var(--background);
+  overflow: hidden;
+}
+
+.session-curve-icon img {
+  width: calc(var(--space-bigger) - var(--border-width) * 2);
+  height: calc(var(--space-bigger) - var(--border-width) * 2);
+  filter: invert();
 }

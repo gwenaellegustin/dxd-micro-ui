@@ -33,7 +33,9 @@ function drawAcute(ctx, color) {
   const [r, g, b] = [(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff];
   ctx.fillStyle = `rgba(${r},${g},${b},0.9)`;
 
-  const count = 8, len = 17, halfW = 2.5;
+  const count = 8,
+    len = 17,
+    halfW = 2.5;
   for (let i = 0; i < count; i++) {
     ctx.save();
     ctx.translate(20, 20);
@@ -60,13 +62,63 @@ sessions
     const card = document.createElement("div");
     card.className = "session-card";
 
+    // Header: date + delete button
+    const headerEl = document.createElement("div");
+    headerEl.className = "session-header";
+
     const dateEl = document.createElement("h2");
     dateEl.className = "session-date";
     dateEl.textContent = formatDate(session.timestamp);
-    card.appendChild(dateEl);
+    headerEl.appendChild(dateEl);
 
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "session-delete-btn";
+    const deleteImg = document.createElement("img");
+    deleteImg.src = "/close.svg";
+    deleteBtn.appendChild(deleteImg);
+    deleteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (confirm("Delete this crisis?")) {
+        const all = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
+        localStorage.setItem(
+          "paint-sessions",
+          JSON.stringify(all.filter((s) => s.timestamp !== session.timestamp)),
+        );
+        card.remove();
+      }
+    });
+    headerEl.appendChild(deleteBtn);
+    card.appendChild(headerEl);
+
+    // Time range
+    if (session.evolution) {
+      const timesEl = document.createElement("p");
+      timesEl.className = "session-times";
+      const startStr = session.evolution.start?.custom ?? "";
+      const end = session.evolution.end;
+      if (end?.value === "still") {
+        timesEl.innerHTML = `${startStr} – <b>Still ongoing</b>`;
+      } else {
+        timesEl.textContent = `${startStr} – ${end?.custom ?? ""}`;
+      }
+      card.appendChild(timesEl);
+    }
+
+    // Tools + curve icon (left-aligned together)
     const toolsEl = document.createElement("div");
     toolsEl.className = "session-tools";
+
+    if (session.evolution) {
+      const curveBtn = document.createElement("div");
+      curveBtn.className = "session-curve-icon";
+      const curveImg = document.createElement("img");
+      curveImg.src =
+        session.evolution.type === "custom"
+          ? "/pencil.svg"
+          : `/${session.evolution.type}.svg`;
+      curveBtn.appendChild(curveImg);
+      toolsEl.appendChild(curveBtn);
+    }
 
     ["point", "pulse", "acute"].forEach((tool) => {
       const toolDecals = session.decals.filter((d) => d.tool === tool);
@@ -84,5 +136,18 @@ sessions
     });
 
     card.appendChild(toolsEl);
+
+    card.addEventListener("click", () => {
+      const data = structuredClone(session);
+      if (data.evolution?.start?.value === "now") {
+        const d = new Date(data.timestamp);
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mm = String(d.getMinutes()).padStart(2, "0");
+        data.evolution.start = { value: "custom", custom: `${hh}:${mm}` };
+      }
+      sessionStorage.setItem("pending-session", JSON.stringify(data));
+      location.href = "app.html";
+    });
+
     list.appendChild(card);
   });

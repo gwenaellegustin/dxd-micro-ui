@@ -201,7 +201,7 @@ function init() {
   validateButton.addEventListener("click", () => {
     sessionStorage.setItem(
       "pending-session",
-      JSON.stringify({ timestamp: sessionStart, decals: [...decalData] }),
+      JSON.stringify({ ...(pendingSession ?? {}), timestamp: sessionStart, decals: [...decalData] }),
     );
     location.href = "evolution.html";
   });

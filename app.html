@@ -14,7 +14,7 @@
     <div class="container-info">
       <div class="line">
         <button id="close-btn" onclick="location.href = 'index.html'">
-          <img src="/close.png" alt="Cancel" />
+          <img src="/close.svg" alt="Cancel" />
         </button>
         <h1 id="title">Pain(t)</h1>
         <button id="validate-btn"><img src="/next.svg" alt="Next" /></button>
@@ -71,51 +71,6 @@
     </div>
 
     <div id="container"></div>
-    <div class="container-info">
-      <h2>Evolution over time</h2>
-      <fieldset class="radio-button-picker">
-        <label class="radio-button">
-          <input
-            type="radio"
-            id="linear"
-            name="evolution"
-            value="linear"
-            checked
-          />
-          <img src="/linear.svg" alt="Point" />
-        </label>
-        <label class="radio-button">
-          <input type="radio" id="exp" name="evolution" value="exp" />
-          <img src="/exp.svg" alt="Exponential" />
-        </label>
-        <label class="radio-button">
-          <input type="radio" id="power" name="evolution" value="power" />
-          <img src="/power.svg" alt="Power" />
-        </label>
-        <label class="radio-button">
-          <input type="radio" id="peak" name="evolution" value="peak" />
-          <img src="/peak.svg" alt="Peak" />
-        </label>
-        <label class="radio-button">
-          <input
-            type="radio"
-            id="peak increase"
-            name="evolution"
-            value="peak-incr"
-          />
-          <img src="/peak-incr.svg" alt="Peak increase" />
-        </label>
-        <label class="radio-button">
-          <input type="radio" id="var" name="evolution" value="var" />
-          <img src="/var.svg" alt="Variable" />
-        </label>
-        <label class="radio-button">
-          <input type="radio" id="var-incr" name="evolution" value="var-incr" />
-          <img src="/var-incr.svg" alt="Variable increase" />
-        </label>
-      </fieldset>
-    </div>
-
     <script type="module" src="src/app.js"></script>
   </body>
 </html>

@@ -10,6 +10,7 @@ let startValue = "now";
 let endValue = "still";
 let startCustomTime = null;
 let endCustomTime = null;
+let _pendingEvolutionRestored = false;
 
 // Y position (0=top=max pain, 1=bottom=no pain) for each preset as a function of t (0..1)
 const _session = JSON.parse(
@@ -75,6 +76,18 @@ const presetFunctions = {
 function resizeCanvas() {
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
+  const saved = _session?.evolution;
+  if (
+    !_pendingEvolutionRestored &&
+    saved?.type === "custom" &&
+    saved.curve?.length
+  ) {
+    drawnPoints = saved.curve.map((p) => ({
+      x: p.t * canvas.width,
+      y: p.y * canvas.height,
+    }));
+    _pendingEvolutionRestored = true;
+  }
   render();
 }
 
@@ -177,6 +190,9 @@ function canvasPoint(e) {
 canvas.addEventListener("pointerdown", (e) => {
   isDrawing = true;
   drawnPoints = [canvasPoint(e)];
+  document
+    .querySelectorAll("input[name='evolution']")
+    .forEach((r) => (r.checked = false));
   canvas.setPointerCapture(e.pointerId);
   e.preventDefault();
 });
@@ -268,19 +284,76 @@ document.getElementById("validate-btn").addEventListener("click", () => {
       t: p.x / canvas.width,
       y: p.y / canvas.height,
     }));
+    const now = new Date();
+    const toHHMM = (d) =>
+      `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+    const round15 = (d) => {
+      const rounded = new Date(d);
+      rounded.setMinutes(Math.round(d.getMinutes() / 15) * 15, 0, 0);
+      return rounded;
+    };
+    const oneHourAgo = round15(new Date(now - 60 * 60 * 1000));
+    const resolveTime = (value, customTime) => {
+      if (value === "now") return { value: "custom", custom: toHHMM(now) };
+      if (value === "1h") return { value: "custom", custom: toHHMM(oneHourAgo) };
+      return { value, custom: customTime };
+    };
     pending.evolution = {
       type: drawnPoints ? "custom" : selectedPreset,
       curve: normalized,
-      start: { value: startValue, custom: startCustomTime },
-      end: { value: endValue, custom: endCustomTime },
+      start: resolveTime(startValue, startCustomTime),
+      end: resolveTime(endValue, endCustomTime),
     };
     const sessions = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
-    sessions.push(pending);
+    const idx = sessions.findIndex((s) => s.timestamp === pending.timestamp);
+    if (idx !== -1) {
+      sessions[idx] = pending;
+    } else {
+      sessions.push(pending);
+    }
     localStorage.setItem("paint-sessions", JSON.stringify(sessions));
     sessionStorage.removeItem("pending-session");
   }
   location.href = "index.html";
 });
+
+// Restore evolution state when reopening a saved session
+const _savedEvolution = _session?.evolution;
+if (_savedEvolution) {
+  startValue = _savedEvolution.start.value;
+  startCustomTime = _savedEvolution.start.custom ?? null;
+  const startRadio = document.querySelector(
+    `input[name="time-start"][value="${startValue}"]`,
+  );
+  if (startRadio) startRadio.checked = true;
+  if (startValue === "custom" && startCustomTime) {
+    const p = document.querySelector(".time-picker[data-side='start']");
+    p.value = startCustomTime;
+    p.parentElement.querySelector(".time-picker-display").textContent =
+      startCustomTime;
+  }
+
+  endValue = _savedEvolution.end.value;
+  endCustomTime = _savedEvolution.end.custom ?? null;
+  const endRadio = document.querySelector(
+    `input[name="time-end"][value="${endValue}"]`,
+  );
+  if (endRadio) endRadio.checked = true;
+  if (endValue === "custom" && endCustomTime) {
+    const p = document.querySelector(".time-picker[data-side='end']");
+    p.value = endCustomTime;
+    p.parentElement.querySelector(".time-picker-display").textContent =
+      endCustomTime;
+  }
+
+  if (_savedEvolution.type !== "custom") {
+    selectedPreset = _savedEvolution.type;
+    const radio = document.querySelector(
+      `input[name="evolution"][value="${selectedPreset}"]`,
+    );
+    if (radio) radio.checked = true;
+  }
+}
 
 // Init
 const ro = new ResizeObserver(resizeCanvas);
