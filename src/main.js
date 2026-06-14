@@ -158,6 +158,21 @@ function init() {
   };
   sizeBar.addEventListener("input", updateSizeThumb);
   // updateSizeThumb(sizeBar)
+
+  //* Tool picker
+  const toolTextures = {
+    point: createDecalTexture(),
+    pulse: createPulseTexture(),
+  };
+  document.querySelectorAll("input[name='tool']").forEach((radio) => {
+    radio.addEventListener("change", () => {
+      const tex = toolTextures[radio.value];
+      if (tex) {
+        decalMaterial.map = tex;
+        decalMaterial.needsUpdate = true;
+      }
+    });
+  });
 }
 
 //////////////////////////* Move
@@ -332,6 +347,28 @@ function samplePointsOnMesh(geo, totalCount) {
   return positions;
 }
 
+function createPulseTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 128;
+  canvas.height = 128;
+  const ctx = canvas.getContext("2d");
+
+  const cx = 64, cy = 64;
+  const radii = [20, 40, 60];
+  const lineWidth = 4;
+
+  ctx.clearRect(0, 0, 128, 128);
+  radii.forEach((r, i) => {
+    const alpha = 1 - i * 0.25;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+    ctx.lineWidth = lineWidth;
+    ctx.stroke();
+  });
+
+  return new THREE.CanvasTexture(canvas);
+}
 function createDotTexture() {
   const canvas = document.createElement("canvas");
   canvas.width = 64;
