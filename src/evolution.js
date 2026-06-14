@@ -1,23 +1,22 @@
 const canvas = document.getElementById("evolution-canvas");
 const ctx = canvas.getContext("2d");
-const timePicker = document.getElementById("time-picker");
 
 let drawnPoints = null;
 let isDrawing = false;
 let selectedPreset = "linear";
 let startValue = "now";
 let endValue = "still";
-let customTimeSide = null;
 let startCustomTime = null;
 let endCustomTime = null;
 
 // Y position (0=top=max pain, 1=bottom=no pain) for each preset as a function of t (0..1)
 const presetFunctions = {
-  linear: (t) => 0.15 + 0.7 * t,
-  exp: (t) => 0.15 + 0.75 * (1 - Math.exp(-3.5 * t)),
-  power: (t) => 0.15 + 0.7 * Math.pow(t, 2.2),
+  linear: (t) => 1 - 0.9 * t,
+  exp: (t) => 1 - 0.7 * Math.pow(t, 2.2),
+  power: (t) => 1 - 0.75 * (1 - Math.exp(-3.5 * t)),
   peak: (t) => 0.5 - 0.35 * Math.sin(Math.PI * t),
-  "peak-incr": (t) => 0.55 - 0.4 * Math.sin(Math.PI * Math.min(t * 1.5, 1)) + 0.1 * t,
+  "peak-incr": (t) =>
+    0.55 - 0.4 * Math.sin(Math.PI * Math.min(t * 1.5, 1)) + 0.1 * t,
   var: (t) => 0.5 + 0.28 * Math.sin(4.5 * Math.PI * t),
   "var-incr": (t) => 0.25 + 0.35 * t + 0.18 * Math.sin(4 * Math.PI * t),
 };
@@ -42,7 +41,8 @@ function drawBackground() {
 }
 
 function drawAxes() {
-  const w = canvas.width, h = canvas.height;
+  const w = canvas.width,
+    h = canvas.height;
   ctx.strokeStyle = "rgba(255,255,255,0.8)";
   ctx.lineWidth = 1.5;
 
@@ -86,7 +86,8 @@ function drawCurve(points) {
 function getPresetPoints() {
   const fn = presetFunctions[selectedPreset];
   if (!fn) return [];
-  const w = canvas.width, h = canvas.height;
+  const w = canvas.width,
+    h = canvas.height;
   const steps = 80;
   const points = [];
   for (let i = 0; i <= steps; i++) {
@@ -98,7 +99,7 @@ function getPresetPoints() {
 
 function render() {
   drawBackground();
-  drawAxes();
+  // drawAxes();
   drawCurve(drawnPoints ?? getPresetPoints());
 }
 
@@ -137,54 +138,44 @@ document.querySelectorAll("input[name='evolution']").forEach((radio) => {
   });
 });
 
-// Time buttons
-document.querySelectorAll(".time-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const side = btn.dataset.side;
-    const value = btn.dataset.value;
-
-    if (value === "custom") {
-      customTimeSide = side;
-      timePicker.value = "";
-      timePicker.click();
-      return;
-    }
-
-    document
-      .querySelectorAll(`.time-btn[data-side="${side}"]`)
-      .forEach((b) => b.classList.remove("selected"));
-    btn.classList.add("selected");
-
-    if (side === "start") startValue = value;
-    else endValue = value;
+// Time radio buttons
+document.querySelectorAll("input[name='time-start']").forEach((radio) => {
+  radio.addEventListener("change", () => {
+    startValue = radio.value;
   });
 });
 
-timePicker.addEventListener("change", () => {
-  if (!customTimeSide || !timePicker.value) return;
-  const side = customTimeSide;
+document.querySelectorAll("input[name='time-end']").forEach((radio) => {
+  radio.addEventListener("change", () => {
+    endValue = radio.value;
+  });
+});
 
-  document
-    .querySelectorAll(`.time-btn[data-side="${side}"]`)
-    .forEach((b) => b.classList.remove("selected"));
-  const iconBtn = document.querySelector(
-    `.time-btn-icon[data-side="${side}"]`,
-  );
-  iconBtn.classList.add("selected");
-
-  if (side === "start") {
-    startValue = "custom";
-    startCustomTime = timePicker.value;
-  } else {
-    endValue = "custom";
-    endCustomTime = timePicker.value;
-  }
-  customTimeSide = null;
+// Custom time pickers — overlay click opens native picker, change sets value and checks radio
+document.querySelectorAll(".time-picker").forEach((picker) => {
+  picker.addEventListener("change", () => {
+    const side = picker.dataset.side;
+    const radio = document.querySelector(
+      `input[name="time-${side}"][value="custom"]`,
+    );
+    radio.checked = true;
+    picker.parentElement.querySelector(".time-picker-display").textContent =
+      picker.value;
+    if (side === "start") {
+      startValue = "custom";
+      startCustomTime = picker.value;
+    } else {
+      endValue = "custom";
+      endCustomTime = picker.value;
+    }
+  });
 });
 
 // Validate
 document.getElementById("validate-btn").addEventListener("click", () => {
-  const pending = JSON.parse(sessionStorage.getItem("pending-session") || "null");
+  const pending = JSON.parse(
+    sessionStorage.getItem("pending-session") || "null",
+  );
   if (pending) {
     const normalized = (drawnPoints ?? getPresetPoints()).map((p) => ({
       t: p.x / canvas.width,

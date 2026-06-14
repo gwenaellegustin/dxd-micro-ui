@@ -61,65 +61,45 @@
 
     <div class="time-section">
       <div class="time-labels">
-        <span>Start</span>
-        <span>End</span>
+        <h2>Start</h2>
+        <h2>End</h2>
       </div>
       <div class="time-cols">
         <div class="time-col">
-          <button class="time-btn selected" data-side="start" data-value="now">
+          <label class="radio-button radio-button-text">
+            <input type="radio" name="time-start" value="now" checked />
             Now
-          </button>
-          <button class="time-btn" data-side="start" data-value="1h">
+          </label>
+          <label class="radio-button radio-button-text">
+            <input type="radio" name="time-start" value="1h" />
             1 hour ago
-          </button>
-          <button
-            class="time-btn time-btn-icon"
-            data-side="start"
-            data-value="custom"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-          </button>
+          </label>
+          <label class="radio-button radio-btn-custom">
+            <input type="radio" name="time-start" value="custom" />
+            <input type="time" class="time-picker" data-side="start" />
+            <img src="/time.svg" alt="Time" />
+            <span class="time-picker-display"></span>
+          </label>
         </div>
         <div class="time-col time-col-end">
-          <button class="time-btn selected" data-side="end" data-value="still">
+          <label class="radio-button radio-button-text">
+            <input type="radio" name="time-end" value="still" checked />
             Still
-          </button>
-          <button class="time-btn" data-side="end" data-value="now">Now</button>
-          <button class="time-btn" data-side="end" data-value="1h">
-            1 hour ago
-          </button>
-          <button
-            class="time-btn time-btn-icon"
-            data-side="end"
-            data-value="custom"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-          </button>
+          </label>
+          <label class="radio-button radio-button-text">
+            <input type="radio" name="time-end" value="now" />
+            Now
+          </label>
+          <label class="radio-button radio-btn-custom">
+            <input type="radio" name="time-end" value="custom" />
+            <input type="time" class="time-picker" data-side="end" />
+            <img src="/time.svg" alt="Time" />
+            <span class="time-picker-display"></span>
+          </label>
         </div>
       </div>
     </div>
 
-    <input type="datetime-local" id="time-picker" style="display: none" />
     <script type="module" src="src/evolution.js"></script>
   </body>
 </html>

@@ -17,7 +17,6 @@
 .time-labels {
   display: flex;
   justify-content: space-between;
-  font-weight: bold;
 }
 
 .time-cols {
@@ -36,41 +35,27 @@
   align-items: flex-end;
 }
 
-.time-btn {
-  width: auto;
-  height: auto;
-  padding: var(--space-smallest) var(--space-small);
-  border: var(--border-width) solid var(--on-background);
-  color: var(--on-background);
-  font-family: Monospace;
-  font-size: inherit;
-  background: transparent;
+.radio-btn-custom {
+  position: relative;
+}
+
+.radio-btn-custom .time-picker {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
   cursor: pointer;
-  border-radius: var(--space-gargantua);
-  transition: 0.15s ease-in-out;
-}
-
-.time-btn:active,
-.time-btn.selected {
-  background: var(--on-background);
-  color: var(--background);
-}
-
-.time-btn.selected svg {
-  stroke: var(--background);
-}
-
-.time-btn-icon {
-  width: var(--space-bigger);
-  height: var(--space-bigger);
-  padding: var(--space-smallest);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.time-btn-icon svg {
   width: 100%;
   height: 100%;
-  stroke: var(--on-background);
+}
+
+.time-picker-display:not(:empty) {
+  margin-left: var(--space-smallest);
+}
+
+.radio-btn-custom:has(.time-picker-display:not(:empty)) {
+  padding: 0 var(--space-small);
+}
+
+.radio-btn-custom:has(input[type="radio"]:checked) .time-picker-display {
+  color: var(--background);
 }

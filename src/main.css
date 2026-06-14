@@ -63,6 +63,11 @@ button:active img {
   filter: invert(1);
 }
 
+#title {
+  text-align: center;
+  width: 100%;
+}
+
 .container-info {
   display: flex;
   flex-direction: column;
@@ -91,6 +96,8 @@ button:active img {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-width: var(--space-bigger);
+  height: var(--space-bigger);
   border: var(--border-width) solid var(--on-background);
   border-radius: var(--space-small);
   background: transparent;
@@ -114,8 +121,19 @@ button:active img {
 .radio-button:has(input[type="radio"]:checked) {
   background: var(--on-background);
   border-radius: var(--space-gargantua);
+  border: var(--border-width) solid var(--background);
 }
 
 .radio-button:has(input[type="radio"]:checked) img {
   filter: invert();
+}
+
+.radio-button-text {
+  box-sizing: border-box;
+  height: var(--space-bigger);
+  padding: 0 var(--space-small);
+}
+
+.radio-button-text:has(input[type="radio"]:checked) {
+  color: var(--background);
 }

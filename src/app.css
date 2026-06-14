@@ -5,11 +5,6 @@
   overflow: hidden;
 }
 
-#title {
-  text-align: center;
-  width: 100%;
-}
-
 .pain-row {
   display: flex;
   justify-content: center;
