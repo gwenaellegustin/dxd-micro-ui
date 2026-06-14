@@ -234,9 +234,8 @@ function loadGlbCloudPoint(glbPath) {
       if (child.isMesh && mesh === undefined) {
         mesh = child;
         mesh.material = new THREE.MeshPhongMaterial({
-          transparent: true,
-          opacity: 0,
-          depthWrite: false,
+          colorWrite: false,
+          depthWrite: true,
         });
       }
     });
