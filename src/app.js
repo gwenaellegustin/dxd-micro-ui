@@ -170,7 +170,7 @@ function init() {
 
   //* Color picker
   const colorBar = document.getElementById("color-bar");
-  const painLabel = document.getElementById("pain-label");
+  const painLabel = document.getElementById("color-reference-value");
   const painLevels = [
     [10, "Able to ignore it"],
     [20, "Mildly distracted"],
