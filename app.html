@@ -22,7 +22,7 @@
         </button>
       </div>
       <div class="line">
-        <div>
+        <div class="grouped">
           <button id="cancel-all-btn">
             <img src="/icons/cancel_all.svg" alt="Cancel all" />
           </button>
@@ -30,7 +30,8 @@
             <img src="/icons/cancel.svg" alt="Cancel" />
           </button>
         </div>
-        <div>
+
+        <div class="grouped">
           <fieldset class="radio-button-picker">
             <label class="radio-button">
               <input
@@ -51,8 +52,6 @@
               <img src="/icons/acute.svg" alt="Acute" />
             </label>
           </fieldset>
-        </div>
-        <div>
           <button id="info">
             <img src="/icons/question_mark.svg" alt="Cancel all" />
           </button>
@@ -70,6 +69,28 @@
         min="0"
         max="1000"
       />
+    </div>
+
+    <div id="info-popup-backdrop" class="info-popup-backdrop hidden"></div>
+    <div id="info-popup" class="info-popup hidden">
+      <div class="info-popup-item" data-tool="point">
+        <div class="info-popup-icon">
+          <img src="/icons/radiant.svg" alt="Radiating" />
+        </div>
+        <h3>Radiating</h3>
+      </div>
+      <div class="info-popup-item" data-tool="pulse">
+        <div class="info-popup-icon">
+          <img src="/icons/pulse.svg" alt="Pulsing" />
+        </div>
+        <h3>Pulsing</h3>
+      </div>
+      <div class="info-popup-item" data-tool="acute">
+        <div class="info-popup-icon">
+          <img src="/icons/acute.svg" alt="Acute" />
+        </div>
+        <h3>Acute</h3>
+      </div>
     </div>
 
     <div id="container"></div>
