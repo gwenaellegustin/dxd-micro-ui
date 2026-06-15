@@ -57,6 +57,7 @@ const SIZE_MIN = 0.5;
 const SIZE_MAX = 1.8;
 const SIZE_GROW_DURATION = 4000;
 const PREVIEW_DELAY = 100;
+const RING_BORDER = 0.01;
 let isPressing = false;
 let pressOriginatedOutside = false;
 let pressStart = 0;
@@ -315,7 +316,7 @@ function init() {
       tapHintEl.style.color = "white";
       tapHintEl.classList.remove("hidden");
     }
-  }, 3000);
+  }, 1000);
 
   //* Tool picker
   const toolTextures = {
@@ -360,7 +361,10 @@ function animate() {
       line.visible = true;
       previewMesh.position.copy(intersection.point);
       previewMesh.rotation.copy(mouseHelper.rotation);
-      previewMesh.scale.setScalar(sizeSelected / 2);
+      const outerR = sizeSelected / 2;
+      const innerR = Math.max(0, outerR - RING_BORDER);
+      previewMesh.geometry.dispose();
+      previewMesh.geometry = new THREE.RingGeometry(innerR, outerR, 48);
     }
   } else {
     line.visible = false;
@@ -572,8 +576,14 @@ function fillMeshHoles(geometry) {
   const edgeCount = new Map();
   const edgeVerts = new Map();
   for (let t = 0; t < triCount; t++) {
-    const a = indices[t * 3], b = indices[t * 3 + 1], c = indices[t * 3 + 2];
-    for (const [i, j] of [[a, b], [b, c], [c, a]]) {
+    const a = indices[t * 3],
+      b = indices[t * 3 + 1],
+      c = indices[t * 3 + 2];
+    for (const [i, j] of [
+      [a, b],
+      [b, c],
+      [c, a],
+    ]) {
       const key = i < j ? `${i}_${j}` : `${j}_${i}`;
       edgeCount.set(key, (edgeCount.get(key) || 0) + 1);
       if (!edgeVerts.has(key)) edgeVerts.set(key, [i, j]);
@@ -599,9 +609,10 @@ function fillMeshHoles(geometry) {
     if (visited.has(start)) continue;
     const loop = [start];
     visited.add(start);
-    let cur = start, prev = -1;
+    let cur = start,
+      prev = -1;
     while (true) {
-      const next = adj.get(cur)?.find(n => n !== prev && !visited.has(n));
+      const next = adj.get(cur)?.find((n) => n !== prev && !visited.has(n));
       if (next === undefined) break;
       visited.add(next);
       loop.push(next);
@@ -615,7 +626,9 @@ function fillMeshHoles(geometry) {
   // Fan-triangulate each loop from its centroid
   const vertices = [];
   for (const loop of loops) {
-    let cx = 0, cy = 0, cz = 0;
+    let cx = 0,
+      cy = 0,
+      cz = 0;
     for (const idx of loop) {
       cx += posAttr.getX(idx);
       cy += posAttr.getY(idx);
@@ -625,17 +638,27 @@ function fillMeshHoles(geometry) {
     cy /= loop.length;
     cz /= loop.length;
     for (let i = 0; i < loop.length; i++) {
-      const a = loop[i], b = loop[(i + 1) % loop.length];
+      const a = loop[i],
+        b = loop[(i + 1) % loop.length];
       vertices.push(
-        cx, cy, cz,
-        posAttr.getX(a), posAttr.getY(a), posAttr.getZ(a),
-        posAttr.getX(b), posAttr.getY(b), posAttr.getZ(b),
+        cx,
+        cy,
+        cz,
+        posAttr.getX(a),
+        posAttr.getY(a),
+        posAttr.getZ(a),
+        posAttr.getX(b),
+        posAttr.getY(b),
+        posAttr.getZ(b),
       );
     }
   }
 
   const fillGeo = new THREE.BufferGeometry();
-  fillGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  fillGeo.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(vertices, 3),
+  );
   return fillGeo;
 }
 

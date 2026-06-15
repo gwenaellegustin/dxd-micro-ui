@@ -44,7 +44,7 @@
   width: var(--space-big);
   height: var(--space-big);
   margin-top: calc((var(--space-bigger) - var(--space-big)) / 2);
-  border: 1px solid var(--background);
+  border: var(--border-width) solid var(--background);
   cursor: pointer;
   border-radius: var(--space-gargantua);
 }
