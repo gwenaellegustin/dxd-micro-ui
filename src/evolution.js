@@ -1,4 +1,5 @@
 import { getTFromColor } from "./color.js";
+import { navigate } from "./nav.js";
 
 const canvas = document.getElementById("evolution-canvas");
 const ctx = canvas.getContext("2d");
@@ -275,6 +276,8 @@ document.querySelectorAll(".time-picker").forEach((picker) => {
 });
 
 // Validate
+document.getElementById("previous-btn").addEventListener("click", () => navigate("app.html"));
+
 document.getElementById("validate-btn").addEventListener("click", () => {
   const pending = JSON.parse(
     sessionStorage.getItem("pending-session") || "null",
@@ -314,7 +317,7 @@ document.getElementById("validate-btn").addEventListener("click", () => {
     localStorage.setItem("paint-sessions", JSON.stringify(sessions));
     sessionStorage.removeItem("pending-session");
   }
-  location.href = "index.html";
+  navigate("index.html");
 });
 
 // Restore evolution state when reopening a saved session

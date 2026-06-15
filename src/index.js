@@ -1,7 +1,9 @@
+import { navigate } from "./nav.js";
+
 function formatDate(ts) {
   const d = new Date(ts);
   const pad = (n) => String(n).padStart(2, "0");
-  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
 }
 
 function painLevel(color) {
@@ -51,6 +53,11 @@ function drawAcute(ctx, color) {
 }
 
 const draws = { point: drawPoint, pulse: drawPulse, acute: drawAcute };
+
+document.getElementById("new-entry-btn").addEventListener("click", (e) => {
+  e.preventDefault();
+  navigate("app.html");
+});
 
 const sessions = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
 const list = document.getElementById("sessions-list");
@@ -144,7 +151,7 @@ sessions
         data.evolution.start = { value: "custom", custom: `${hh}:${mm}` };
       }
       sessionStorage.setItem("pending-session", JSON.stringify(data));
-      location.href = "app.html";
+      navigate("app.html");
     });
 
     list.appendChild(card);

@@ -12,6 +12,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import * as colorjs from "./color.js";
+import { navigate } from "./nav.js";
 
 const container = document.getElementById("container");
 
@@ -150,15 +151,6 @@ function init() {
   mouseHelper.visible = false;
   scene.add(mouseHelper);
 
-  const closeButton = document.getElementById("close-btn");
-  closeButton.addEventListener("click", (event) => {
-    sessionStorage.setItem(
-      "pending-session",
-      JSON.stringify({ timestamp: sessionStart, decals: [...decalData] }),
-    );
-    sessionStorage.removeItem("pending-session");
-  });
-
   //* Color picker
   const colorBar = document.getElementById("color-bar");
   const painLabel = document.getElementById("pain-label");
@@ -205,13 +197,21 @@ function init() {
     decalData.length = 0;
   });
 
+  document
+    .getElementById("close-btn")
+    .addEventListener("click", () => navigate("index.html"));
+
   const validateButton = document.getElementById("validate-btn");
   validateButton.addEventListener("click", () => {
     sessionStorage.setItem(
       "pending-session",
-      JSON.stringify({ ...(pendingSession ?? {}), timestamp: sessionStart, decals: [...decalData] }),
+      JSON.stringify({
+        ...(pendingSession ?? {}),
+        timestamp: sessionStart,
+        decals: [...decalData],
+      }),
     );
-    location.href = "evolution.html";
+    navigate("evolution.html");
   });
 
   const infoButton = document.getElementById("info");
@@ -226,10 +226,14 @@ function init() {
     const isHidden = infoPopup.classList.toggle("hidden");
     infoBackdrop.classList.toggle("hidden", isHidden);
     if (!isHidden) {
-      const current = document.querySelector("input[name='tool']:checked")?.value;
-      document.querySelectorAll(".info-popup-item[data-tool]").forEach((item) => {
-        item.classList.toggle("selected", item.dataset.tool === current);
-      });
+      const current = document.querySelector(
+        "input[name='tool']:checked",
+      )?.value;
+      document
+        .querySelectorAll(".info-popup-item[data-tool]")
+        .forEach((item) => {
+          item.classList.toggle("selected", item.dataset.tool === current);
+        });
     }
   });
   infoBackdrop.addEventListener("click", closeInfo);
