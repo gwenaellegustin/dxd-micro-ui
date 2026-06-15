@@ -396,13 +396,13 @@ function animate() {
 function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
   if (tool === "point") {
-    // Single uninterrupted vibration for the full possible press duration
-    navigator.vibrate(SIZE_GROW_DURATION);
+    // Split into 1 s chunks (hardware cap workaround) with 0 ms gaps — feels continuous
+    navigator.vibrate([1000, 0, 1000, 0, 1000, 0, 1000]);
     hapticInterval = -1; // sentinel: active, no interval to clear
   } else if (tool === "pulse") {
-    // Slow wave building to a 500ms peak then receding (~3.3 s)
+    // Regular slow wave: smooth sine-shaped on/off cycle, ~1.2 s period
     const pattern = [
-      40, 400, 125, 280, 290, 180, 500, 120, 290, 180, 125, 280, 40, 410,
+      60, 140, 160, 100, 220, 80, 260, 80, 220, 100, 160, 140, 60, 220,
     ];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
