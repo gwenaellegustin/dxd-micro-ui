@@ -74,7 +74,7 @@ sessions
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "session-delete-btn";
     const deleteImg = document.createElement("img");
-    deleteImg.src = "/close.svg";
+    deleteImg.src = `${import.meta.env.BASE_URL}icons/close.svg`;
     deleteBtn.appendChild(deleteImg);
     deleteBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -113,9 +113,7 @@ sessions
       curveBtn.className = "session-curve-icon";
       const curveImg = document.createElement("img");
       curveImg.src =
-        session.evolution.type === "custom"
-          ? "/pencil.svg"
-          : `/${session.evolution.type}.svg`;
+        `${import.meta.env.BASE_URL}icons/${session.evolution.type === "custom" ? "pencil" : session.evolution.type}.svg`;
       curveBtn.appendChild(curveImg);
       toolsEl.appendChild(curveBtn);
     }
