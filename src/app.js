@@ -57,6 +57,7 @@ const SIZE_MAX = 1.8;
 const SIZE_GROW_DURATION = 4000;
 const PREVIEW_DELAY = 100;
 let isPressing = false;
+let pressOriginatedOutside = false;
 let pressStart = 0;
 let previewMesh;
 
@@ -107,7 +108,13 @@ function init() {
     if (previewMesh) previewMesh.visible = false;
     line.visible = false;
   });
+  window.addEventListener("pointerdown", function (event) {
+    if (!container.contains(event.target)) {
+      pressOriginatedOutside = true;
+    }
+  });
   container.addEventListener("pointerdown", function (event) {
+    if (pressOriginatedOutside) return;
     moved = false;
     isPressing = true;
     pressStart = Date.now();
@@ -119,6 +126,7 @@ function init() {
       shoot();
     }
     isPressing = false;
+    pressOriginatedOutside = false;
     controls.enabled = true;
     if (previewMesh) previewMesh.visible = false;
     line.visible = false;
