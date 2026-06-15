@@ -362,6 +362,13 @@ function animate() {
       Math.min(Math.max(elapsed - PREVIEW_DELAY, 0) / SIZE_GROW_DURATION, 1) *
         (sizeMax - SIZE_MIN);
 
+    if (
+      elapsed >= PREVIEW_DELAY + SIZE_GROW_DURATION &&
+      hapticInterval !== null
+    ) {
+      stopHaptic();
+    }
+
     if (intersection.intersects && elapsed > PREVIEW_DELAY) {
       controls.enabled = false;
       if (!previewMesh.visible) {
@@ -390,7 +397,7 @@ function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
   if (tool === "point") {
     // Single uninterrupted vibration for the full possible press duration
-    navigator.vibrate(30000);
+    navigator.vibrate(SIZE_GROW_DURATION);
     hapticInterval = -1; // sentinel: active, no interval to clear
   } else if (tool === "pulse") {
     // Slow wave building to a 500ms peak then receding (~3.3 s)
