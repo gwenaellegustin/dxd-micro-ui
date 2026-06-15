@@ -209,6 +209,7 @@ function init() {
       painLevels.find(([threshold]) => pct <= threshold)?.[1] ??
       painLevels.at(-1)[1];
     tapHintEl.style.color = hex;
+    tapHintEl.style.textAlign = pct <= 50 ? "right" : "left";
     tapHintEl.classList.remove("hidden");
     colorSliderTouched = true;
   });
