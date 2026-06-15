@@ -387,12 +387,12 @@ function animate() {
 function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
   if (tool === "point") {
-    // Continuous gentle buzz
-    navigator.vibrate(200);
-    hapticInterval = setInterval(() => navigator.vibrate(200), 180);
+    // Single uninterrupted vibration for the full possible press duration
+    navigator.vibrate(SIZE_GROW_DURATION + 2000);
+    hapticInterval = -1; // sentinel: active, no interval to clear
   } else if (tool === "pulse") {
-    // Wave that builds up then fades — mirrors the concentric-ring visual
-    const pattern = [5, 70, 10, 50, 25, 30, 40, 20, 25, 30, 10, 50, 5, 95];
+    // Slow wave: short taps with long silences building to a peak then receding (~1.1 s)
+    const pattern = [5, 200, 15, 140, 35, 90, 60, 60, 35, 90, 15, 140, 5, 205];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
     hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
