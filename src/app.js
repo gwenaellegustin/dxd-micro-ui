@@ -364,9 +364,7 @@ function animate() {
 
     if (intersection.intersects && elapsed > PREVIEW_DELAY) {
       controls.enabled = false;
-      if (!previewMesh.visible) {
-        startHaptic(document.querySelector("input[name='tool']:checked")?.value);
-      }
+      startHaptic(document.querySelector("input[name='tool']:checked")?.value);
       previewMesh.visible = true;
       line.visible = true;
       previewMesh.position.copy(intersection.point);
@@ -392,7 +390,9 @@ function startHaptic(tool) {
     hapticInterval = -1; // sentinel: active, no interval to clear
   } else if (tool === "pulse") {
     // Slow wave: short taps with long silences building to a peak then receding (~1.1 s)
-    const pattern = [5, 400, 15, 280, 35, 180, 60, 120, 35, 180, 15, 280, 5, 410];
+    const pattern = [
+      5, 400, 15, 280, 35, 180, 60, 120, 35, 180, 15, 280, 5, 410,
+    ];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
     hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
