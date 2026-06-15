@@ -123,6 +123,8 @@ function init() {
         if (decals.length === 0) {
           document.getElementById("tap-hint")?.classList.remove("hidden");
         }
+      } else {
+        document.getElementById("tap-hint")?.classList.add("hidden");
       }
       shoot();
     }
@@ -170,7 +172,7 @@ function init() {
     [60, "Laying down resting"],
     [70, "Crying and/or moaning"],
     [80, "Can't move"],
-    [90, "Needs ambulance"],
+    [90, "Need ambulance"],
     [100, "Need sedation"],
   ];
   const updateSliderColor = (event) => {
@@ -204,9 +206,10 @@ function init() {
     decalData.length = 0;
   });
 
-  document
-    .getElementById("close-btn")
-    .addEventListener("click", () => navigate("index.html"));
+  document.getElementById("close-btn").addEventListener("click", () => {
+    sessionStorage.removeItem("pending-session");
+    navigate("index.html");
+  });
 
   const validateButton = document.getElementById("validate-btn");
   validateButton.addEventListener("click", () => {
@@ -269,6 +272,12 @@ function init() {
   previewMesh.renderOrder = 999;
   previewMesh.visible = false;
   scene.add(previewMesh);
+
+  //* Show tap hint after 3 s if no shoot yet
+  const tapHintEl = document.getElementById("tap-hint");
+  setTimeout(() => {
+    if (decals.length === 0) tapHintEl.classList.remove("hidden");
+  }, 3000);
 
   //* Tool picker
   const toolTextures = {
