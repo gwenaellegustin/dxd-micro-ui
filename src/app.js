@@ -165,7 +165,7 @@ function init() {
   });
 
   //*Model
-  loadGlbCloudPoint("models/head-polygon/tete_clean_filled.glb");
+  loadGlbCloudPoint("models/head-polygon/tete_clean.glb");
   const geometry = new THREE.BufferGeometry();
   geometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
 
@@ -215,7 +215,10 @@ function init() {
   let colorHideTimeout;
   colorBar.addEventListener("change", () => {
     clearTimeout(colorHideTimeout);
-    colorHideTimeout = setTimeout(() => tapHintEl.classList.add("hidden"), 1000);
+    colorHideTimeout = setTimeout(
+      () => tapHintEl.classList.add("hidden"),
+      1000,
+    );
   });
   applySliderColor(colorBar);
 
@@ -421,8 +424,13 @@ function loadGlbCloudPoint(glbPath) {
 
     scene.add(gltf.scene);
 
-    // Build point cloud from all meshes
+    // Build point cloud from all meshes, and cap open holes with black fills
     const allPositions = [];
+    const blackFillMaterial = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      side: THREE.DoubleSide,
+      depthWrite: true,
+    });
     gltf.scene.traverse((child) => {
       if (child.isMesh) {
         const pts = samplePointsOnMesh(child.geometry, 5000);
@@ -430,6 +438,13 @@ function loadGlbCloudPoint(glbPath) {
           const v = new THREE.Vector3(pts[i], pts[i + 1], pts[i + 2]);
           v.applyMatrix4(child.matrixWorld);
           allPositions.push(v.x, v.y, v.z);
+        }
+        // Cap each open boundary loop with a black polygon
+        const fillGeo = fillMeshHoles(child.geometry);
+        if (fillGeo) {
+          const fillMesh = new THREE.Mesh(fillGeo, blackFillMaterial);
+          fillMesh.applyMatrix4(child.matrixWorld);
+          scene.add(fillMesh);
         }
       }
     });
@@ -545,6 +560,84 @@ function samplePointsOnMesh(geo, totalCount) {
 
   return positions;
 }
+function fillMeshHoles(geometry) {
+  if (!geometry.index) return null;
+
+  const posAttr = geometry.attributes.position;
+  const indices = geometry.index.array;
+  const triCount = indices.length / 3;
+
+  // Count edge occurrences; boundary edges appear in exactly one triangle
+  const edgeCount = new Map();
+  const edgeVerts = new Map();
+  for (let t = 0; t < triCount; t++) {
+    const a = indices[t * 3], b = indices[t * 3 + 1], c = indices[t * 3 + 2];
+    for (const [i, j] of [[a, b], [b, c], [c, a]]) {
+      const key = i < j ? `${i}_${j}` : `${j}_${i}`;
+      edgeCount.set(key, (edgeCount.get(key) || 0) + 1);
+      if (!edgeVerts.has(key)) edgeVerts.set(key, [i, j]);
+    }
+  }
+
+  // Build adjacency map from boundary edges
+  const adj = new Map();
+  for (const [key, count] of edgeCount) {
+    if (count !== 1) continue;
+    const [a, b] = edgeVerts.get(key);
+    if (!adj.has(a)) adj.set(a, []);
+    if (!adj.has(b)) adj.set(b, []);
+    adj.get(a).push(b);
+    adj.get(b).push(a);
+  }
+  if (adj.size === 0) return null;
+
+  // Walk adjacency to extract boundary loops
+  const visited = new Set();
+  const loops = [];
+  for (const start of adj.keys()) {
+    if (visited.has(start)) continue;
+    const loop = [start];
+    visited.add(start);
+    let cur = start, prev = -1;
+    while (true) {
+      const next = adj.get(cur)?.find(n => n !== prev && !visited.has(n));
+      if (next === undefined) break;
+      visited.add(next);
+      loop.push(next);
+      prev = cur;
+      cur = next;
+    }
+    if (loop.length >= 3) loops.push(loop);
+  }
+  if (loops.length === 0) return null;
+
+  // Fan-triangulate each loop from its centroid
+  const vertices = [];
+  for (const loop of loops) {
+    let cx = 0, cy = 0, cz = 0;
+    for (const idx of loop) {
+      cx += posAttr.getX(idx);
+      cy += posAttr.getY(idx);
+      cz += posAttr.getZ(idx);
+    }
+    cx /= loop.length;
+    cy /= loop.length;
+    cz /= loop.length;
+    for (let i = 0; i < loop.length; i++) {
+      const a = loop[i], b = loop[(i + 1) % loop.length];
+      vertices.push(
+        cx, cy, cz,
+        posAttr.getX(a), posAttr.getY(a), posAttr.getZ(a),
+        posAttr.getX(b), posAttr.getY(b), posAttr.getZ(b),
+      );
+    }
+  }
+
+  const fillGeo = new THREE.BufferGeometry();
+  fillGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  return fillGeo;
+}
+
 function createDotTexture() {
   const canvas = document.createElement("canvas");
   canvas.width = 64;
