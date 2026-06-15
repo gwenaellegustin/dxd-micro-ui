@@ -63,6 +63,7 @@ let pressOriginatedOutside = false;
 let pressStart = 0;
 let previewMesh;
 let hapticInterval = null;
+let hapticVisualTimeout = null;
 
 init();
 
@@ -399,20 +400,24 @@ function startHaptic(tool) {
     // Split into 1 s chunks (hardware cap workaround) with 0 ms gaps — feels continuous
     navigator.vibrate([1000, 0, 1000, 0, 1000, 0, 1000]);
     hapticInterval = -1; // sentinel: active, no interval to clear
+    startHapticVisual(tool, null);
   } else if (tool === "pulse") {
-    // Regular slow wave: smooth sine-shaped on/off cycle, ~1.2 s period
+    // Regular slow wave: smooth sine-shaped on/off cycle, ~3 s period
     const pattern = [
-      60, 140, 160, 100, 220, 80, 260, 80, 220, 100, 160, 140, 60, 220,
+      90, 210, 240, 150, 330, 120, 390, 120, 330, 150, 240, 210, 90, 330,
     ];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
     hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
+    startHapticVisual(tool, pattern);
   } else if (tool === "acute") {
-    // Two sharp taps, long pause
+    // Very short intense tap, repeating every 500 ms
     const pattern = [6, 50, 6, 188];
+    // const pattern = [10, 490];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
     hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
+    startHapticVisual(tool, pattern);
   }
 }
 
@@ -420,6 +425,59 @@ function stopHaptic() {
   clearInterval(hapticInterval);
   hapticInterval = null;
   if (navigator.vibrate) navigator.vibrate(0);
+  stopHapticVisual();
+}
+
+// Debug: visual indicator that mirrors haptic pattern timing
+(function injectHapticDebugStyle() {
+  if (navigator.maxTouchPoints > 0 || "ontouchstart" in window) return;
+  const s = document.createElement("style");
+  s.textContent = `
+    #haptic-debug {
+      position: fixed; bottom: 80px; right: 16px;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: #222; border: 2px solid #444;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; font-family: monospace; color: #888;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      transition: background 60ms, box-shadow 60ms, border-color 60ms;
+      z-index: 9999; pointer-events: none; user-select: none;
+    }
+    #haptic-debug.hd-on {
+      background: #e55; border-color: #f88;
+      box-shadow: 0 0 14px #ff440099; color: #fff;
+    }
+    #haptic-debug.hidden { display: none; }
+  `;
+  document.head.appendChild(s);
+})();
+
+function startHapticVisual(tool, pattern) {
+  if (navigator.maxTouchPoints > 0 || "ontouchstart" in window) return;
+  const el = document.getElementById("haptic-debug");
+  if (!el) return;
+  el.textContent = tool;
+  el.classList.remove("hidden");
+  if (!pattern) {
+    el.classList.add("hd-on");
+    return;
+  }
+  let step = 0;
+  function tick() {
+    el.classList.toggle("hd-on", step % 2 === 0);
+    hapticVisualTimeout = setTimeout(tick, pattern[step]);
+    step = (step + 1) % pattern.length;
+  }
+  tick();
+}
+
+function stopHapticVisual() {
+  clearTimeout(hapticVisualTimeout);
+  hapticVisualTimeout = null;
+  const el = document.getElementById("haptic-debug");
+  if (!el) return;
+  el.classList.add("hidden");
+  el.classList.remove("hd-on");
 }
 
 //////////////////////////* Load models
