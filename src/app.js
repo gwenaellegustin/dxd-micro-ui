@@ -363,8 +363,9 @@ function animate() {
       Math.min(Math.max(elapsed - PREVIEW_DELAY, 0) / SIZE_GROW_DURATION, 1) *
         (sizeMax - SIZE_MIN);
 
-    const activeTool =
-      document.querySelector("input[name='tool']:checked")?.value;
+    const activeTool = document.querySelector(
+      "input[name='tool']:checked",
+    )?.value;
     if (
       elapsed >= PREVIEW_DELAY + SIZE_GROW_DURATION &&
       hapticInterval !== null &&
@@ -402,11 +403,7 @@ function startHaptic(tool) {
   if (tool === "point") {
     // Duty-cycle ramp over SIZE_GROW_DURATION (4000 ms), then continuous
     // Each 400 ms window goes from 10 % → 100 % on-time to simulate growing intensity
-    const pattern = [
-      40, 360, 80, 320, 120, 280, 160, 240, 200, 200,
-      240, 160, 280, 120, 320, 80, 360, 40, 395, 5,
-      60000,
-    ];
+    const pattern = [50];
     navigator.vibrate(pattern);
     hapticInterval = -1; // sentinel: active but no interval to clear
     startHapticVisual(tool, pattern);
