@@ -87,7 +87,10 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0s;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s 0s;
 }
 
 .info-popup.hidden {
@@ -95,7 +98,10 @@
   transform: translate(-50%, -50%) scale(0.92);
   pointer-events: none;
   visibility: hidden;
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s 0.2s;
 }
 
 .info-popup-backdrop {
@@ -105,14 +111,18 @@
   z-index: 9;
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.2s ease, visibility 0s 0s;
+  transition:
+    opacity 0.2s ease,
+    visibility 0s 0s;
 }
 
 .info-popup-backdrop.hidden {
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0s 0.2s;
+  transition:
+    opacity 0.2s ease,
+    visibility 0s 0.2s;
 }
 
 .info-popup-item {
@@ -155,4 +165,21 @@
   width: calc(var(--space-bigger) - var(--border-width) * 2);
   height: calc(var(--space-bigger) - var(--border-width) * 2);
   filter: none;
+}
+
+.tap-hint {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding-top: var(--space);
+  text-align: center;
+  color: var(--on-background);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.tap-hint.hidden {
+  display: none;
 }

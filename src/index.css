@@ -44,29 +44,6 @@
   align-items: center;
 }
 
-.session-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.session-delete-btn {
-  flex-shrink: 0;
-  width: 30px;
-  height: 30px;
-  opacity: 0.5;
-}
-
-.session-delete-btn img {
-  width: 30px;
-  height: 30px;
-}
-
-.session-delete-btn:active {
-  opacity: 1;
-  background-color: transparent;
-  color: var(--on-background);
-}
 
 .session-times {
   font-size: 0.85em;

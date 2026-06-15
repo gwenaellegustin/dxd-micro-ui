@@ -12,6 +12,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import * as colorjs from "./color.js";
+import { navigate } from "./nav.js";
 
 const container = document.getElementById("container");
 
@@ -123,6 +124,15 @@ function init() {
   });
   window.addEventListener("pointerup", function (event) {
     if (moved === false && isPressing && intersection.intersects) {
+      const isTap = Date.now() - pressStart < PREVIEW_DELAY;
+      if (isTap) {
+        sizeSelected = SIZE_MIN * 0.6;
+        if (decals.length === 0) {
+          document.getElementById("tap-hint")?.classList.remove("hidden");
+        }
+      } else {
+        document.getElementById("tap-hint")?.classList.add("hidden");
+      }
       shoot();
     }
     isPressing = false;
@@ -158,15 +168,6 @@ function init() {
   mouseHelper.visible = false;
   scene.add(mouseHelper);
 
-  const closeButton = document.getElementById("close-btn");
-  closeButton.addEventListener("click", (event) => {
-    sessionStorage.setItem(
-      "pending-session",
-      JSON.stringify({ timestamp: sessionStart, decals: [...decalData] }),
-    );
-    sessionStorage.removeItem("pending-session");
-  });
-
   //* Color picker
   const colorBar = document.getElementById("color-bar");
   const painLabel = document.getElementById("pain-label");
@@ -179,7 +180,7 @@ function init() {
     [60, "Laying down resting"],
     [70, "Crying and/or moaning"],
     [80, "Can't move"],
-    [90, "Needs ambulance"],
+    [90, "Need ambulance"],
     [100, "Need sedation"],
   ];
   const updateSliderColor = (event) => {
@@ -213,13 +214,22 @@ function init() {
     decalData.length = 0;
   });
 
+  document.getElementById("close-btn").addEventListener("click", () => {
+    sessionStorage.removeItem("pending-session");
+    navigate("index.html");
+  });
+
   const validateButton = document.getElementById("validate-btn");
   validateButton.addEventListener("click", () => {
     sessionStorage.setItem(
       "pending-session",
-      JSON.stringify({ ...(pendingSession ?? {}), timestamp: sessionStart, decals: [...decalData] }),
+      JSON.stringify({
+        ...(pendingSession ?? {}),
+        timestamp: sessionStart,
+        decals: [...decalData],
+      }),
     );
-    location.href = "evolution.html";
+    navigate("evolution.html");
   });
 
   const infoButton = document.getElementById("info");
@@ -234,10 +244,14 @@ function init() {
     const isHidden = infoPopup.classList.toggle("hidden");
     infoBackdrop.classList.toggle("hidden", isHidden);
     if (!isHidden) {
-      const current = document.querySelector("input[name='tool']:checked")?.value;
-      document.querySelectorAll(".info-popup-item[data-tool]").forEach((item) => {
-        item.classList.toggle("selected", item.dataset.tool === current);
-      });
+      const current = document.querySelector(
+        "input[name='tool']:checked",
+      )?.value;
+      document
+        .querySelectorAll(".info-popup-item[data-tool]")
+        .forEach((item) => {
+          item.classList.toggle("selected", item.dataset.tool === current);
+        });
     }
   });
   infoBackdrop.addEventListener("click", closeInfo);
@@ -266,6 +280,12 @@ function init() {
   previewMesh.renderOrder = 999;
   previewMesh.visible = false;
   scene.add(previewMesh);
+
+  //* Show tap hint after 3 s if no shoot yet
+  const tapHintEl = document.getElementById("tap-hint");
+  setTimeout(() => {
+    if (decals.length === 0) tapHintEl.classList.remove("hidden");
+  }, 3000);
 
   //* Tool picker
   const toolTextures = {

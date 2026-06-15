@@ -1,7 +1,9 @@
+import { navigate } from "./nav.js";
+
 function formatDate(ts) {
   const d = new Date(ts);
   const pad = (n) => String(n).padStart(2, "0");
-  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
 }
 
 function painLevel(color) {
@@ -52,6 +54,11 @@ function drawAcute(ctx, color) {
 
 const draws = { point: drawPoint, pulse: drawPulse, acute: drawAcute };
 
+document.getElementById("new-entry-btn").addEventListener("click", (e) => {
+  e.preventDefault();
+  navigate("app.html");
+});
+
 const sessions = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
 const list = document.getElementById("sessions-list");
 
@@ -62,33 +69,40 @@ sessions
     const card = document.createElement("div");
     card.className = "session-card";
 
-    // Header: date + delete button
-    const headerEl = document.createElement("div");
-    headerEl.className = "session-header";
-
     const dateEl = document.createElement("h2");
     dateEl.className = "session-date";
     dateEl.textContent = formatDate(session.timestamp);
-    headerEl.appendChild(dateEl);
+    card.appendChild(dateEl);
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "session-delete-btn";
-    const deleteImg = document.createElement("img");
-    deleteImg.src = `${import.meta.env.BASE_URL}icons/close.svg`;
-    deleteBtn.appendChild(deleteImg);
-    deleteBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (confirm("Delete this crisis?")) {
-        const all = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
-        localStorage.setItem(
-          "paint-sessions",
-          JSON.stringify(all.filter((s) => s.timestamp !== session.timestamp)),
-        );
-        card.remove();
-      }
-    });
-    headerEl.appendChild(deleteBtn);
-    card.appendChild(headerEl);
+    let pressTimer = null;
+    let longPressFired = false;
+
+    const startPress = () => {
+      longPressFired = false;
+      pressTimer = setTimeout(() => {
+        longPressFired = true;
+        if (confirm("Delete this crisis?")) {
+          const all = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
+          localStorage.setItem(
+            "paint-sessions",
+            JSON.stringify(all.filter((s) => s.timestamp !== session.timestamp)),
+          );
+          card.remove();
+        }
+      }, 700);
+    };
+    const cancelPress = () => {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    };
+
+    card.addEventListener("mousedown", startPress);
+    card.addEventListener("mouseup", cancelPress);
+    card.addEventListener("mouseleave", cancelPress);
+    card.addEventListener("touchstart", startPress, { passive: true });
+    card.addEventListener("touchend", cancelPress);
+    card.addEventListener("touchmove", cancelPress);
+    card.addEventListener("contextmenu", (e) => e.preventDefault());
 
     // Time range
     if (session.evolution) {
@@ -136,6 +150,7 @@ sessions
     card.appendChild(toolsEl);
 
     card.addEventListener("click", () => {
+      if (longPressFired) { longPressFired = false; return; }
       const data = structuredClone(session);
       if (data.evolution?.start?.value === "now") {
         const d = new Date(data.timestamp);
@@ -144,7 +159,7 @@ sessions
         data.evolution.start = { value: "custom", custom: `${hh}:${mm}` };
       }
       sessionStorage.setItem("pending-session", JSON.stringify(data));
-      location.href = "app.html";
+      navigate("app.html");
     });
 
     list.appendChild(card);
