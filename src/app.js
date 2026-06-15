@@ -400,9 +400,9 @@ function animate() {
 function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
   if (tool === "point") {
-    // One long vibration; refresh only if user holds >9.5 s (rare)
-    navigator.vibrate(10000);
-    hapticInterval = setInterval(() => navigator.vibrate(10000), 9500);
+    // Single continuous vibration, cancelled by vibrate(0) on release
+    navigator.vibrate(300000);
+    hapticInterval = -1; // sentinel: active but no interval to clear
     startHapticVisual(tool, null);
   } else if (tool === "pulse") {
     // Regular slow wave: smooth sine-shaped on/off cycle, ~3 s period
