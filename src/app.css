@@ -73,9 +73,10 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--on-background);
-  color: var(--background);
+  transform: translate(-50%, -50%) scale(1);
+  background: var(--background);
+  color: var(--on-background);
+  border: var(--border-width) solid var(--on-background);
   border-radius: var(--space);
   padding: var(--space);
   display: flex;
@@ -84,10 +85,17 @@
   z-index: 10;
   min-width: 200px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0s;
 }
 
 .info-popup.hidden {
-  display: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.92);
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s;
 }
 
 .info-popup-backdrop {
@@ -95,10 +103,16 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
   z-index: 9;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease, visibility 0s 0s;
 }
 
 .info-popup-backdrop.hidden {
-  display: none;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0s 0.2s;
 }
 
 .info-popup-item {
@@ -112,23 +126,23 @@
 }
 
 .info-popup-item:hover {
-  background: rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .info-popup-item.selected .info-popup-icon {
-  background: var(--background);
-  border-color: var(--background);
+  background: var(--on-background);
+  border-color: var(--on-background);
   border-radius: var(--space-gargantua);
 }
 
 .info-popup-item.selected .info-popup-icon img {
-  filter: none;
+  filter: invert(1);
 }
 
 .info-popup-icon {
   width: var(--space-bigger);
   height: var(--space-bigger);
-  border: var(--border-width) solid var(--background);
+  border: var(--border-width) solid var(--on-background);
   border-radius: var(--space-small);
   display: flex;
   justify-content: center;
@@ -140,5 +154,5 @@
 .info-popup-icon img {
   width: calc(var(--space-bigger) - var(--border-width) * 2);
   height: calc(var(--space-bigger) - var(--border-width) * 2);
-  filter: invert(1);
+  filter: none;
 }
