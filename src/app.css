@@ -12,26 +12,6 @@
   gap: var(--space-small);
 }
 
-.color-reference-row {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-small);
-  align-items: baseline;
-}
-
-#color-reference-label {
-  flex: 1;
-  text-align: right;
-  color: var(--on-background);
-  white-space: nowrap;
-  margin: 0;
-}
-
-#color-reference-value {
-  flex: 1;
-  margin: 0;
-}
-
 #color-bar {
   -webkit-appearance: none;
   /* appearance: none; */
@@ -167,7 +147,18 @@
   filter: none;
 }
 
-.tap-hint {
+@keyframes hint-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hint {
   position: absolute;
   top: 100%;
   left: 0;
@@ -175,11 +166,10 @@
   margin: 0;
   padding-top: var(--space);
   text-align: center;
-  color: var(--on-background);
-  opacity: 0.6;
   pointer-events: none;
+  animation: hint-in 0.4s ease-out;
 }
 
-.tap-hint.hidden {
+.hint.hidden {
   display: none;
 }

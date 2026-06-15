@@ -101,6 +101,7 @@ function init() {
   // controls.maxDistance = 200; // Redefine after base on head size
 
   //*Interaction
+  const tapHintEl = document.getElementById("hint");
   window.addEventListener("resize", onWindowResize);
   let moved = false;
   controls.addEventListener("change", function () {
@@ -128,13 +129,25 @@ function init() {
       if (isTap) {
         sizeSelected = SIZE_MIN * 0.6;
         if (decals.length === 0) {
-          document.getElementById("tap-hint")?.classList.remove("hidden");
+          clearTimeout(colorHideTimeout);
+          tapHintEl.classList.add("hidden");
+          tapHintEl.textContent = "Press and hold to expand the area";
+          tapHintEl.style.color = "white";
+          void tapHintEl.offsetWidth;
+          tapHintEl.classList.remove("hidden");
         }
       } else {
-        document.getElementById("tap-hint")?.classList.add("hidden");
+        tapHintEl.classList.add("hidden");
       }
       shoot();
     }
+    isPressing = false;
+    pressOriginatedOutside = false;
+    controls.enabled = true;
+    if (previewMesh) previewMesh.visible = false;
+    line.visible = false;
+  });
+  window.addEventListener("pointercancel", function () {
     isPressing = false;
     pressOriginatedOutside = false;
     controls.enabled = true;
@@ -170,7 +183,7 @@ function init() {
 
   //* Color picker
   const colorBar = document.getElementById("color-bar");
-  const painLabel = document.getElementById("color-reference-value");
+  let colorSliderTouched = false;
   const painLevels = [
     [10, "Able to ignore it"],
     [20, "Mildly distracted"],
@@ -183,19 +196,28 @@ function init() {
     [90, "Need ambulance"],
     [100, "Need sedation"],
   ];
-  const updateSliderColor = (event) => {
-    const target = event.target || event;
+  const applySliderColor = (target) => {
     const hex = colorjs.getColorFromRangeValue(target.value, target.max);
     target.style.setProperty("--slider-color", hex);
     colorSelected = parseInt(hex.replace("#", ""), 16);
-    const pct = (Number(target.value) / Number(target.max)) * 100;
-    painLabel.textContent =
+    return hex;
+  };
+  colorBar.addEventListener("input", (event) => {
+    const hex = applySliderColor(event.target);
+    const pct = (Number(event.target.value) / Number(event.target.max)) * 100;
+    tapHintEl.textContent =
       painLevels.find(([threshold]) => pct <= threshold)?.[1] ??
       painLevels.at(-1)[1];
-    painLabel.style.color = hex;
-  };
-  colorBar.addEventListener("input", updateSliderColor);
-  updateSliderColor(colorBar);
+    tapHintEl.style.color = hex;
+    tapHintEl.classList.remove("hidden");
+    colorSliderTouched = true;
+  });
+  let colorHideTimeout;
+  colorBar.addEventListener("change", () => {
+    clearTimeout(colorHideTimeout);
+    colorHideTimeout = setTimeout(() => tapHintEl.classList.add("hidden"), 1000);
+  });
+  applySliderColor(colorBar);
 
   const cancelButton = document.getElementById("cancel-btn");
   cancelButton.addEventListener("click", (event) => {
@@ -282,9 +304,13 @@ function init() {
   scene.add(previewMesh);
 
   //* Show tap hint after 3 s if no shoot yet
-  const tapHintEl = document.getElementById("tap-hint");
   setTimeout(() => {
-    if (decals.length === 0) tapHintEl.classList.remove("hidden");
+    if (decals.length === 0 && !colorSliderTouched) {
+      clearTimeout(colorHideTimeout);
+      tapHintEl.textContent = "Press and hold to expand the area";
+      tapHintEl.style.color = "white";
+      tapHintEl.classList.remove("hidden");
+    }
   }, 3000);
 
   //* Tool picker
