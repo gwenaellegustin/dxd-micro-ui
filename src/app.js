@@ -152,7 +152,7 @@ function init() {
   });
 
   //*Model
-  loadGlbCloudPoint("models/head-polygon/tete_clean.glb");
+  loadGlbCloudPoint("models/head-polygon/tete_clean_filled.glb");
   const geometry = new THREE.BufferGeometry();
   geometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
 
