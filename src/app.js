@@ -107,7 +107,7 @@ function init() {
     if (previewMesh) previewMesh.visible = false;
     line.visible = false;
   });
-  window.addEventListener("pointerdown", function (event) {
+  container.addEventListener("pointerdown", function (event) {
     moved = false;
     isPressing = true;
     pressStart = Date.now();
@@ -124,6 +124,14 @@ function init() {
     line.visible = false;
   });
   window.addEventListener("pointermove", onPointerMove);
+  container.addEventListener("pointerleave", function () {
+    if (isPressing) {
+      isPressing = false;
+      controls.enabled = true;
+      if (previewMesh) previewMesh.visible = false;
+      line.visible = false;
+    }
+  });
 
   //*Model
   loadGlbCloudPoint("models/head-polygon/tete_clean.glb");
@@ -204,6 +212,36 @@ function init() {
       JSON.stringify({ ...(pendingSession ?? {}), timestamp: sessionStart, decals: [...decalData] }),
     );
     location.href = "evolution.html";
+  });
+
+  const infoButton = document.getElementById("info");
+  const infoPopup = document.getElementById("info-popup");
+  const infoBackdrop = document.getElementById("info-popup-backdrop");
+  const closeInfo = () => {
+    infoPopup.classList.add("hidden");
+    infoBackdrop.classList.add("hidden");
+  };
+  infoButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const isHidden = infoPopup.classList.toggle("hidden");
+    infoBackdrop.classList.toggle("hidden", isHidden);
+    if (!isHidden) {
+      const current = document.querySelector("input[name='tool']:checked")?.value;
+      document.querySelectorAll(".info-popup-item[data-tool]").forEach((item) => {
+        item.classList.toggle("selected", item.dataset.tool === current);
+      });
+    }
+  });
+  infoBackdrop.addEventListener("click", closeInfo);
+  document.querySelectorAll(".info-popup-item[data-tool]").forEach((item) => {
+    item.addEventListener("click", () => {
+      const radio = document.getElementById(item.dataset.tool);
+      if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      closeInfo();
+    });
   });
 
   //* Press-size preview ring
