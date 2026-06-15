@@ -388,11 +388,11 @@ function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
   if (tool === "point") {
     // Single uninterrupted vibration for the full possible press duration
-    navigator.vibrate(SIZE_GROW_DURATION + 2000);
+    navigator.vibrate(SIZE_GROW_DURATION);
     hapticInterval = -1; // sentinel: active, no interval to clear
   } else if (tool === "pulse") {
     // Slow wave: short taps with long silences building to a peak then receding (~1.1 s)
-    const pattern = [5, 200, 15, 140, 35, 90, 60, 60, 35, 90, 15, 140, 5, 205];
+    const pattern = [5, 400, 15, 280, 35, 180, 60, 120, 35, 180, 15, 280, 5, 410];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
     hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
