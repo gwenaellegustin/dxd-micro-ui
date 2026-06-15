@@ -246,9 +246,10 @@ document.querySelectorAll("input[name='time-end']").forEach((radio) => {
   });
 });
 
-// Open native time picker on label click
+// Open native time picker on label click, without pre-checking the radio
 document.querySelectorAll(".radio-btn-custom").forEach((label) => {
-  label.addEventListener("click", () => {
+  label.addEventListener("click", (e) => {
+    e.preventDefault();
     try {
       label.querySelector(".time-picker").showPicker();
     } catch (_) {}
@@ -271,6 +272,25 @@ document.querySelectorAll(".time-picker").forEach((picker) => {
     } else {
       endValue = "custom";
       endCustomTime = picker.value;
+    }
+  });
+
+  // If picker is dismissed without a value, revert radio to default
+  picker.addEventListener("blur", () => {
+    const side = picker.dataset.side;
+    const customRadio = document.querySelector(
+      `input[name="time-${side}"][value="custom"]`,
+    );
+    if (customRadio?.checked && !picker.value) {
+      const defaultValue = side === "start" ? "now" : "still";
+      const defaultRadio = document.querySelector(
+        `input[name="time-${side}"][value="${defaultValue}"]`,
+      );
+      if (defaultRadio) {
+        defaultRadio.checked = true;
+        if (side === "start") startValue = defaultValue;
+        else endValue = defaultValue;
+      }
     }
   });
 });
