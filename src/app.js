@@ -107,7 +107,7 @@ function init() {
     if (previewMesh) previewMesh.visible = false;
     line.visible = false;
   });
-  window.addEventListener("pointerdown", function (event) {
+  container.addEventListener("pointerdown", function (event) {
     moved = false;
     isPressing = true;
     pressStart = Date.now();
@@ -124,6 +124,14 @@ function init() {
     line.visible = false;
   });
   window.addEventListener("pointermove", onPointerMove);
+  container.addEventListener("pointerleave", function () {
+    if (isPressing) {
+      isPressing = false;
+      controls.enabled = true;
+      if (previewMesh) previewMesh.visible = false;
+      line.visible = false;
+    }
+  });
 
   //*Model
   loadGlbCloudPoint("models/head-polygon/tete_clean.glb");
