@@ -363,9 +363,12 @@ function animate() {
       Math.min(Math.max(elapsed - PREVIEW_DELAY, 0) / SIZE_GROW_DURATION, 1) *
         (sizeMax - SIZE_MIN);
 
+    const activeTool =
+      document.querySelector("input[name='tool']:checked")?.value;
     if (
       elapsed >= PREVIEW_DELAY + SIZE_GROW_DURATION &&
-      hapticInterval !== null
+      hapticInterval !== null &&
+      activeTool !== "point"
     ) {
       stopHaptic();
     }
