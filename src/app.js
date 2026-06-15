@@ -134,6 +134,7 @@ function init() {
           tapHintEl.classList.add("hidden");
           tapHintEl.textContent = "Press and hold to expand the area";
           tapHintEl.style.color = "white";
+          tapHintEl.style.textAlign = "center";
           void tapHintEl.offsetWidth;
           tapHintEl.classList.remove("hidden");
         }
@@ -314,9 +315,10 @@ function init() {
       clearTimeout(colorHideTimeout);
       tapHintEl.textContent = "Press and hold to expand the area";
       tapHintEl.style.color = "white";
+      tapHintEl.style.textAlign = "center";
       tapHintEl.classList.remove("hidden");
     }
-  }, 1000);
+  }, 1500);
 
   //* Tool picker
   const toolTextures = {
