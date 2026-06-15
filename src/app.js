@@ -62,6 +62,7 @@ let isPressing = false;
 let pressOriginatedOutside = false;
 let pressStart = 0;
 let previewMesh;
+let hapticInterval = null;
 
 init();
 
@@ -108,6 +109,7 @@ function init() {
   controls.addEventListener("change", function () {
     moved = true;
     isPressing = false;
+    stopHaptic();
     if (previewMesh) previewMesh.visible = false;
     line.visible = false;
   });
@@ -146,6 +148,7 @@ function init() {
     isPressing = false;
     pressOriginatedOutside = false;
     controls.enabled = true;
+    stopHaptic();
     if (previewMesh) previewMesh.visible = false;
     line.visible = false;
   });
@@ -153,6 +156,7 @@ function init() {
     isPressing = false;
     pressOriginatedOutside = false;
     controls.enabled = true;
+    stopHaptic();
     if (previewMesh) previewMesh.visible = false;
     line.visible = false;
   });
@@ -161,6 +165,7 @@ function init() {
     if (isPressing) {
       isPressing = false;
       controls.enabled = true;
+      stopHaptic();
       if (previewMesh) previewMesh.visible = false;
       line.visible = false;
     }
@@ -359,6 +364,9 @@ function animate() {
 
     if (intersection.intersects && elapsed > PREVIEW_DELAY) {
       controls.enabled = false;
+      if (!previewMesh.visible) {
+        startHaptic(document.querySelector("input[name='tool']:checked")?.value);
+      }
       previewMesh.visible = true;
       line.visible = true;
       previewMesh.position.copy(intersection.point);
@@ -373,6 +381,34 @@ function animate() {
   }
   renderer.render(scene, camera);
   // stats.update();
+}
+
+//////////////////////////* Haptic feedback
+function startHaptic(tool) {
+  if (!navigator.vibrate || hapticInterval !== null) return;
+  if (tool === "point") {
+    // Continuous gentle buzz
+    navigator.vibrate(200);
+    hapticInterval = setInterval(() => navigator.vibrate(200), 180);
+  } else if (tool === "pulse") {
+    // Wave that builds up then fades — mirrors the concentric-ring visual
+    const pattern = [5, 70, 10, 50, 25, 30, 40, 20, 25, 30, 10, 50, 5, 95];
+    const duration = pattern.reduce((a, b) => a + b, 0);
+    navigator.vibrate(pattern);
+    hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
+  } else if (tool === "acute") {
+    // Two sharp taps, long pause
+    const pattern = [6, 50, 6, 188];
+    const duration = pattern.reduce((a, b) => a + b, 0);
+    navigator.vibrate(pattern);
+    hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
+  }
+}
+
+function stopHaptic() {
+  clearInterval(hapticInterval);
+  hapticInterval = null;
+  if (navigator.vibrate) navigator.vibrate(0);
 }
 
 //////////////////////////* Load models
