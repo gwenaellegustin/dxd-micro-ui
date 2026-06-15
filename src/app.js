@@ -117,6 +117,13 @@ function init() {
   });
   window.addEventListener("pointerup", function (event) {
     if (moved === false && isPressing && intersection.intersects) {
+      const isTap = Date.now() - pressStart < PREVIEW_DELAY;
+      if (isTap) {
+        sizeSelected = SIZE_MIN * 0.6;
+        if (decals.length === 0) {
+          document.getElementById("tap-hint")?.classList.remove("hidden");
+        }
+      }
       shoot();
     }
     isPressing = false;
