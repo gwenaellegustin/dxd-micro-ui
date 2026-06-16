@@ -21,13 +21,17 @@
   --space-gargantua: 128px; */
 
   --space: 20px; /*16px;*/
-  --space-smallest: calc(var(--space)/4);
+  /* --space-smallest: calc(var(--space)/4);  */
   --space-small: calc(var(--space)/2);
   --space-big: calc(var(--space)/2 * 3);
   --space-bigger: calc(var(--space) * 2);
-  --space-biggest: calc(var(--space) * 4);
-  --space-giant: calc(var(--space) * 6);
-  --space-gargantua: calc(var(--space) * 8);
+  /* --space-biggest: calc(var(--space) * 4); */
+  /* --space-giant: calc(var(--space) * 6); */
+  /* --space-gargantua: calc(var(--space) * 8); */
+
+  --radius: var(--space-small);
+  --radius-card: var(--space-big);
+  --radius-round: var(--space-bigger);
 }
 
 @keyframes page-fade {
@@ -81,7 +85,7 @@ button {
   border: none;
   cursor: pointer;
   padding: 0;
-  border-radius: var(--space-gargantua);
+  border-radius: var(--radius-round);
   transition: 0.3s ease-in-out;
 }
 button:active {
@@ -113,7 +117,6 @@ button:active img {
 }
 
 /* Radiobutton */
-
 .radio-button-picker {
   display: flex;
   gap: var(--space-small);
@@ -122,15 +125,14 @@ button:active img {
 }
 
 .radio-button {
-  /* width: var(--space-bigger);
-  height: var(--space-bigger); */
+  box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
   min-width: var(--space-bigger);
   height: var(--space-bigger);
   border: var(--border-width) solid var(--on-background);
-  border-radius: var(--space-small);
+  border-radius: var(--radius);
   background: transparent;
   cursor: pointer;
   transition: 0.15s ease-in-out;
@@ -151,7 +153,7 @@ button:active img {
 
 .radio-button:has(input[type="radio"]:checked) {
   background: var(--on-background);
-  border-radius: var(--space-gargantua);
+  border-radius: var(--radius-round);
   border: var(--border-width) solid var(--background);
 }
 

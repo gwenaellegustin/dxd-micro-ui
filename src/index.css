@@ -4,7 +4,7 @@
   justify-content: center;
   align-items: center;
   border: var(--border-width) solid var(--on-background);
-  border-radius: var(--space-gargantua);
+  border-radius: var(--radius-round);
   padding: var(--space);
   transition: 0.3s ease-in-out;
 }
@@ -35,7 +35,7 @@
   flex-direction: column;
   gap: var(--space-small);
   border: var(--border-width) solid var(--on-background);
-  border-radius: var(--space-bigger);
+  border-radius: var(--radius-card);
   padding: var(--space-small) var(--space) var(--space) var(--space-big);
 }
 
@@ -50,13 +50,14 @@
 }
 
 .session-curve-icon {
+  box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
   width: var(--space-bigger);
   height: var(--space-bigger);
   background: var(--on-background);
-  border-radius: var(--space-gargantua);
+  border-radius: var(--radius-round);
   border: var(--border-width) solid var(--background);
   overflow: hidden;
 }

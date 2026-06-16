@@ -14,11 +14,8 @@
 
 #color-bar {
   -webkit-appearance: none;
-  /* appearance: none; */
-  /* background: transparent; */
   width: 100%;
   margin: 0;
-  border-radius: var(--space-gargantua);
   background-color: var(--background);
 }
 
@@ -34,7 +31,7 @@
     #e13e0d 95%,
     #ff0000 100%
   );
-  border-radius: var(--space-gargantua);
+  border-radius: var(--radius-round);
 }
 
 #color-bar::-webkit-slider-thumb {
@@ -46,7 +43,7 @@
   margin-top: calc((var(--space-bigger) - var(--space-big)) / 2);
   border: var(--border-width) solid var(--background);
   cursor: pointer;
-  border-radius: var(--space-gargantua);
+  border-radius: var(--radius-round);
 }
 
 .info-popup {
@@ -57,13 +54,12 @@
   background: var(--background);
   color: var(--on-background);
   border: var(--border-width) solid var(--on-background);
-  border-radius: var(--space);
+  border-radius: var(--radius);
   padding: var(--space);
   display: flex;
   flex-direction: column;
   gap: var(--space-small);
   z-index: 10;
-  min-width: 200px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   opacity: 1;
   visibility: visible;
@@ -87,9 +83,9 @@
 .info-popup-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--background);
   z-index: 9;
-  opacity: 1;
+  opacity: 0.5;
   visibility: visible;
   transition:
     opacity 0.2s ease,
@@ -110,19 +106,13 @@
   align-items: center;
   gap: var(--space);
   cursor: pointer;
-  border-radius: var(--space-small);
-  padding: var(--space-smallest) var(--space-small);
   transition: background 0.15s ease-in-out;
-}
-
-.info-popup-item:hover {
-  background: rgba(255, 255, 255, 0.08);
 }
 
 .info-popup-item.selected .info-popup-icon {
   background: var(--on-background);
   border-color: var(--on-background);
-  border-radius: var(--space-gargantua);
+  border-radius: var(--radius-round);
 }
 
 .info-popup-item.selected .info-popup-icon img {
@@ -130,10 +120,11 @@
 }
 
 .info-popup-icon {
+  box-sizing: border-box;
   width: var(--space-bigger);
   height: var(--space-bigger);
   border: var(--border-width) solid var(--on-background);
-  border-radius: var(--space-small);
+  border-radius: var(--radius);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -158,6 +149,17 @@
   }
 }
 
+@keyframes hint-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
 .hint {
   position: absolute;
   top: 100%;
@@ -171,5 +173,5 @@
 }
 
 .hint.hidden {
-  display: none;
+  animation: hint-out 0.3s ease-in forwards;
 }
