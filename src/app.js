@@ -401,12 +401,7 @@ function animate() {
 function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
   if (tool === "point") {
-    const pattern = [SIZE_GROW_DURATION];
-    navigator.vibrate(pattern);
-    hapticInterval = setInterval(
-      () => navigator.vibrate(pattern),
-      SIZE_GROW_DURATION,
-    );
+    navigator.vibrate(SIZE_GROW_DURATION);
     startHapticVisual(tool, pattern);
   } else if (tool === "pulse") {
     // Regular slow wave: smooth sine-shaped on/off cycle, ~3 s period
