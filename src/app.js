@@ -401,8 +401,8 @@ function animate() {
 function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
   if (tool === "point") {
-    // Light continuous hum: 20% duty cycle, loops for full press duration
-    const pattern = [20, 80];
+    // Long continuous vibration during all preview
+    const pattern = [10000];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
     hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
@@ -416,7 +416,6 @@ function startHaptic(tool) {
     startHapticVisual(tool, pattern);
   } else if (tool === "acute") {
     // Sharp discharge: 12 ms burst then silence, 2 Hz
-    // const pattern = [12, 488];
     const pattern = [6, 50, 6, 188];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
