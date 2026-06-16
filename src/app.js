@@ -401,21 +401,22 @@ function animate() {
 function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
   if (tool === "point") {
-    navigator.vibrate(SIZE_GROW_DURATION);
+    // Light continuous hum: 20% duty cycle, loops for full press duration
+    const pattern = [20, 80];
+    const duration = pattern.reduce((a, b) => a + b, 0);
+    navigator.vibrate(pattern);
+    hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
     startHapticVisual(tool, pattern);
   } else if (tool === "pulse") {
-    // Regular slow wave: smooth sine-shaped on/off cycle, ~3 s period
-    const pattern = [
-      90, 210, 240, 150, 330, 120, 390, 120, 330, 150, 240, 210, 90, 330,
-    ];
+    // Sine-wave swell: on-times follow a sin curve, one cycle ~1.7 s
+    const pattern = [100, 100, 170, 30, 200, 10, 170, 30, 100, 800];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
     hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
     startHapticVisual(tool, pattern);
   } else if (tool === "acute") {
-    // Very short intense tap, repeating every 500 ms
-    const pattern = [6, 50, 6, 188];
-    // const pattern = [10, 490];
+    // Sharp discharge: 12 ms burst then silence, 2 Hz
+    const pattern = [12, 488];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
     hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
