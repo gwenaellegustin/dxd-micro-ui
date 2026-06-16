@@ -400,22 +400,30 @@ function animate() {
 //////////////////////////* Haptic feedback
 function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
+
   if (tool === "point") {
-    // Long continuous vibration during all preview
-    const pattern = [10000];
-    const duration = pattern.reduce((a, b) => a + b, 0);
-    navigator.vibrate(pattern);
-    hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
-    startHapticVisual(tool, pattern);
+    // OS limits max vibration time (usually 1 sec).
+    // Loop a safe 500ms chunk to create a continuous, seamless rumble.
+    const chunkDuration = 500;
+    navigator.vibrate(chunkDuration);
+    hapticInterval = setInterval(
+      () => navigator.vibrate(chunkDuration),
+      chunkDuration,
+    );
+
+    // Pass visual debug array equivalent to continuous on
+    startHapticVisual(tool, [chunkDuration, 0]);
   } else if (tool === "pulse") {
-    // Sine-wave swell: on-times follow a sin curve, one cycle ~1.7 s
-    const pattern = [100, 100, 170, 30, 200, 10, 170, 30, 100, 800];
-    const duration = pattern.reduce((a, b) => a + b, 0);
+    // Smooth swelling pulse: builds up to a peak, tapers down,
+    // and loops seamlessly without a jarring drop-off.
+    const pattern = [80, 120, 160, 100, 240, 100, 120, 80];
+    const duration = pattern.reduce((a, b) => a + b, 0); // Exactly 1000ms
+
     navigator.vibrate(pattern);
     hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
     startHapticVisual(tool, pattern);
   } else if (tool === "acute") {
-    // Sharp discharge: 12 ms burst then silence, 2 Hz
+    // Sharp discharge: 6ms burst then silence, 4 Hz
     const pattern = [6, 50, 6, 188];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
