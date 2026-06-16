@@ -402,26 +402,33 @@ function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
 
   if (tool === "point") {
-    // OS limits max vibration time (usually 1 sec).
-    // Loop a safe 500ms chunk to create a continuous, seamless rumble.
-    const chunkDuration = 500;
-    navigator.vibrate(chunkDuration);
-    hapticInterval = setInterval(
-      () => navigator.vibrate(chunkDuration),
-      chunkDuration,
-    );
+    // High-frequency heartbeat trick:
+    // Requests a 200ms vibration every 100ms. This forces the hardware
+    // to stay at full power continuously without ever spinning down.
+    navigator.vibrate(200);
+    hapticInterval = setInterval(() => {
+      navigator.vibrate(200);
+    }, 100);
 
-    // Pass visual debug array equivalent to continuous on
-    startHapticVisual(tool, [chunkDuration, 0]);
+    startHapticVisual(tool, [200, 0]);
   } else if (tool === "pulse") {
-    // Smooth swelling pulse: builds up to a peak, tapers down,
-    // and loops seamlessly without a jarring drop-off.
-    const pattern = [80, 120, 160, 100, 240, 100, 120, 80];
-    const duration = pattern.reduce((a, b) => a + b, 0); // Exactly 1000ms
+    // Mega slow wave: Updates every 500ms across a 4-second total cycle.
+    // Creates a deeply gradual, heavy breathing effect.
+    const pulseSteps = [60, 200, 380, 480, 380, 200, 60, 0];
+    let currentStep = 0;
 
-    navigator.vibrate(pattern);
-    hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
-    startHapticVisual(tool, pattern);
+    // Trigger first step immediately
+    navigator.vibrate(pulseSteps[currentStep]);
+    currentStep = (currentStep + 1) % pulseSteps.length;
+
+    // Drive the wave at 500ms increments (8 steps * 500ms = 4000ms total cycle)
+    hapticInterval = setInterval(() => {
+      navigator.vibrate(pulseSteps[currentStep]);
+      currentStep = (currentStep + 1) % pulseSteps.length;
+    }, 500);
+
+    // Adjusted for the slow visual debugger
+    startHapticVisual(tool, [250, 250]);
   } else if (tool === "acute") {
     // Sharp discharge: 6ms burst then silence, 4 Hz
     const pattern = [6, 50, 6, 188];
