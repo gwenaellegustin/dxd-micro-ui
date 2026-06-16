@@ -148,6 +148,64 @@ function render() {
   drawMaxPainMarker();
 }
 
+let _animId = null;
+let _animFrom = null;
+let _animTo = null;
+let _animStart = null;
+const ANIM_MS = 450;
+
+function easeInOut(t) {
+  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+}
+
+function resampleToCount(points, n) {
+  if (points.length === 0) return [];
+  if (points.length === 1) return Array.from({ length: n }, () => ({ ...points[0] }));
+  const result = [];
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1);
+    const raw = t * (points.length - 1);
+    const lo = Math.floor(raw);
+    const hi = Math.min(lo + 1, points.length - 1);
+    const f = raw - lo;
+    result.push({
+      x: points[lo].x * (1 - f) + points[hi].x * f,
+      y: points[lo].y * (1 - f) + points[hi].y * f,
+    });
+  }
+  return result;
+}
+
+function lerpPoints(a, b, t) {
+  return a.map((pa, i) => ({
+    x: pa.x + (b[i].x - pa.x) * t,
+    y: pa.y + (b[i].y - pa.y) * t,
+  }));
+}
+
+function animateTo(targetPoints, fromPoints) {
+  if (_animId) cancelAnimationFrame(_animId);
+  const current = fromPoints ?? (drawnPoints ? resampleToCount(drawnPoints, targetPoints.length) : getPresetPoints());
+  _animFrom = current.length === targetPoints.length ? current : resampleToCount(current, targetPoints.length);
+  _animTo = targetPoints;
+  _animStart = null;
+
+  function step(ts) {
+    if (!_animStart) _animStart = ts;
+    const rawT = Math.min((ts - _animStart) / ANIM_MS, 1);
+    const t = easeInOut(rawT);
+    drawBackground();
+    drawCurve(lerpPoints(_animFrom, _animTo, t));
+    drawMaxPainMarker();
+    if (rawT < 1) {
+      _animId = requestAnimationFrame(step);
+    } else {
+      _animId = null;
+    }
+  }
+  _animId = requestAnimationFrame(step);
+}
+
 // Drawing interaction
 function canvasPoint(e) {
   const rect = canvas.getBoundingClientRect();
@@ -156,6 +214,7 @@ function canvasPoint(e) {
 }
 
 canvas.addEventListener("pointerdown", (e) => {
+  if (_animId) { cancelAnimationFrame(_animId); _animId = null; }
   isDrawing = true;
   drawnPoints = [canvasPoint(e)];
   _pendingSavedCurve = null;
@@ -181,10 +240,13 @@ canvas.addEventListener("pointerup", (e) => {
 // Preset radio buttons
 document.querySelectorAll("input[name='evolution']").forEach((radio) => {
   radio.addEventListener("change", () => {
+    const fromPoints = drawnPoints
+      ? resampleToCount(drawnPoints, 81)
+      : getPresetPoints();
     selectedPreset = radio.value;
     drawnPoints = null;
     _pendingSavedCurve = null;
-    render();
+    animateTo(getPresetPoints(), fromPoints);
   });
 });
 
