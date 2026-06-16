@@ -13,6 +13,7 @@ import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import * as colorjs from "./color.js";
 import { navigate } from "./nav.js";
+import { onMount, onUnmount } from "./router.js";
 
 const container = document.getElementById("container");
 
@@ -42,10 +43,8 @@ const decalMaterial = new THREE.MeshBasicMaterial({
 });
 const decals = [];
 const decalData = [];
-const pendingSession = JSON.parse(
-  sessionStorage.getItem("pending-session") || "null",
-);
-const sessionStart = pendingSession?.timestamp ?? Date.now();
+let pendingSession = null;
+let sessionStart = Date.now();
 let mouseHelper;
 const position = new THREE.Vector3();
 const orientation = new THREE.Euler();
@@ -65,7 +64,67 @@ let previewMesh;
 let hapticInterval = null;
 let hapticVisualTimeout = null;
 
-init();
+let _appInitialized = false;
+let _modelLoaded = false;
+
+//////////////////////////* Lifecycle
+
+function clearDecals() {
+  decals.forEach((d) => mesh?.remove(d));
+  decals.length = 0;
+  decalData.length = 0;
+}
+
+function restoreDecals(savedDecals) {
+  if (!mesh || !savedDecals?.length) return;
+  const texMap = {
+    point: createDecalTexture(),
+    pulse: createPulseTexture(),
+    acute: createAcuteLineTexture(),
+  };
+  for (const d of savedDecals) {
+    const pos = new THREE.Vector3(...d.position);
+    const ori = new THREE.Euler(...d.orientation);
+    const sz = new THREE.Vector3(...d.size);
+    const mat = decalMaterial.clone();
+    mat.color.setHex(d.color);
+    if (texMap[d.tool]) {
+      mat.map = texMap[d.tool];
+      mat.needsUpdate = true;
+    }
+    const m = new THREE.Mesh(new DecalGeometry(mesh, pos, ori, sz), mat);
+    m.renderOrder = decals.length;
+    decals.push(m);
+    mesh.attach(m);
+    decalData.push(d);
+  }
+}
+
+function mountApp() {
+  pendingSession = JSON.parse(sessionStorage.getItem("pending-session") || "null");
+  sessionStart = pendingSession?.timestamp ?? Date.now();
+
+  if (!_appInitialized) {
+    init();
+    _appInitialized = true;
+  } else {
+    clearDecals();
+    if (_modelLoaded && pendingSession?.decals?.length) {
+      restoreDecals(pendingSession.decals);
+    }
+    renderer.setAnimationLoop(animate);
+    onWindowResize();
+  }
+}
+
+function unmountApp() {
+  if (renderer) renderer.setAnimationLoop(null);
+}
+
+onMount("app", mountApp);
+onUnmount("app", unmountApp);
+
+//////////////////////////* Init
 
 function init() {
   //*FPS info
@@ -315,7 +374,7 @@ function init() {
   previewMesh.visible = false;
   scene.add(previewMesh);
 
-  //* Show tap hint after 3 s if no shoot yet
+  //* Show tap hint after 1.5 s if no shoot yet
   setTimeout(() => {
     if (decals.length === 0 && !colorSliderTouched) {
       clearTimeout(colorHideTimeout);
@@ -498,42 +557,6 @@ function stopHapticVisual() {
 }
 
 //////////////////////////* Load models
-function loadLeePerrySmith() {
-  const map = textureLoader.load(jpgSmithCol);
-  map.colorSpace = THREE.SRGBColorSpace;
-  const specularMap = textureLoader.load(jpgSmithSpec);
-  const normalMap = textureLoader.load(jpgSmithTangent);
-
-  const loader = new GLTFLoader();
-
-  loader.load(glbSmith, function (gltf) {
-    mesh = gltf.scene.children[0];
-    mesh.material = new THREE.MeshPhongMaterial({
-      specular: 0x111111,
-      map: map,
-      specularMap: specularMap,
-      normalMap: normalMap, // skin texture
-      shininess: 25,
-    });
-
-    scene.add(mesh);
-    mesh.scale.multiplyScalar(10);
-  });
-}
-function loadGlb(glbPath, scale = 1) {
-  const loader = new GLTFLoader();
-
-  loader.load(glbPath, function (gltf) {
-    mesh = gltf.scene.children[0];
-    mesh.material = new THREE.MeshPhongMaterial({
-      specular: 0x111111,
-      shininess: 25,
-    });
-
-    scene.add(mesh);
-    mesh.scale.multiplyScalar(scale);
-  });
-}
 function loadGlbCloudPoint(glbPath) {
   const loader = new GLTFLoader();
   loader.load(glbPath, function (gltf) {
@@ -616,30 +639,8 @@ function loadGlbCloudPoint(glbPath) {
 
     scene.add(new THREE.Points(pointsGeo, pointsMaterial));
 
-    // Restore decals when returning from evolution page
-    if (pendingSession?.decals?.length) {
-      const texMap = {
-        point: createDecalTexture(),
-        pulse: createPulseTexture(),
-        acute: createAcuteLineTexture(),
-      };
-      for (const d of pendingSession.decals) {
-        const pos = new THREE.Vector3(...d.position);
-        const ori = new THREE.Euler(...d.orientation);
-        const sz = new THREE.Vector3(...d.size);
-        const mat = decalMaterial.clone();
-        mat.color.setHex(d.color);
-        if (texMap[d.tool]) {
-          mat.map = texMap[d.tool];
-          mat.needsUpdate = true;
-        }
-        const m = new THREE.Mesh(new DecalGeometry(mesh, pos, ori, sz), mat);
-        m.renderOrder = decals.length;
-        decals.push(m);
-        mesh.attach(m);
-        decalData.push(d);
-      }
-    }
+    _modelLoaded = true;
+    restoreDecals(pendingSession?.decals);
   });
 }
 function samplePointsOnMesh(geo, totalCount) {

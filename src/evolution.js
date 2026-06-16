@@ -1,5 +1,6 @@
 import { getTFromColor } from "./color.js";
 import { navigate } from "./nav.js";
+import { onMount } from "./router.js";
 
 const canvas = document.getElementById("evolution-canvas");
 const ctx = canvas.getContext("2d");
@@ -11,16 +12,11 @@ let startValue = "now";
 let endValue = "still";
 let startCustomTime = null;
 let endCustomTime = null;
-let _pendingEvolutionRestored = false;
+let _session = null;
+let maxPainT = 1;
+let _pendingSavedCurve = null;
 
 // Y position (0=top=max pain, 1=bottom=no pain) for each preset as a function of t (0..1)
-const _session = JSON.parse(
-  sessionStorage.getItem("pending-session") || "null",
-);
-const maxPainT = _session?.decals?.length
-  ? Math.max(..._session.decals.map((d) => getTFromColor(d.color)))
-  : 1;
-
 const presetFunctions = {
   linear: (t) => 1 - maxPainT * t,
   exp: (t) => 1 - maxPainT * Math.pow(t, 3),
@@ -77,17 +73,13 @@ const presetFunctions = {
 function resizeCanvas() {
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
-  const saved = _session?.evolution;
-  if (
-    !_pendingEvolutionRestored &&
-    saved?.type === "custom" &&
-    saved.curve?.length
-  ) {
-    drawnPoints = saved.curve.map((p) => ({
+  // Restore saved custom curve once canvas has real dimensions
+  if (_pendingSavedCurve && canvas.width > 0) {
+    drawnPoints = _pendingSavedCurve.map((p) => ({
       x: p.t * canvas.width,
       y: p.y * canvas.height,
     }));
-    _pendingEvolutionRestored = true;
+    _pendingSavedCurve = null;
   }
   render();
 }
@@ -103,31 +95,6 @@ function drawBackground() {
   grad.addColorStop(1, "#359800");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
-
-function drawAxes() {
-  const w = canvas.width,
-    h = canvas.height;
-  ctx.strokeStyle = "rgba(255,255,255,0.8)";
-  ctx.lineWidth = 1.5;
-
-  // Y axis (left side)
-  ctx.beginPath();
-  ctx.moveTo(12, h - 12);
-  ctx.lineTo(12, 8);
-  ctx.moveTo(8, 14);
-  ctx.lineTo(12, 8);
-  ctx.lineTo(16, 14);
-  ctx.stroke();
-
-  // X axis (bottom)
-  ctx.beginPath();
-  ctx.moveTo(12, h - 12);
-  ctx.lineTo(w - 8, h - 12);
-  ctx.moveTo(w - 14, h - 16);
-  ctx.lineTo(w - 8, h - 12);
-  ctx.lineTo(w - 14, h - 8);
-  ctx.stroke();
 }
 
 function drawCurve(points) {
@@ -191,6 +158,7 @@ function canvasPoint(e) {
 canvas.addEventListener("pointerdown", (e) => {
   isDrawing = true;
   drawnPoints = [canvasPoint(e)];
+  _pendingSavedCurve = null;
   document
     .querySelectorAll("input[name='evolution']")
     .forEach((r) => (r.checked = false));
@@ -215,6 +183,7 @@ document.querySelectorAll("input[name='evolution']").forEach((radio) => {
   radio.addEventListener("change", () => {
     selectedPreset = radio.value;
     drawnPoints = null;
+    _pendingSavedCurve = null;
     render();
   });
 });
@@ -295,10 +264,11 @@ document.querySelectorAll(".time-picker").forEach((picker) => {
   });
 });
 
-// Validate
+// Navigate back to app
 document.getElementById("previous-btn").addEventListener("click", () => navigate("app.html"));
 
-document.getElementById("validate-btn").addEventListener("click", () => {
+// Save and navigate home
+document.getElementById("evolution-validate-btn").addEventListener("click", () => {
   const pending = JSON.parse(
     sessionStorage.getItem("pending-session") || "null",
   );
@@ -340,44 +310,81 @@ document.getElementById("validate-btn").addEventListener("click", () => {
   navigate("index.html");
 });
 
-// Restore evolution state when reopening a saved session
-const _savedEvolution = _session?.evolution;
-if (_savedEvolution) {
-  startValue = _savedEvolution.start.value;
-  startCustomTime = _savedEvolution.start.custom ?? null;
-  const startRadio = document.querySelector(
-    `input[name="time-start"][value="${startValue}"]`,
-  );
-  if (startRadio) startRadio.checked = true;
-  if (startValue === "custom" && startCustomTime) {
-    const p = document.querySelector(".time-picker[data-side='start']");
-    p.value = startCustomTime;
-    p.parentElement.querySelector(".time-picker-display").textContent =
-      startCustomTime;
-  }
+function mountEvolution() {
+  _session = JSON.parse(sessionStorage.getItem("pending-session") || "null");
+  maxPainT = _session?.decals?.length
+    ? Math.max(..._session.decals.map((d) => getTFromColor(d.color)))
+    : 1;
 
-  endValue = _savedEvolution.end.value;
-  endCustomTime = _savedEvolution.end.custom ?? null;
-  const endRadio = document.querySelector(
-    `input[name="time-end"][value="${endValue}"]`,
-  );
-  if (endRadio) endRadio.checked = true;
-  if (endValue === "custom" && endCustomTime) {
-    const p = document.querySelector(".time-picker[data-side='end']");
-    p.value = endCustomTime;
-    p.parentElement.querySelector(".time-picker-display").textContent =
-      endCustomTime;
-  }
+  // Reset state
+  drawnPoints = null;
+  _pendingSavedCurve = null;
+  selectedPreset = "linear";
+  startValue = "now";
+  endValue = "still";
+  startCustomTime = null;
+  endCustomTime = null;
 
-  if (_savedEvolution.type !== "custom") {
-    selectedPreset = _savedEvolution.type;
-    const radio = document.querySelector(
-      `input[name="evolution"][value="${selectedPreset}"]`,
+  // Reset UI: preset radios
+  const linearRadio = document.querySelector('input[name="evolution"][value="linear"]');
+  if (linearRadio) linearRadio.checked = true;
+
+  // Reset time pickers
+  ["start", "end"].forEach((side) => {
+    const picker = document.querySelector(`.time-picker[data-side='${side}']`);
+    if (picker) {
+      picker.value = "";
+      picker.parentElement.querySelector(".time-picker-display").textContent = "";
+    }
+  });
+  const startDefaultRadio = document.querySelector('input[name="time-start"][value="now"]');
+  if (startDefaultRadio) startDefaultRadio.checked = true;
+  const endDefaultRadio = document.querySelector('input[name="time-end"][value="still"]');
+  if (endDefaultRadio) endDefaultRadio.checked = true;
+
+  // Restore saved evolution state
+  const savedEvolution = _session?.evolution;
+  if (savedEvolution) {
+    startValue = savedEvolution.start.value;
+    startCustomTime = savedEvolution.start.custom ?? null;
+    const startRadio = document.querySelector(
+      `input[name="time-start"][value="${startValue}"]`,
     );
-    if (radio) radio.checked = true;
+    if (startRadio) startRadio.checked = true;
+    if (startValue === "custom" && startCustomTime) {
+      const p = document.querySelector(".time-picker[data-side='start']");
+      p.value = startCustomTime;
+      p.parentElement.querySelector(".time-picker-display").textContent = startCustomTime;
+    }
+
+    endValue = savedEvolution.end.value;
+    endCustomTime = savedEvolution.end.custom ?? null;
+    const endRadio = document.querySelector(
+      `input[name="time-end"][value="${endValue}"]`,
+    );
+    if (endRadio) endRadio.checked = true;
+    if (endValue === "custom" && endCustomTime) {
+      const p = document.querySelector(".time-picker[data-side='end']");
+      p.value = endCustomTime;
+      p.parentElement.querySelector(".time-picker-display").textContent = endCustomTime;
+    }
+
+    if (savedEvolution.type !== "custom") {
+      selectedPreset = savedEvolution.type;
+      const radio = document.querySelector(
+        `input[name="evolution"][value="${selectedPreset}"]`,
+      );
+      if (radio) radio.checked = true;
+    } else if (savedEvolution.curve?.length) {
+      _pendingSavedCurve = savedEvolution.curve;
+    }
   }
+
+  resizeCanvas();
 }
 
-// Init
+onMount("evolution", mountEvolution);
+
+// ResizeObserver set up once
 const ro = new ResizeObserver(resizeCanvas);
 ro.observe(canvas);

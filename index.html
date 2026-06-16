@@ -7,19 +7,165 @@
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
-    <link type="text/css" rel="stylesheet" href="src/main.css" />
-    <link type="text/css" rel="stylesheet" href="src/index.css" />
   </head>
   <body>
-    <div class="container-info">
+
+    <!-- Persistent header — stays fixed, only icons animate -->
+    <header id="app-header">
       <div class="line">
-        <h1 id="title">Pain(t)</h1>
+        <div class="header-slot">
+          <button id="close-btn"><img src="/icons/close.svg" alt="Cancel" /></button>
+          <button id="previous-btn"><img src="/icons/previous.svg" alt="Previous" /></button>
+        </div>
+        <h1 class="page-title">Pain(t)</h1>
+        <div class="header-slot">
+          <button id="validate-btn"><img src="/icons/next.svg" alt="Next" /></button>
+          <button id="evolution-validate-btn"><img src="/icons/save.svg" alt="Save" /></button>
+        </div>
       </div>
-      <a href="app.html" id="new-entry-btn"
-        ><img src="/icons/add.svg" alt="Add"
-      /></a>
-      <div id="sessions-list"></div>
-    </div>
-    <script type="module" src="src/index.js"></script>
+    </header>
+
+    <!-- Home -->
+    <section class="view view-active" id="view-home">
+      <div class="container-info">
+        <a href="#" id="new-entry-btn"><img src="/icons/add.svg" alt="Add" /></a>
+        <div id="sessions-list"></div>
+      </div>
+    </section>
+
+    <!-- App -->
+    <section class="view" id="view-app">
+      <div class="container-info">
+        <div class="line">
+          <div class="grouped">
+            <button id="cancel-all-btn">
+              <img src="/icons/cancel_all.svg" alt="Cancel all" />
+            </button>
+            <button id="cancel-btn">
+              <img src="/icons/cancel.svg" alt="Cancel" />
+            </button>
+          </div>
+          <div class="grouped">
+            <fieldset class="radio-button-picker">
+              <label class="radio-button">
+                <input type="radio" id="point" name="tool" value="point" checked />
+                <img src="/icons/radiant.svg" alt="Point" />
+              </label>
+              <label class="radio-button">
+                <input type="radio" id="pulse" name="tool" value="pulse" />
+                <img src="/icons/pulse.svg" alt="Pulse" />
+              </label>
+              <label class="radio-button">
+                <input type="radio" id="acute" name="tool" value="acute" />
+                <img src="/icons/acute.svg" alt="Acute" />
+              </label>
+            </fieldset>
+            <button id="info">
+              <img src="/icons/question_mark.svg" alt="Info" />
+            </button>
+          </div>
+        </div>
+        <input class="line" type="range" id="color-bar" name="color" min="0" max="1000" />
+        <p id="hint" class="hint hidden"></p>
+      </div>
+      <div id="info-popup-backdrop" class="info-popup-backdrop hidden"></div>
+      <div id="info-popup" class="info-popup hidden">
+        <div class="info-popup-item" data-tool="point">
+          <div class="info-popup-icon"><img src="/icons/radiant.svg" alt="Radiating" /></div>
+          <h2>Radiating</h2>
+        </div>
+        <div class="info-popup-item" data-tool="pulse">
+          <div class="info-popup-icon"><img src="/icons/pulse.svg" alt="Pulsing" /></div>
+          <h2>Pulsing</h2>
+        </div>
+        <div class="info-popup-item" data-tool="acute">
+          <div class="info-popup-icon"><img src="/icons/acute.svg" alt="Acute" /></div>
+          <h2>Acute</h2>
+        </div>
+      </div>
+      <div id="container"></div>
+      <div id="haptic-debug" class="hidden"></div>
+    </section>
+
+    <!-- Evolution -->
+    <section class="view" id="view-evolution">
+      <div class="container-info">
+        <h2>Evolution over time</h2>
+        <fieldset class="radio-button-picker">
+          <label class="radio-button">
+            <input type="radio" name="evolution" value="linear" checked />
+            <img src="/icons/linear.svg" alt="Linear" />
+          </label>
+          <label class="radio-button">
+            <input type="radio" name="evolution" value="exp" />
+            <img src="/icons/exp.svg" alt="Exponential" />
+          </label>
+          <label class="radio-button">
+            <input type="radio" name="evolution" value="power" />
+            <img src="/icons/power.svg" alt="Power" />
+          </label>
+          <label class="radio-button">
+            <input type="radio" name="evolution" value="peak" />
+            <img src="/icons/peak.svg" alt="Peak" />
+          </label>
+          <label class="radio-button">
+            <input type="radio" name="evolution" value="peak-incr" />
+            <img src="/icons/peak-incr.svg" alt="Peak increase" />
+          </label>
+          <label class="radio-button">
+            <input type="radio" name="evolution" value="var" />
+            <img src="/icons/var.svg" alt="Variable" />
+          </label>
+          <label class="radio-button">
+            <input type="radio" name="evolution" value="var-incr" />
+            <img src="/icons/var-incr.svg" alt="Variable increase" />
+          </label>
+        </fieldset>
+        <p>Or draw your curve</p>
+      </div>
+      <canvas id="evolution-canvas"></canvas>
+      <div class="time-section">
+        <div class="time-labels">
+          <h2>Start</h2>
+          <h2>End</h2>
+        </div>
+        <div class="time-cols">
+          <div class="time-col">
+            <label class="radio-button radio-button-text">
+              <input type="radio" name="time-start" value="now" checked />
+              Now
+            </label>
+            <label class="radio-button radio-button-text">
+              <input type="radio" name="time-start" value="1h" />
+              1 hour ago
+            </label>
+            <label class="radio-button radio-btn-custom">
+              <input type="radio" name="time-start" value="custom" />
+              <input type="time" class="time-picker" data-side="start" />
+              <img src="/icons/time.svg" alt="Time" />
+              <span class="time-picker-display"></span>
+            </label>
+          </div>
+          <div class="time-col time-col-end">
+            <label class="radio-button radio-button-text">
+              <input type="radio" name="time-end" value="still" checked />
+              Still
+            </label>
+            <label class="radio-button radio-button-text">
+              <input type="radio" name="time-end" value="1h" />
+              1 hour ago
+            </label>
+            <label class="radio-button radio-btn-custom">
+              <input type="radio" name="time-end" value="custom" />
+              <input type="time" class="time-picker" data-side="end" />
+              <img src="/icons/time.svg" alt="Time" />
+              <span class="time-picker-display"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script type="module" src="src/main.js"></script>
   </body>
 </html>

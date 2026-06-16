@@ -1,4 +1,5 @@
 import { navigate } from "./nav.js";
+import { onMount } from "./router.js";
 
 function formatDate(ts) {
   const d = new Date(ts);
@@ -54,113 +55,119 @@ function drawAcute(ctx, color) {
 
 const draws = { point: drawPoint, pulse: drawPulse, acute: drawAcute };
 
+// Set up once — navigate to app when new entry is clicked
 document.getElementById("new-entry-btn").addEventListener("click", (e) => {
   e.preventDefault();
   navigate("app.html");
 });
 
-const sessions = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
-const list = document.getElementById("sessions-list");
+function renderSessions() {
+  const sessions = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
+  const list = document.getElementById("sessions-list");
+  list.innerHTML = "";
 
-sessions
-  .slice()
-  .reverse()
-  .forEach((session) => {
-    const card = document.createElement("div");
-    card.className = "session-card";
+  sessions
+    .slice()
+    .reverse()
+    .forEach((session) => {
+      const card = document.createElement("div");
+      card.className = "session-card";
 
-    const dateEl = document.createElement("h2");
-    dateEl.className = "session-date";
-    dateEl.textContent = formatDate(session.timestamp);
-    card.appendChild(dateEl);
+      const dateEl = document.createElement("h2");
+      dateEl.className = "session-date";
+      dateEl.textContent = formatDate(session.timestamp);
+      card.appendChild(dateEl);
 
-    let pressTimer = null;
-    let longPressFired = false;
+      let pressTimer = null;
+      let longPressFired = false;
 
-    const startPress = () => {
-      longPressFired = false;
-      pressTimer = setTimeout(() => {
-        longPressFired = true;
-        if (confirm("Delete this crisis?")) {
-          const all = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
-          localStorage.setItem(
-            "paint-sessions",
-            JSON.stringify(all.filter((s) => s.timestamp !== session.timestamp)),
-          );
-          card.remove();
+      const startPress = () => {
+        longPressFired = false;
+        pressTimer = setTimeout(() => {
+          longPressFired = true;
+          if (confirm("Delete this crisis?")) {
+            const all = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
+            localStorage.setItem(
+              "paint-sessions",
+              JSON.stringify(all.filter((s) => s.timestamp !== session.timestamp)),
+            );
+            card.remove();
+          }
+        }, 700);
+      };
+      const cancelPress = () => {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      };
+
+      card.addEventListener("mousedown", startPress);
+      card.addEventListener("mouseup", cancelPress);
+      card.addEventListener("mouseleave", cancelPress);
+      card.addEventListener("touchstart", startPress, { passive: true });
+      card.addEventListener("touchend", cancelPress);
+      card.addEventListener("touchmove", cancelPress);
+      card.addEventListener("contextmenu", (e) => e.preventDefault());
+
+      // Time range
+      if (session.evolution) {
+        const timesEl = document.createElement("p");
+        timesEl.className = "session-times";
+        const startStr = session.evolution.start?.custom ?? "";
+        const end = session.evolution.end;
+        if (end?.value === "still") {
+          timesEl.innerHTML = `${startStr} – <b>Still ongoing</b>`;
+        } else {
+          timesEl.textContent = `${startStr} – ${end?.custom ?? ""}`;
         }
-      }, 700);
-    };
-    const cancelPress = () => {
-      clearTimeout(pressTimer);
-      pressTimer = null;
-    };
-
-    card.addEventListener("mousedown", startPress);
-    card.addEventListener("mouseup", cancelPress);
-    card.addEventListener("mouseleave", cancelPress);
-    card.addEventListener("touchstart", startPress, { passive: true });
-    card.addEventListener("touchend", cancelPress);
-    card.addEventListener("touchmove", cancelPress);
-    card.addEventListener("contextmenu", (e) => e.preventDefault());
-
-    // Time range
-    if (session.evolution) {
-      const timesEl = document.createElement("p");
-      timesEl.className = "session-times";
-      const startStr = session.evolution.start?.custom ?? "";
-      const end = session.evolution.end;
-      if (end?.value === "still") {
-        timesEl.innerHTML = `${startStr} – <b>Still ongoing</b>`;
-      } else {
-        timesEl.textContent = `${startStr} – ${end?.custom ?? ""}`;
+        card.appendChild(timesEl);
       }
-      card.appendChild(timesEl);
-    }
 
-    // Tools + curve icon (left-aligned together)
-    const toolsEl = document.createElement("div");
-    toolsEl.className = "session-tools";
+      // Tools + curve icon
+      const toolsEl = document.createElement("div");
+      toolsEl.className = "session-tools";
 
-    if (session.evolution) {
-      const curveBtn = document.createElement("div");
-      curveBtn.className = "session-curve-icon";
-      const curveImg = document.createElement("img");
-      curveImg.src =
-        `${import.meta.env.BASE_URL}icons/${session.evolution.type === "custom" ? "pencil" : session.evolution.type}.svg`;
-      curveBtn.appendChild(curveImg);
-      toolsEl.appendChild(curveBtn);
-    }
-
-    ["point", "pulse", "acute"].forEach((tool) => {
-      const toolDecals = session.decals.filter((d) => d.tool === tool);
-      if (toolDecals.length === 0) return;
-
-      const best = toolDecals.reduce((max, d) =>
-        painLevel(d.color) > painLevel(max.color) ? d : max,
-      );
-
-      const canvas = document.createElement("canvas");
-      canvas.width = 40;
-      canvas.height = 40;
-      draws[tool](canvas.getContext("2d"), best.color);
-      toolsEl.appendChild(canvas);
-    });
-
-    card.appendChild(toolsEl);
-
-    card.addEventListener("click", () => {
-      if (longPressFired) { longPressFired = false; return; }
-      const data = structuredClone(session);
-      if (data.evolution?.start?.value === "now") {
-        const d = new Date(data.timestamp);
-        const hh = String(d.getHours()).padStart(2, "0");
-        const mm = String(d.getMinutes()).padStart(2, "0");
-        data.evolution.start = { value: "custom", custom: `${hh}:${mm}` };
+      if (session.evolution) {
+        const curveBtn = document.createElement("div");
+        curveBtn.className = "session-curve-icon";
+        const curveImg = document.createElement("img");
+        curveImg.src =
+          `${import.meta.env.BASE_URL}icons/${session.evolution.type === "custom" ? "pencil" : session.evolution.type}.svg`;
+        curveBtn.appendChild(curveImg);
+        toolsEl.appendChild(curveBtn);
       }
-      sessionStorage.setItem("pending-session", JSON.stringify(data));
-      navigate("app.html");
-    });
 
-    list.appendChild(card);
-  });
+      ["point", "pulse", "acute"].forEach((tool) => {
+        const toolDecals = session.decals.filter((d) => d.tool === tool);
+        if (toolDecals.length === 0) return;
+
+        const best = toolDecals.reduce((max, d) =>
+          painLevel(d.color) > painLevel(max.color) ? d : max,
+        );
+
+        const canvas = document.createElement("canvas");
+        canvas.width = 40;
+        canvas.height = 40;
+        draws[tool](canvas.getContext("2d"), best.color);
+        toolsEl.appendChild(canvas);
+      });
+
+      card.appendChild(toolsEl);
+
+      card.addEventListener("click", () => {
+        if (longPressFired) { longPressFired = false; return; }
+        const data = structuredClone(session);
+        if (data.evolution?.start?.value === "now") {
+          const d = new Date(data.timestamp);
+          const hh = String(d.getHours()).padStart(2, "0");
+          const mm = String(d.getMinutes()).padStart(2, "0");
+          data.evolution.start = { value: "custom", custom: `${hh}:${mm}` };
+        }
+        sessionStorage.setItem("pending-session", JSON.stringify(data));
+        navigate("app.html");
+      });
+
+      list.appendChild(card);
+    });
+}
+
+onMount("home", renderSessions);

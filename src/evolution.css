@@ -1,8 +1,4 @@
 /* Evolution page */
-body {
-  overflow: hidden;
-}
-
 #evolution-canvas {
   flex: 1;
   width: 100%;

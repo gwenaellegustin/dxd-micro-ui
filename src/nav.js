@@ -1,11 +1,11 @@
-export function navigate(url) {
-  let done = false;
-  const go = () => {
-    if (done) return;
-    done = true;
-    location.href = url;
-  };
-  document.body.classList.add("leaving");
-  document.body.addEventListener("animationend", go, { once: true });
-  setTimeout(go, 200); // fallback if animationend never fires
+import { navigate as routerNavigate } from "./router.js";
+
+const urlToView = {
+  "index.html": "home",
+  "app.html": "app",
+  "evolution.html": "evolution",
+};
+
+export function navigate(target) {
+  routerNavigate(urlToView[target] ?? target);
 }
