@@ -401,11 +401,9 @@ function animate() {
 function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
   if (tool === "point") {
-    // Duty-cycle ramp over SIZE_GROW_DURATION (4000 ms), then continuous
-    // Each 400 ms window goes from 10 % → 100 % on-time to simulate growing intensity
-    const pattern = [50];
+    const pattern = [10000];
     navigator.vibrate(pattern);
-    hapticInterval = -1; // sentinel: active but no interval to clear
+    hapticInterval = setInterval(() => navigator.vibrate(pattern), 9000);
     startHapticVisual(tool, pattern);
   } else if (tool === "pulse") {
     // Regular slow wave: smooth sine-shaped on/off cycle, ~3 s period
