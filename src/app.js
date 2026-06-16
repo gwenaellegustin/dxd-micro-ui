@@ -402,43 +402,32 @@ function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
 
   if (tool === "point") {
-    // 100% Continuous: Overlapping 1-second commands.
-    // Fires a 1000ms vibration every 800ms. This prevents the OS 1-second
-    // cutoff while avoiding the "buzzy" feeling of high-frequency updates.
-    navigator.vibrate(1000);
+    // High-frequency heartbeat trick:
+    // Requests a 200ms vibration every 100ms. This forces the hardware
+    // to stay at full power continuously without ever spinning down.
+    navigator.vibrate(200);
     hapticInterval = setInterval(() => {
-      navigator.vibrate(1000);
-    }, 800);
+      navigator.vibrate(200);
+    }, 100);
 
-    startHapticVisual(tool, [1000, 0]);
+    startHapticVisual(tool, [200, 0]);
   } else if (tool === "pulse") {
-    // True Density Wave: Slower increasing and decreasing.
-    // Uses precise gaps (off-times) that gradually shrink as the wave peaks,
-    // and widen as the wave falls. This creates an unmistakable breathing effect.
-    // Format: [on, off, on, off, ...]
-    const pattern = [
-      30,
-      200, // Low trough
-      80,
-      150, // Building up
-      150,
-      100, // Swelling
-      250,
-      50, // Heavy crest
-      250,
-      50, // Heavy crest
-      150,
-      100, // Fading down
-      80,
-      150, // Dropping
-      30,
-      200, // Low trough
-    ];
-    const duration = pattern.reduce((a, b) => a + b, 0); // Exactly 2020ms cycle
+    // Fast-attack, slow-decay wave: Jumps into action immediately,
+    // hits a heavy peak, and then gradually slopes down over a 4-second cycle.
+    const pulseSteps = [350, 480, 350, 220, 120, 50, 0, 0];
+    let currentStep = 0;
 
-    navigator.vibrate(pattern);
-    hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
-    startHapticVisual(tool, pattern);
+    // Trigger the strong initial step instantly on touch
+    navigator.vibrate(pulseSteps[currentStep]);
+    currentStep = (currentStep + 1) % pulseSteps.length;
+
+    // Maintain the slow 500ms pace for the gradual fade-out
+    hapticInterval = setInterval(() => {
+      navigator.vibrate(pulseSteps[currentStep]);
+      currentStep = (currentStep + 1) % pulseSteps.length;
+    }, 500);
+
+    startHapticVisual(tool, [250, 250]);
   } else if (tool === "acute") {
     // Sharp discharge: 6ms burst then silence, 4 Hz
     const pattern = [6, 50, 6, 188];
