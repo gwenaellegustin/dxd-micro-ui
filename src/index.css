@@ -36,17 +36,13 @@
   gap: var(--space-small);
   border: var(--border-width) solid var(--on-background);
   border-radius: var(--radius-card);
-  padding: var(--space-small) var(--space) var(--space) var(--space-big);
+  padding: var(--space) var(--space) var(--space) var(--space-big);
 }
 
 .session-tools {
   display: flex;
   gap: var(--space-small);
   align-items: center;
-}
-
-.session-times {
-  opacity: 0.75;
 }
 
 .session-curve-icon {

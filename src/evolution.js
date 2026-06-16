@@ -135,7 +135,7 @@ function drawMaxPainMarker() {
   ctx.moveTo(0, y);
   ctx.lineTo(canvas.width, y);
   ctx.strokeStyle = "rgba(0,0,0,0.5)";
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 2;
   ctx.setLineDash([6, 4]);
   ctx.stroke();
   ctx.setLineDash([]);
@@ -265,50 +265,57 @@ document.querySelectorAll(".time-picker").forEach((picker) => {
 });
 
 // Navigate back to app
-document.getElementById("previous-btn").addEventListener("click", () => navigate("app.html"));
+document
+  .getElementById("previous-btn")
+  .addEventListener("click", () => navigate("app.html"));
 
 // Save and navigate home
-document.getElementById("evolution-validate-btn").addEventListener("click", () => {
-  const pending = JSON.parse(
-    sessionStorage.getItem("pending-session") || "null",
-  );
-  if (pending) {
-    const normalized = (drawnPoints ?? getPresetPoints()).map((p) => ({
-      t: p.x / canvas.width,
-      y: p.y / canvas.height,
-    }));
-    const now = new Date();
-    const toHHMM = (d) =>
-      `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-    const round15 = (d) => {
-      const rounded = new Date(d);
-      rounded.setMinutes(Math.round(d.getMinutes() / 15) * 15, 0, 0);
-      return rounded;
-    };
-    const oneHourAgo = round15(new Date(now - 60 * 60 * 1000));
-    const resolveTime = (value, customTime) => {
-      if (value === "now") return { value: "custom", custom: toHHMM(now) };
-      if (value === "1h") return { value: "custom", custom: toHHMM(oneHourAgo) };
-      return { value, custom: customTime };
-    };
-    pending.evolution = {
-      type: drawnPoints ? "custom" : selectedPreset,
-      curve: normalized,
-      start: resolveTime(startValue, startCustomTime),
-      end: resolveTime(endValue, endCustomTime),
-    };
-    const sessions = JSON.parse(localStorage.getItem("paint-sessions") || "[]");
-    const idx = sessions.findIndex((s) => s.timestamp === pending.timestamp);
-    if (idx !== -1) {
-      sessions[idx] = pending;
-    } else {
-      sessions.push(pending);
+document
+  .getElementById("evolution-validate-btn")
+  .addEventListener("click", () => {
+    const pending = JSON.parse(
+      sessionStorage.getItem("pending-session") || "null",
+    );
+    if (pending) {
+      const normalized = (drawnPoints ?? getPresetPoints()).map((p) => ({
+        t: p.x / canvas.width,
+        y: p.y / canvas.height,
+      }));
+      const now = new Date();
+      const toHHMM = (d) =>
+        `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+      const round15 = (d) => {
+        const rounded = new Date(d);
+        rounded.setMinutes(Math.round(d.getMinutes() / 15) * 15, 0, 0);
+        return rounded;
+      };
+      const oneHourAgo = round15(new Date(now - 60 * 60 * 1000));
+      const resolveTime = (value, customTime) => {
+        if (value === "now") return { value: "custom", custom: toHHMM(now) };
+        if (value === "1h")
+          return { value: "custom", custom: toHHMM(oneHourAgo) };
+        return { value, custom: customTime };
+      };
+      pending.evolution = {
+        type: drawnPoints ? "custom" : selectedPreset,
+        curve: normalized,
+        start: resolveTime(startValue, startCustomTime),
+        end: resolveTime(endValue, endCustomTime),
+      };
+      const sessions = JSON.parse(
+        localStorage.getItem("paint-sessions") || "[]",
+      );
+      const idx = sessions.findIndex((s) => s.timestamp === pending.timestamp);
+      if (idx !== -1) {
+        sessions[idx] = pending;
+      } else {
+        sessions.push(pending);
+      }
+      localStorage.setItem("paint-sessions", JSON.stringify(sessions));
+      sessionStorage.removeItem("pending-session");
     }
-    localStorage.setItem("paint-sessions", JSON.stringify(sessions));
-    sessionStorage.removeItem("pending-session");
-  }
-  navigate("index.html");
-});
+    navigate("index.html");
+  });
 
 function mountEvolution() {
   _session = JSON.parse(sessionStorage.getItem("pending-session") || "null");
@@ -326,7 +333,9 @@ function mountEvolution() {
   endCustomTime = null;
 
   // Reset UI: preset radios
-  const linearRadio = document.querySelector('input[name="evolution"][value="linear"]');
+  const linearRadio = document.querySelector(
+    'input[name="evolution"][value="linear"]',
+  );
   if (linearRadio) linearRadio.checked = true;
 
   // Reset time pickers
@@ -334,12 +343,17 @@ function mountEvolution() {
     const picker = document.querySelector(`.time-picker[data-side='${side}']`);
     if (picker) {
       picker.value = "";
-      picker.parentElement.querySelector(".time-picker-display").textContent = "";
+      picker.parentElement.querySelector(".time-picker-display").textContent =
+        "";
     }
   });
-  const startDefaultRadio = document.querySelector('input[name="time-start"][value="now"]');
+  const startDefaultRadio = document.querySelector(
+    'input[name="time-start"][value="now"]',
+  );
   if (startDefaultRadio) startDefaultRadio.checked = true;
-  const endDefaultRadio = document.querySelector('input[name="time-end"][value="still"]');
+  const endDefaultRadio = document.querySelector(
+    'input[name="time-end"][value="still"]',
+  );
   if (endDefaultRadio) endDefaultRadio.checked = true;
 
   // Restore saved evolution state
@@ -354,7 +368,8 @@ function mountEvolution() {
     if (startValue === "custom" && startCustomTime) {
       const p = document.querySelector(".time-picker[data-side='start']");
       p.value = startCustomTime;
-      p.parentElement.querySelector(".time-picker-display").textContent = startCustomTime;
+      p.parentElement.querySelector(".time-picker-display").textContent =
+        startCustomTime;
     }
 
     endValue = savedEvolution.end.value;
@@ -366,7 +381,8 @@ function mountEvolution() {
     if (endValue === "custom" && endCustomTime) {
       const p = document.querySelector(".time-picker[data-side='end']");
       p.value = endCustomTime;
-      p.parentElement.querySelector(".time-picker-display").textContent = endCustomTime;
+      p.parentElement.querySelector(".time-picker-display").textContent =
+        endCustomTime;
     }
 
     if (savedEvolution.type !== "custom") {
