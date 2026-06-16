@@ -412,22 +412,21 @@ function startHaptic(tool) {
 
     startHapticVisual(tool, [200, 0]);
   } else if (tool === "pulse") {
-    // Mega slow wave: Updates every 500ms across a 4-second total cycle.
-    // Creates a deeply gradual, heavy breathing effect.
-    const pulseSteps = [60, 200, 380, 480, 380, 200, 60, 0];
+    // Fast-attack, slow-decay wave: Jumps into action immediately,
+    // hits a heavy peak, and then gradually slopes down over a 4-second cycle.
+    const pulseSteps = [350, 480, 350, 220, 120, 50, 0, 0];
     let currentStep = 0;
 
-    // Trigger first step immediately
+    // Trigger the strong initial step instantly on touch
     navigator.vibrate(pulseSteps[currentStep]);
     currentStep = (currentStep + 1) % pulseSteps.length;
 
-    // Drive the wave at 500ms increments (8 steps * 500ms = 4000ms total cycle)
+    // Maintain the slow 500ms pace for the gradual fade-out
     hapticInterval = setInterval(() => {
       navigator.vibrate(pulseSteps[currentStep]);
       currentStep = (currentStep + 1) % pulseSteps.length;
     }, 500);
 
-    // Adjusted for the slow visual debugger
     startHapticVisual(tool, [250, 250]);
   } else if (tool === "acute") {
     // Sharp discharge: 6ms burst then silence, 4 Hz
