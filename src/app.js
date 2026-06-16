@@ -402,19 +402,20 @@ function startHaptic(tool) {
   if (!navigator.vibrate || hapticInterval !== null) return;
   if (tool === "point") {
     // Light continuous hum: 20% duty cycle, loops for full press duration
-    const pattern = [SIZE_GROW_DURATION, 0];
+    const pattern = [80, 0];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
     hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
     startHapticVisual(tool, pattern);
   } else if (tool === "pulse") {
-    // Single sine-envelope swell filling SIZE_GROW_DURATION exactly — no repeat needed
-    const T_off = 50;
-    const steps = 7;
+    // Repeating sine-envelope swell — fixed 1.5 s cycle, loops for the press duration
+    const T_cycle = 1500;
+    const T_off = 20;
+    const steps = 5;
     const sines = Array.from({ length: steps }, (_, k) =>
       Math.sin((Math.PI * (k + 0.5)) / steps),
     );
-    const onBudget = SIZE_GROW_DURATION - T_off * (steps - 1);
+    const onBudget = T_cycle - T_off * (steps - 1);
     const sineSum = sines.reduce((a, b) => a + b, 0);
     let onUsed = 0;
     const pattern = sines.flatMap((s, k) => {
@@ -426,6 +427,7 @@ function startHaptic(tool) {
       return k < steps - 1 ? [on, T_off] : [on];
     });
     navigator.vibrate(pattern);
+    hapticInterval = setInterval(() => navigator.vibrate(pattern), T_cycle);
     startHapticVisual(tool, pattern);
   } else if (tool === "acute") {
     // Sharp discharge: 12 ms burst then silence, 2 Hz
