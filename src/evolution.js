@@ -325,10 +325,23 @@ document.querySelectorAll(".time-picker").forEach((picker) => {
   });
 });
 
-// Navigate back to app
-document
-  .getElementById("previous-btn")
-  .addEventListener("click", () => navigate("app"));
+document.getElementById("previous-btn").addEventListener("click", () => {
+  const pending = JSON.parse(sessionStorage.getItem("pending-session") || "null");
+  if (pending) {
+    const normalized = (drawnPoints ?? getPresetPoints()).map((p) => ({
+      t: p.x / canvas.width,
+      y: p.y / canvas.height,
+    }));
+    pending.evolution = {
+      type: drawnPoints ? "custom" : selectedPreset,
+      curve: normalized,
+      start: { value: startValue, custom: startCustomTime },
+      end: { value: endValue, custom: endCustomTime },
+    };
+    sessionStorage.setItem("pending-session", JSON.stringify(pending));
+  }
+  navigate("app");
+});
 
 // Save and navigate home
 document

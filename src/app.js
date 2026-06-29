@@ -18,7 +18,9 @@ const intersects = [];
 
 //* Model point
 let controls;
-let headMaxDim = 20; // updated after model load, used to scale decals
+let headMaxDim = 20;
+let headCenter = new THREE.Vector3();
+let headRadius = 0;
 
 const decalMaterial = new THREE.MeshBasicMaterial({
   map: createDecalTexture(),
@@ -100,6 +102,27 @@ function mountApp() {
     if (_modelLoaded && pendingSession?.decals?.length) {
       restoreDecals(pendingSession.decals);
     }
+
+    if (!pendingSession) {
+      document.getElementById("point").checked = true;
+      decalMaterial.map = createDecalTexture();
+      decalMaterial.needsUpdate = true;
+
+      const colorBar = document.getElementById("color-bar");
+      colorBar.value = 500;
+      const hex = colorjs.getColorFromRangeValue(500, colorBar.max);
+      colorBar.style.setProperty("--slider-color", hex);
+      colorSelected = parseInt(hex.replace("#", ""), 16);
+
+      document.getElementById("hint").classList.add("hidden");
+
+      if (_modelLoaded) {
+        controls.target.copy(headCenter);
+        camera.position.set(headCenter.x, headCenter.y, headCenter.z + headMaxDim * 1.8);
+        controls.update();
+      }
+    }
+
     renderer.setAnimationLoop(animate);
     onWindowResize();
   }
@@ -536,15 +559,14 @@ function loadGlbCloudPoint(glbPath) {
     pointsGeo.computeBoundingSphere();
     const bboxSize = new THREE.Vector3();
     pointsGeo.boundingBox.getSize(bboxSize);
-    const center = new THREE.Vector3();
-    pointsGeo.boundingBox.getCenter(center);
+    pointsGeo.boundingBox.getCenter(headCenter);
 
     headMaxDim = Math.max(bboxSize.x, bboxSize.y, bboxSize.z);
-    const headRadius = pointsGeo.boundingSphere.radius;
+    headRadius = pointsGeo.boundingSphere.radius;
 
     // Fit camera & controls to model
-    controls.target.copy(center);
-    camera.position.set(center.x, center.y, center.z + headMaxDim * 1.8);
+    controls.target.copy(headCenter);
+    camera.position.set(headCenter.x, headCenter.y, headCenter.z + headMaxDim * 1.8);
     controls.minDistance = headRadius + 1;
     controls.maxDistance = headMaxDim * 1.4;
     controls.update();
