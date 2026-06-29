@@ -467,6 +467,7 @@ function mountEvolution() {
       if (radio) radio.checked = true;
     } else if (savedEvolution.curve?.length) {
       _pendingSavedCurve = savedEvolution.curve;
+      document.querySelectorAll("input[name='evolution']").forEach((r) => (r.checked = false));
     }
   }
 
