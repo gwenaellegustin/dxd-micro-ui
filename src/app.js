@@ -62,7 +62,6 @@ let pressOriginatedOutside = false;
 let pressStart = 0;
 let previewMesh;
 let hapticInterval = null;
-let hapticVisualTimeout = null;
 
 let _appInitialized = false;
 let _modelLoaded = false;
@@ -376,7 +375,7 @@ function init() {
 
   //* Show tap hint after 1.5 s if no shoot yet
   setTimeout(() => {
-    if (decals.length === 0 && !colorSliderTouched) {
+    if (decals.length === 0 && !colorSliderTouched && !isPressing) {
       clearTimeout(colorHideTimeout);
       tapHintEl.textContent = "Press and hold to expand the area";
       tapHintEl.style.color = "white";
@@ -469,7 +468,6 @@ function startHaptic(tool) {
       navigator.vibrate(200);
     }, 100);
 
-    startHapticVisual(tool, [200, 0]);
   } else if (tool === "pulse") {
     // Fast-attack, slow-decay wave: Jumps into action immediately,
     // hits a heavy peak, and then gradually slopes down over a 4-second cycle.
@@ -486,14 +484,12 @@ function startHaptic(tool) {
       currentStep = (currentStep + 1) % pulseSteps.length;
     }, 500);
 
-    startHapticVisual(tool, [250, 250]);
   } else if (tool === "acute") {
     // Sharp discharge: 6ms burst then silence, 4 Hz
     const pattern = [6, 50, 6, 188];
     const duration = pattern.reduce((a, b) => a + b, 0);
     navigator.vibrate(pattern);
     hapticInterval = setInterval(() => navigator.vibrate(pattern), duration);
-    startHapticVisual(tool, pattern);
   }
 }
 
@@ -501,60 +497,8 @@ function stopHaptic() {
   clearInterval(hapticInterval);
   hapticInterval = null;
   if (navigator.vibrate) navigator.vibrate(0);
-  stopHapticVisual();
 }
 
-// Debug: visual indicator that mirrors haptic pattern timing
-(function injectHapticDebugStyle() {
-  if (navigator.maxTouchPoints > 0 || "ontouchstart" in window) return;
-  const s = document.createElement("style");
-  s.textContent = `
-    #haptic-debug {
-      position: fixed; bottom: 80px; right: 16px;
-      width: 52px; height: 52px; border-radius: 50%;
-      background: #222; border: 2px solid #444;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 8px; font-family: monospace; color: #888;
-      text-transform: uppercase; letter-spacing: 0.5px;
-      transition: background 60ms, box-shadow 60ms, border-color 60ms;
-      z-index: 9999; pointer-events: none; user-select: none;
-    }
-    #haptic-debug.hd-on {
-      background: #e55; border-color: #f88;
-      box-shadow: 0 0 14px #ff440099; color: #fff;
-    }
-    #haptic-debug.hidden { display: none; }
-  `;
-  document.head.appendChild(s);
-})();
-
-function startHapticVisual(tool, pattern) {
-  if (navigator.maxTouchPoints > 0 || "ontouchstart" in window) return;
-  const el = document.getElementById("haptic-debug");
-  if (!el) return;
-  el.textContent = tool;
-  el.classList.remove("hidden");
-  if (!pattern) {
-    el.classList.add("hd-on");
-    return;
-  }
-  let step = 0;
-  function tick() {
-    el.classList.toggle("hd-on", step % 2 === 0);
-    hapticVisualTimeout = setTimeout(tick, pattern[step]);
-    step = (step + 1) % pattern.length;
-  }
-  tick();
-}
-
-function stopHapticVisual() {
-  clearTimeout(hapticVisualTimeout);
-  hapticVisualTimeout = null;
-  const el = document.getElementById("haptic-debug");
-  if (!el) return;
-  el.classList.add("hidden");
-  el.classList.remove("hd-on");
-}
 
 //////////////////////////* Load models
 function loadGlbCloudPoint(glbPath) {
