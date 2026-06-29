@@ -114,6 +114,9 @@ body {
 .view.view-active {
   display: flex;
   flex-direction: column;
+}
+.view.view-active.slide-forward,
+.view.view-active.slide-back {
   animation: page-fade 0.5s ease;
 }
 
