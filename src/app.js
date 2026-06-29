@@ -55,7 +55,26 @@ let hapticInterval = null;
 let _appInitialized = false;
 let _modelLoaded = false;
 
+let tapHintEl;
+let colorSliderTouched = false;
+let colorHideTimeout;
+let hintTimeout;
+
 //////////////////////////* Lifecycle
+
+function scheduleHintIfNeeded() {
+  clearTimeout(hintTimeout);
+  hintTimeout = setTimeout(() => {
+    if (decals.length === 0 && !colorSliderTouched && !isPressing) {
+      clearTimeout(colorHideTimeout);
+      tapHintEl.textContent = "Press and hold to expand the area";
+      tapHintEl.style.color = "white";
+      tapHintEl.style.textAlign = "center";
+      tapHintEl.style.display = "";
+      tapHintEl.classList.remove("hidden");
+    }
+  }, 1500);
+}
 
 function clearDecals() {
   decals.forEach((d) => mesh?.remove(d));
@@ -103,6 +122,10 @@ function mountApp() {
       restoreDecals(pendingSession.decals);
     }
 
+    colorSliderTouched = false;
+    tapHintEl.classList.add("hidden");
+    tapHintEl.style.display = "none";
+
     if (!pendingSession) {
       document.getElementById("point").checked = true;
       decalMaterial.map = createDecalTexture();
@@ -114,8 +137,6 @@ function mountApp() {
       colorBar.style.setProperty("--slider-color", hex);
       colorSelected = parseInt(hex.replace("#", ""), 16);
 
-      document.getElementById("hint").classList.add("hidden");
-
       if (_modelLoaded) {
         controls.target.copy(headCenter);
         camera.position.set(headCenter.x, headCenter.y, headCenter.z + headMaxDim * 1.8);
@@ -123,6 +144,7 @@ function mountApp() {
       }
     }
 
+    scheduleHintIfNeeded();
     renderer.setAnimationLoop(animate);
     onWindowResize();
   }
@@ -130,6 +152,7 @@ function mountApp() {
 
 function unmountApp() {
   if (renderer) renderer.setAnimationLoop(null);
+  clearTimeout(hintTimeout);
 }
 
 onMount("app", mountApp);
@@ -170,7 +193,10 @@ function init() {
   // controls.maxDistance = 200; // Redefine after base on head size
 
   //*Interaction
-  const tapHintEl = document.getElementById("hint");
+  tapHintEl = document.getElementById("hint");
+  tapHintEl.addEventListener("animationend", (e) => {
+    if (e.animationName === "hint-out") tapHintEl.style.display = "none";
+  });
   window.addEventListener("resize", onWindowResize);
   let moved = false;
   controls.addEventListener("change", function () {
@@ -204,6 +230,7 @@ function init() {
           tapHintEl.textContent = "Press and hold to expand the area";
           tapHintEl.style.color = "white";
           tapHintEl.style.textAlign = "center";
+          tapHintEl.style.display = "";
           void tapHintEl.offsetWidth;
           tapHintEl.classList.remove("hidden");
         }
@@ -257,7 +284,6 @@ function init() {
 
   //* Color picker
   const colorBar = document.getElementById("color-bar");
-  let colorSliderTouched = false;
   const painLevels = [
     [10, "Able to ignore it"],
     [20, "Mildly distracted"],
@@ -284,10 +310,10 @@ function init() {
       painLevels.at(-1)[1];
     tapHintEl.style.color = hex;
     tapHintEl.style.textAlign = pct <= 50 ? "right" : "left";
+    tapHintEl.style.display = "";
     tapHintEl.classList.remove("hidden");
     colorSliderTouched = true;
   });
-  let colorHideTimeout;
   colorBar.addEventListener("change", () => {
     clearTimeout(colorHideTimeout);
     colorHideTimeout = setTimeout(
@@ -315,6 +341,7 @@ function init() {
   });
 
   document.getElementById("close-btn").addEventListener("click", () => {
+    tapHintEl.classList.add("hidden");
     sessionStorage.removeItem("pending-session");
     navigate("home");
   });
@@ -382,15 +409,7 @@ function init() {
   scene.add(previewMesh);
 
   //* Show tap hint after 1.5 s if no shoot yet
-  setTimeout(() => {
-    if (decals.length === 0 && !colorSliderTouched && !isPressing) {
-      clearTimeout(colorHideTimeout);
-      tapHintEl.textContent = "Press and hold to expand the area";
-      tapHintEl.style.color = "white";
-      tapHintEl.style.textAlign = "center";
-      tapHintEl.classList.remove("hidden");
-    }
-  }, 1500);
+  scheduleHintIfNeeded();
 
   //* Tool picker
   const toolTextures = {
