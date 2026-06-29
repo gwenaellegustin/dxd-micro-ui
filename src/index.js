@@ -1,4 +1,4 @@
-import { navigate } from "./nav.js";
+import { navigate } from "./router.js";
 import { onMount } from "./router.js";
 
 function formatDate(ts) {
@@ -58,7 +58,7 @@ const draws = { point: drawPoint, pulse: drawPulse, acute: drawAcute };
 // Set up once — navigate to app when new entry is clicked
 document.getElementById("new-entry-btn").addEventListener("click", (e) => {
   e.preventDefault();
-  navigate("app.html");
+  navigate("app");
 });
 
 function renderSessions() {
@@ -163,7 +163,7 @@ function renderSessions() {
           data.evolution.start = { value: "custom", custom: `${hh}:${mm}` };
         }
         sessionStorage.setItem("pending-session", JSON.stringify(data));
-        navigate("app.html");
+        navigate("app");
       });
 
       list.appendChild(card);

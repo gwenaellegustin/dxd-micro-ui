@@ -1,24 +1,13 @@
-// Inspired by https://github.com/mrdoob/three.js/blob/master/examples/webgl_decals.html
-//* Backup of import in case of auto delete
-// import * as THREE from "three";
-// import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-// import Stats from "three/addons/libs/stats.module.js";
-// import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-// import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
-// import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import * as colorjs from "./color.js";
-import { navigate } from "./nav.js";
-import { onMount, onUnmount } from "./router.js";
+import { navigate, onMount, onUnmount } from "./router.js";
 
 const container = document.getElementById("container");
 
-//* Define in example
-let renderer, scene, camera, stats, mesh, raycaster, line;
+let renderer, scene, camera, mesh, raycaster, line;
 const intersection = {
   intersects: false,
   point: new THREE.Vector3(),
@@ -31,8 +20,6 @@ const intersects = [];
 let controls;
 let headMaxDim = 20; // updated after model load, used to scale decals
 
-//* Drawing
-const textureLoader = new THREE.TextureLoader();
 const decalMaterial = new THREE.MeshBasicMaterial({
   map: createDecalTexture(),
   transparent: true,
@@ -128,10 +115,6 @@ onUnmount("app", unmountApp);
 //////////////////////////* Init
 
 function init() {
-  //*FPS info
-  // stats = new Stats();
-  // container.appendChild(stats.dom);
-
   //*Scene
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -310,7 +293,7 @@ function init() {
 
   document.getElementById("close-btn").addEventListener("click", () => {
     sessionStorage.removeItem("pending-session");
-    navigate("index.html");
+    navigate("home");
   });
 
   const validateButton = document.getElementById("validate-btn");
@@ -323,7 +306,7 @@ function init() {
         decals: [...decalData],
       }),
     );
-    navigate("evolution.html");
+    navigate("evolution");
   });
 
   const infoButton = document.getElementById("info");
@@ -454,7 +437,6 @@ function animate() {
     line.visible = false;
   }
   renderer.render(scene, camera);
-  // stats.update();
 }
 
 //////////////////////////* Haptic feedback

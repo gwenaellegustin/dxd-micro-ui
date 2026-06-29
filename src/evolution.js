@@ -1,5 +1,5 @@
 import { getTFromColor } from "./color.js";
-import { navigate } from "./nav.js";
+import { navigate } from "./router.js";
 import { onMount } from "./router.js";
 
 const canvas = document.getElementById("evolution-canvas");
@@ -143,7 +143,6 @@ function drawMaxPainMarker() {
 
 function render() {
   drawBackground();
-  // drawAxes();
   drawCurve(drawnPoints ?? getPresetPoints());
   drawMaxPainMarker();
 }
@@ -329,7 +328,7 @@ document.querySelectorAll(".time-picker").forEach((picker) => {
 // Navigate back to app
 document
   .getElementById("previous-btn")
-  .addEventListener("click", () => navigate("app.html"));
+  .addEventListener("click", () => navigate("app"));
 
 // Save and navigate home
 document
@@ -376,7 +375,7 @@ document
       localStorage.setItem("paint-sessions", JSON.stringify(sessions));
       sessionStorage.removeItem("pending-session");
     }
-    navigate("index.html");
+    navigate("home");
   });
 
 function mountEvolution() {
