@@ -55,7 +55,7 @@ let sizeSelected = 0.1;
 const SIZE_MIN = 0.5;
 const SIZE_MAX = 1.8;
 const SIZE_GROW_DURATION = 4000;
-const PREVIEW_DELAY = 100;
+const PREVIEW_DELAY = 200;
 const RING_BORDER = 0.01;
 let isPressing = false;
 let pressOriginatedOutside = false;
@@ -100,7 +100,9 @@ function restoreDecals(savedDecals) {
 }
 
 function mountApp() {
-  pendingSession = JSON.parse(sessionStorage.getItem("pending-session") || "null");
+  pendingSession = JSON.parse(
+    sessionStorage.getItem("pending-session") || "null",
+  );
   sessionStart = pendingSession?.timestamp ?? Date.now();
 
   if (!_appInitialized) {
@@ -467,7 +469,6 @@ function startHaptic(tool) {
     hapticInterval = setInterval(() => {
       navigator.vibrate(200);
     }, 100);
-
   } else if (tool === "pulse") {
     // Fast-attack, slow-decay wave: Jumps into action immediately,
     // hits a heavy peak, and then gradually slopes down over a 4-second cycle.
@@ -483,7 +484,6 @@ function startHaptic(tool) {
       navigator.vibrate(pulseSteps[currentStep]);
       currentStep = (currentStep + 1) % pulseSteps.length;
     }, 500);
-
   } else if (tool === "acute") {
     // Sharp discharge: 6ms burst then silence, 4 Hz
     const pattern = [6, 50, 6, 188];
@@ -498,7 +498,6 @@ function stopHaptic() {
   hapticInterval = null;
   if (navigator.vibrate) navigator.vibrate(0);
 }
-
 
 //////////////////////////* Load models
 function loadGlbCloudPoint(glbPath) {
